@@ -1,0 +1,14 @@
+from .server_request_handler import ServerRequestHandler
+from .server_response_handler import ServerResponseHandler
+from .server_routes_dispatcher import ServerRoutesDispatcher
+
+
+get_json_content = ServerRequestHandler.get_json_content
+get_request_id = ServerRequestHandler.get_request_id
+
+return_exception = ServerResponseHandler.return_exception
+return_json = ServerResponseHandler.return_json
+
+http_get = ServerRoutesDispatcher.expose_controller_http_get_method
+http_post = ServerRoutesDispatcher.expose_controller_http_post_method
+route = ServerRoutesDispatcher.expose_controller_class

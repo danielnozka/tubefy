@@ -1,0 +1,10 @@
+{
+    "persistenceSettings": {
+        "musicDatabasePath": "./data/music.db",
+        "musicFilesDirectory": "./data"
+    },
+    "serverSettings": {
+        "host": "localhost",
+        "port": 9000
+    }
+}

@@ -1,0 +1,3 @@
+class ServerStoppedException(Exception):
+
+    pass
