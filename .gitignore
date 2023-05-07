@@ -162,3 +162,5 @@ cython_debug/
 # Application files
 log/
 data/
+ffmpeg.exe
+ffprobe.exe

@@ -1,0 +1,10 @@
+{
+    "persistenceSettings": {
+        "musicDatabaseDirectory": "./test_data",
+        "musicFilesDirectory": "./test_data"
+    },
+    "serverSettings": {
+        "host": "localhost",
+        "port": 9001
+    }
+}

@@ -1,6 +1,6 @@
 {
     "persistenceSettings": {
-        "musicDatabasePath": "./data/music.db",
+        "musicDatabaseDirectory": "./data",
         "musicFilesDirectory": "./data"
     },
     "serverSettings": {
