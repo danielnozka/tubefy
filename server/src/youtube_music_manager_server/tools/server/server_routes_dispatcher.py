@@ -2,10 +2,10 @@ import cherrypy
 
 from typing import Callable
 
-from ...exceptions.controller_not_exposed_exception import ControllerNotExposedException
+from ...exceptions import ControllerNotExposedException
 from ..typing import ControllerClassType
 from ..typing import ControllerInstanceType
-from ..typing import MethodType
+from ..typing import ControllerMethodType
 
 
 class ServerRoutesDispatcher(cherrypy.dispatch.RoutesDispatcher):
@@ -28,14 +28,19 @@ class ServerRoutesDispatcher(cherrypy.dispatch.RoutesDispatcher):
         return _wrapped_controller_class
 
     @classmethod
-    def expose_controller_http_get_method(cls, method_route: str) -> MethodType:
+    def expose_controller_http_get_method(cls, method_route: str) -> ControllerMethodType:
 
         return cls._expose_controller_http_method(method_route, 'GET')
 
     @classmethod
-    def expose_controller_http_post_method(cls, method_route: str) -> MethodType:
+    def expose_controller_http_put_method(cls, method_route: str) -> ControllerMethodType:
 
-        return cls._expose_controller_http_method(method_route, 'POST')
+        return cls._expose_controller_http_method(method_route, 'PUT')
+
+    @classmethod
+    def expose_controller_http_delete_method(cls, method_route: str) -> ControllerMethodType:
+
+        return cls._expose_controller_http_method(method_route, 'DELETE')
 
     def register_controller_instance(self, controller_instance: ControllerInstanceType) -> None:
 
@@ -86,9 +91,9 @@ class ServerRoutesDispatcher(cherrypy.dispatch.RoutesDispatcher):
         cls._exposed_controllers[controller_name] = {'controller_route': controller_route, 'controller_methods': {}}
 
     @classmethod
-    def _expose_controller_http_method(cls, method_route: str, method_type: str) -> MethodType:
+    def _expose_controller_http_method(cls, method_route: str, method_type: str) -> ControllerMethodType:
 
-        def _wrapped_controller_http_method(method: MethodType) -> MethodType:
+        def _wrapped_controller_http_method(method: ControllerMethodType) -> ControllerMethodType:
 
             cls._save_exposed_controller_http_method(method, method_route, dict(method=[method_type]))
 
@@ -97,7 +102,8 @@ class ServerRoutesDispatcher(cherrypy.dispatch.RoutesDispatcher):
         return _wrapped_controller_http_method
 
     @classmethod
-    def _save_exposed_controller_http_method(cls, method: MethodType, method_route: str, method_type: dict) -> None:
+    def _save_exposed_controller_http_method(cls, method: ControllerMethodType, method_route: str,
+                                             method_type: dict) -> None:
 
         controller_name, method_name = method.__qualname__.split('.')
 

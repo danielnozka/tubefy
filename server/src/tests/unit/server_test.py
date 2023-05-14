@@ -1,9 +1,9 @@
 import pytest
 
-from .fixtures.exposed_test_controller import ExposedTestController
-from .fixtures.not_exposed_test_controller import NotExposedTestController
-from youtube_music_manager_server.exceptions.controller_not_exposed_exception import ControllerNotExposedException
-from youtube_music_manager_server.server import Server
+from .fixtures import ExposedTestController
+from .fixtures import NotExposedTestController
+from youtube_music_manager_server.exceptions import ControllerNotExposedException
+from youtube_music_manager_server import Server
 
 
 class ServerTest:

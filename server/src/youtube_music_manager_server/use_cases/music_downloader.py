@@ -9,8 +9,9 @@ from dependency_injector.wiring import Provide
 from string import Template
 from youtube_dl import YoutubeDL
 
-from ..configuration.app_settings import AppSettings
-from ..domain.song import Song
+from ..configuration import AppSettings
+from ..domain import Song
+from ..dtos import SongDto
 
 
 class MusicDownloader:
@@ -29,21 +30,21 @@ class MusicDownloader:
         self._file_template = Template(os.path.join(music_files_absolute_directory,
                                                     '${song_artist} - ${song_title}.%(ext)s'))
 
-    def download_song(self, song_id: str, song_title: str, song_artist: str) -> Song:
+    def download_song(self, input_song: SongDto) -> Song:
 
-        self._log.debug(f'Start [funcName]()')
+        self._log.debug(f'Start [funcName](song_id=\'{input_song.id}\')')
 
-        with YoutubeDL(self._get_downloader_options(song_title, song_artist)) as downloader:
+        with YoutubeDL(self._get_downloader_options(input_song.title, input_song.artist)) as downloader:
 
-            downloader.download([self._get_song_url(song_id)])
+            downloader.download([self._get_song_url(input_song.id)])
 
-        song = Song(id_=song_id,
-                    title=song_title,
-                    artist=song_artist,
+        song = Song(id_=input_song.id,
+                    title=input_song.title,
+                    artist=input_song.artist,
                     creation_date=datetime.now(),
-                    file=self._get_song_mp3_file(song_title, song_artist))
+                    file=self._get_song_mp3_file(input_song.title, input_song.artist))
 
-        self._log.debug(f'End [funcName]()')
+        self._log.debug(f'End [funcName](song_id=\'{input_song.id}\')')
 
         return song
 

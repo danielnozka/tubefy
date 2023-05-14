@@ -1,8 +1,8 @@
 import cherrypy
 import logging
 
-from .exceptions.server_stopped_exception import ServerStoppedException
-from .tools.server.server_routes_dispatcher import ServerRoutesDispatcher
+from .exceptions import ServerStoppedException
+from .tools.server import ServerRoutesDispatcher
 from .tools.typing import ControllerInstanceType
 
 

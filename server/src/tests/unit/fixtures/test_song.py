@@ -5,8 +5,8 @@ from datetime import datetime
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
-from youtube_music_manager_server.configuration.app_settings import AppSettings
-from youtube_music_manager_server.domain.song import Song
+from youtube_music_manager_server.configuration import AppSettings
+from youtube_music_manager_server.domain import Song
 
 
 @pytest.fixture(scope='package')

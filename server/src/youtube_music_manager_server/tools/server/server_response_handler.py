@@ -1,12 +1,12 @@
 import cherrypy
 
-from ..typing import MethodType
+from ..typing import ControllerMethodType
 
 
 class ServerResponseHandler:
 
     @classmethod
-    def return_json(cls, method: MethodType) -> MethodType:
+    def return_json(cls, method: ControllerMethodType) -> ControllerMethodType:
 
         return cherrypy.tools.json_out()(method)
 

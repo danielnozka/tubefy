@@ -14,16 +14,11 @@ from ..exceptions.database_query_exception import DatabaseQueryException
 class MusicContext:
 
     _database_file = 'music.db'
-    _songs_table = 'songs'
-    _songs_column_id = 'id'
-    _songs_column_title = 'title'
-    _songs_column_artist = 'artist'
-    _songs_column_creation_date = 'creation_date'
-    _songs_column_file = 'file'
 
     @inject
     def __init__(self, app_settings: AppSettings = Provide['app_settings']):
 
+        self._songs_table = self._SongsTable()
         self._music_database_directory = os.path.abspath(app_settings.persistence_settings.music_database_directory)
         self._database = os.path.join(self._music_database_directory, self._database_file)
 
@@ -33,22 +28,37 @@ class MusicContext:
 
     def add_song(self, song: DatabaseSong) -> None:
 
-        query = (f'INSERT INTO {self._songs_table}({self._songs_column_id}, {self._songs_column_title}, '
-                 f'{self._songs_column_artist}, {self._songs_column_creation_date}, {self._songs_column_file}) '
+        query = (f'INSERT INTO {self._songs_table.name}({self._songs_table.id_column}, '
+                 f'{self._songs_table.title_column}, {self._songs_table.artist_column}, '
+                 f'{self._songs_table.creation_date_column}, {self._songs_table.file_column}) '
                  f'VALUES("{song.id}", "{song.title}", "{song.artist}", "{song.creation_date}", "{song.file}")')
 
         self._make_query(query)
 
-    def get_all(self) -> list[DatabaseSong]:
+    def get_all_songs(self) -> list[DatabaseSong]:
 
-        query = f'SELECT * FROM {self._songs_table}'
+        query = f'SELECT * FROM {self._songs_table.name}'
         query_result = self._make_query(query)
         result = [DatabaseSong(*element) for element in query_result]
+
         return result
 
-    def delete(self, song: DatabaseSong) -> None:
+    def get_song_by_id(self, song_id: str) -> DatabaseSong | None:
 
-        query = f'DELETE FROM {self._songs_table} WHERE {self._songs_column_id}="{song.id}"'
+        query = f'SELECT * FROM {self._songs_table.name} WHERE {self._songs_table.id_column}="{song_id}"'
+        query_result = self._make_query(query)
+
+        if self._query_result_is_empty(query_result):
+
+            return None
+
+        else:
+
+            return DatabaseSong(*query_result[0])
+
+    def delete_song(self, song: DatabaseSong) -> None:
+
+        query = f'DELETE FROM {self._songs_table.name} WHERE {self._songs_table.id_column}="{song.id}"'
         self._make_query(query)
 
     def _create_database(self) -> None:
@@ -57,12 +67,12 @@ class MusicContext:
 
             self._create_database_directory()
 
-        query = (f'CREATE TABLE {self._songs_table} '
-                 f'({self._songs_column_id} TEXT NOT NULL PRIMARY KEY, '
-                 f'{self._songs_column_title} TEXT NOT NULL, '
-                 f'{self._songs_column_artist} TEXT NOT NULL, '
-                 f'{self._songs_column_creation_date} TEXT NOT NULL, '
-                 f'{self._songs_column_file} TEXT NOT NULL)')
+        query = (f'CREATE TABLE {self._songs_table.name} '
+                 f'({self._songs_table.id_column} TEXT NOT NULL PRIMARY KEY, '
+                 f'{self._songs_table.title_column} TEXT NOT NULL, '
+                 f'{self._songs_table.artist_column} TEXT NOT NULL, '
+                 f'{self._songs_table.creation_date_column} TEXT NOT NULL, '
+                 f'{self._songs_table.file_column} TEXT NOT NULL)')
 
         self._make_query(query)
 
@@ -86,6 +96,7 @@ class MusicContext:
             connection.commit()
             cursor.close()
             connection.close()
+
             return result
 
         except Exception as exception:
@@ -102,3 +113,17 @@ class MusicContext:
         except Exception as exception:
 
             raise DatabaseConnectionException(exception)
+
+    @staticmethod
+    def _query_result_is_empty(query_result: list[tuple]) -> bool:
+
+        return len(query_result) == 0
+
+    class _SongsTable:
+
+        name = 'songs'
+        id_column = 'id'
+        title_column = 'title'
+        artist_column = 'artist'
+        creation_date_column = 'creation_date'
+        file_column = 'file'

@@ -1,48 +1,47 @@
-import json
 import os
 import pkgutil
 import pytest
 import shutil
 
 from dependency_injector.providers import Singleton
+from dependency_injector.wiring import inject
+from dependency_injector.wiring import Provide
 
-from .unit import fixtures
+from . import unit as unit_tests_package
+from .unit import fixtures as unit_tests_fixtures_package
 from youtube_music_manager_server.configuration.app_settings import AppSettings
+from youtube_music_manager_server.module_initializer import app_components
 from youtube_music_manager_server.module_initializer import ModuleInitializer
 from youtube_music_manager_server.module_initializer import root_path
-from youtube_music_manager_server import persistence
 
 
-test_settings_file = os.path.join(os.path.dirname(__file__), 'fixtures', 'app_settings.json')
+test_settings_file = os.path.join(os.path.dirname(__file__), 'test_app_settings.json')
 unit_tests_fixtures = [f'tests.unit.fixtures.{module}' for _, module, _ in pkgutil.iter_modules(['./unit/fixtures'])]
 pytest_plugins = unit_tests_fixtures
-
-
-def _open_settings_file(file: str) -> dict:
-
-    with open(file, 'r') as open_file:
-
-        settings = json.load(open_file)
-
-    return settings
-
-
-def _delete_directory(directory: str) -> None:
-
-    if os.path.isdir(directory):
-
-        shutil.rmtree(directory)
 
 
 @pytest.fixture(scope='session', autouse=True)
 def module_initializer() -> ModuleInitializer:
 
     module_initializer = ModuleInitializer()
-    module_initializer.wire(packages=[fixtures, persistence])
+    modules_to_wire = [__name__]
+    packages_to_wire = [unit_tests_package, unit_tests_fixtures_package] + app_components
+    module_initializer.wire(modules=modules_to_wire, packages=packages_to_wire)
     module_initializer.app_settings.override(Singleton(AppSettings, root_path, test_settings_file))
 
     yield module_initializer
+    teardown()
 
-    test_settings = _open_settings_file(test_settings_file)
-    _delete_directory(test_settings['persistenceSettings']['musicDatabaseDirectory'])
-    _delete_directory(test_settings['persistenceSettings']['musicFilesDirectory'])
+
+@inject
+def teardown(app_settings: AppSettings = Provide['app_settings']) -> None:
+
+    delete_directory(app_settings.persistence_settings.music_database_directory)
+    delete_directory(app_settings.persistence_settings.music_files_directory)
+
+
+def delete_directory(directory: str) -> None:
+
+    if os.path.isdir(directory):
+
+        shutil.rmtree(directory)

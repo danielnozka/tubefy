@@ -4,12 +4,13 @@ import os
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
-from .configuration.app_settings import AppSettings
+from . import app_components
+from . import ModuleInitializer
+from .configuration import AppSettings
 from .controllers import app_controllers
-from .exceptions.server_stopped_exception import ServerStoppedException
-from .module_initializer import ModuleInitializer
+from .exceptions import ServerStoppedException
 from .server import Server
-from .tools.logging.logging_builder import LoggingBuilder
+from .tools.logging import LoggingBuilder
 
 
 class Main:
@@ -52,6 +53,6 @@ class Main:
 if __name__ == '__main__':
 
     module_initializer = ModuleInitializer()
-    module_initializer.wire(modules=[__name__])
+    module_initializer.wire(modules=[__name__], packages=app_components)
     main = Main()
     main.start()

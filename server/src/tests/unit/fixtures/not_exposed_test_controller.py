@@ -8,7 +8,7 @@ class NotExposedTestController:
         pass
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def not_exposed_test_controller() -> NotExposedTestController:
 
     return NotExposedTestController()

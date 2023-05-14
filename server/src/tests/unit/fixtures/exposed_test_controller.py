@@ -11,7 +11,7 @@ class ExposedTestController:
         pass
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def exposed_test_controller() -> ExposedTestController:
 
     return ExposedTestController()
