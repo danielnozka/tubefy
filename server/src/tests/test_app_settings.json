@@ -1,4 +1,8 @@
 {
+    "musicDownloaderSettings": {
+        "audioCodec": "mp3",
+        "audioBitRate": "320"
+    },
     "persistenceSettings": {
         "musicDatabaseDirectory": "./test_data",
         "musicFilesDirectory": "./test_data"

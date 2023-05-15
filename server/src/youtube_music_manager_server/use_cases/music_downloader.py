@@ -9,6 +9,7 @@ from dependency_injector.wiring import Provide
 from string import Template
 from youtube_dl import YoutubeDL
 
+from ..configuration.app_settings import AppSettings
 from ..domain.song import Song
 from ..dtos.song_dto import SongDto
 from ..persistence.music_persistence import MusicPersistence
@@ -21,12 +22,14 @@ class MusicDownloader:
     _current_directory = os.path.dirname(__file__)
     _ffmpeg_windows_binary_files = os.path.join(_current_directory, 'ffmpeg.7z')
     _ffmpeg_linux_path = '/usr/bin/ffmpeg'
-    _codec = 'flac'
-    _quality = '320'
 
     @inject
-    def __init__(self, music_persistence: MusicPersistence = Provide['music_persistence']):
+    def __init__(self,
+                 app_settings: AppSettings = Provide['app_settings'],
+                 music_persistence: MusicPersistence = Provide['music_persistence']):
 
+        self._codec = app_settings.music_downloader_settings.audio_codec
+        self._bit_rate = app_settings.music_downloader_settings.audio_bit_rate
         self._music_persistence = music_persistence
         self._ffmpeg_location = self._get_ffmpeg_location()
         self._file_template = Template(os.path.join(self._music_persistence.get_music_files_directory(),
@@ -83,7 +86,7 @@ class MusicDownloader:
                 {
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': self._codec,
-                    'preferredquality': self._quality,
+                    'preferredquality': self._bit_rate,
                 }
             ],
             'postprocessor_args': [

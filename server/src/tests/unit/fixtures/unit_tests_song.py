@@ -18,7 +18,8 @@ def unit_tests_song(app_settings: AppSettings = Provide['app_settings']) -> Song
     song_artist = 'Paul Engemann'
     song_creation_date = datetime.now()
     music_files_absolute_directory = os.path.abspath(app_settings.persistence_settings.music_files_directory)
-    song_file = os.path.join(music_files_absolute_directory, f'{song_artist} - {song_title}.flac')
+    song_file = os.path.join(music_files_absolute_directory,
+                             f'{song_artist} - {song_title}.{app_settings.music_downloader_settings.audio_codec}')
 
     song = Song(id_=song_id,
                 title=song_title,
