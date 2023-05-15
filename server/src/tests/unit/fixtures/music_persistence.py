@@ -1,6 +1,6 @@
 import pytest
 
-from youtube_music_manager_server.persistence import MusicPersistence
+from youtube_music_manager_server.persistence.music_persistence import MusicPersistence
 
 
 @pytest.fixture(scope='class', autouse=True)

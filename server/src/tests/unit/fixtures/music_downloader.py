@@ -1,6 +1,6 @@
 import pytest
 
-from youtube_music_manager_server.use_cases import MusicDownloader
+from youtube_music_manager_server.use_cases.music_downloader import MusicDownloader
 
 
 @pytest.fixture(scope='class')

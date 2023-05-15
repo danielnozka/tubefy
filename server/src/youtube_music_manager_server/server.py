@@ -1,7 +1,7 @@
 import cherrypy
 import logging
 
-from .exceptions import ServerStoppedException
+from .exceptions.server_stopped_exception import ServerStoppedException
 from .tools.server import ServerRoutesDispatcher
 from .tools.typing import ControllerInstanceType
 
@@ -56,7 +56,7 @@ class Server:
 
     def register_controller(self, controller_instance: ControllerInstanceType) -> None:
 
-        self._log.debug(f'Registering controller {controller_instance.__class__.__name__}...')
+        self._log.debug(f'Registering controller \'{controller_instance.__class__.__name__}\'...')
         self._routes_dispatcher.register_controller_instance(controller_instance)
 
     def stop(self) -> None:

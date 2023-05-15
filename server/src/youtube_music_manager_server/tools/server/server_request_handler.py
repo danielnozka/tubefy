@@ -2,6 +2,7 @@ import cherrypy
 
 from uuid import UUID
 
+from ..typing import ControllerMethodType
 from ..typing import JsonType
 
 
@@ -16,3 +17,8 @@ class ServerRequestHandler:
     def get_json_content(cls) -> JsonType:
 
         return cherrypy.request.json
+
+    @classmethod
+    def expect_json_content(cls, method: ControllerMethodType) -> ControllerMethodType:
+
+        return cherrypy.tools.json_in()(method)

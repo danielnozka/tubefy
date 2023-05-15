@@ -3,13 +3,16 @@ import logging
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
+from ..tools.server import expect_json
 from ..tools.server import get_json_content
 from ..tools.server import http_delete
 from ..tools.server import http_get
 from ..tools.server import http_put
+from ..tools.server import return_exception
+from ..tools.server import return_json
 from ..tools.server import route
 from ..tools.typing import JsonType
-from ..use_cases import MusicService
+from ..use_cases.music_service import MusicService
 
 
 @route('/music')
@@ -23,6 +26,7 @@ class MusicController:
         self._music_service = music_service
 
     @http_put('/{song_id}')
+    @expect_json
     def add_song(self, song_id: str) -> None:
 
         self._log.debug(f'Start [funcName](song_id=\'{song_id}\')')
@@ -37,7 +41,10 @@ class MusicController:
             self._log.error(f'End [funcName](song_id=\'{song_id}\') with exceptions',
                             extra={'exception': f'{exception.__class__.__name__}: {exception}'})
 
+            return_exception(exception)
+
     @http_get('/')
+    @return_json
     def get_all_songs(self) -> JsonType:
 
         self._log.debug('Start [funcName]()')
@@ -54,6 +61,8 @@ class MusicController:
             self._log.error('End [funcName]() with exceptions',
                             extra={'exception': f'{exception.__class__.__name__}: {exception}'})
 
+            return_exception(exception)
+
     @http_delete('/{song_id}')
     def delete_song(self, song_id: str) -> None:
 
@@ -68,3 +77,5 @@ class MusicController:
 
             self._log.error(f'End [funcName](song_id=\'{song_id}\') with exceptions',
                             extra={'exception': f'{exception.__class__.__name__}: {exception}'})
+
+            return_exception(exception)

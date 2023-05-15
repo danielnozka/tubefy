@@ -9,9 +9,9 @@ from dependency_injector.wiring import Provide
 from string import Template
 from youtube_dl import YoutubeDL
 
-from ..configuration import AppSettings
-from ..domain import Song
-from ..dtos import SongDto
+from ..domain.song import Song
+from ..dtos.song_dto import SongDto
+from ..persistence.music_persistence import MusicPersistence
 
 
 class MusicDownloader:
@@ -21,13 +21,15 @@ class MusicDownloader:
     _current_directory = os.path.dirname(__file__)
     _ffmpeg_windows_binary_files = os.path.join(_current_directory, 'ffmpeg.7z')
     _ffmpeg_linux_path = '/usr/bin/ffmpeg'
+    _codec = 'flac'
+    _quality = '320'
 
     @inject
-    def __init__(self, app_settings: AppSettings = Provide['app_settings']):
+    def __init__(self, music_persistence: MusicPersistence = Provide['music_persistence']):
 
+        self._music_persistence = music_persistence
         self._ffmpeg_location = self._get_ffmpeg_location()
-        music_files_absolute_directory = os.path.abspath(app_settings.persistence_settings.music_files_directory)
-        self._file_template = Template(os.path.join(music_files_absolute_directory,
+        self._file_template = Template(os.path.join(self._music_persistence.get_music_files_directory(),
                                                     '${song_artist} - ${song_title}.%(ext)s'))
 
     def download_song(self, input_song: SongDto) -> Song:
@@ -80,8 +82,8 @@ class MusicDownloader:
             'postprocessors': [
                 {
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '320',
+                    'preferredcodec': self._codec,
+                    'preferredquality': self._quality,
                 }
             ],
             'postprocessor_args': [
@@ -103,7 +105,7 @@ class MusicDownloader:
     def _get_song_mp3_file(self, song_title: str, song_artist: str) -> str:
 
         song_file_template = self._get_song_file_template(song_title, song_artist)
-        song_mp3_file = song_file_template % {'ext': 'mp3'}
+        song_mp3_file = song_file_template % {'ext': self._codec}
 
         return song_mp3_file
 

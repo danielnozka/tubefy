@@ -4,13 +4,13 @@ import os
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
-from . import app_components
-from . import ModuleInitializer
-from .configuration import AppSettings
+from .configuration.app_settings import AppSettings
 from .controllers import app_controllers
-from .exceptions import ServerStoppedException
+from .exceptions.server_stopped_exception import ServerStoppedException
+from .module_initializer import app_components
+from .module_initializer import ModuleInitializer
 from .server import Server
-from .tools.logging import LoggingBuilder
+from .tools.logging.logging_builder import LoggingBuilder
 
 
 class Main:

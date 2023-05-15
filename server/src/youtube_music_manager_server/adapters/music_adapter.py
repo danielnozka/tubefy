@@ -3,10 +3,10 @@ import logging
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
-from . import JsonAdapter
-from ..domain import Song
-from ..dtos import SongDto
-from ..persistence.domain import DatabaseSong
+from ..domain.song import Song
+from ..dtos.song_dto import SongDto
+from .json_adapter import JsonAdapter
+from ..persistence.domain.database_song import DatabaseSong
 from ..tools.typing import JsonType
 
 

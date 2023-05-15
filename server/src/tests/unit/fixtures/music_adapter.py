@@ -1,6 +1,6 @@
 import pytest
 
-from youtube_music_manager_server.adapters import MusicAdapter
+from youtube_music_manager_server.adapters.music_adapter import MusicAdapter
 
 
 @pytest.fixture(scope='class')

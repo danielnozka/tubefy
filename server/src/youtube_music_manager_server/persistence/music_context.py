@@ -22,7 +22,7 @@ class MusicContext:
         self._music_database_directory = os.path.abspath(app_settings.persistence_settings.music_database_directory)
         self._database = os.path.join(self._music_database_directory, self._database_file)
 
-        if not os.path.isfile(self._database):
+        if not self._database_file_exists():
 
             self._create_database()
 
@@ -60,6 +60,10 @@ class MusicContext:
 
         query = f'DELETE FROM {self._songs_table.name} WHERE {self._songs_table.id_column}="{song.id}"'
         self._make_query(query)
+
+    def _database_file_exists(self) -> bool:
+
+        return os.path.isfile(self._database)
 
     def _create_database(self) -> None:
 

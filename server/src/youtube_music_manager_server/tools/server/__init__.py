@@ -3,6 +3,7 @@ from .server_response_handler import ServerResponseHandler
 from .server_routes_dispatcher import ServerRoutesDispatcher
 
 
+expect_json = ServerRequestHandler.expect_json_content
 get_json_content = ServerRequestHandler.get_json_content
 get_request_id = ServerRequestHandler.get_request_id
 

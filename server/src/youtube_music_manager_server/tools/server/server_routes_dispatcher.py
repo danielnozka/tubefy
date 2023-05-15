@@ -2,7 +2,7 @@ import cherrypy
 
 from typing import Callable
 
-from ...exceptions import ControllerNotExposedException
+from ...exceptions.controller_not_exposed_exception import ControllerNotExposedException
 from ..typing import ControllerClassType
 from ..typing import ControllerInstanceType
 from ..typing import ControllerMethodType

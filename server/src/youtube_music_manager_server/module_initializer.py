@@ -4,18 +4,19 @@ from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Singleton
 
 from . import adapters
+from . import controllers
 from . import persistence
 from . import use_cases
 
-from .adapters import JsonAdapter
-from .adapters import MusicAdapter
-from .configuration import AppSettings
-from .persistence import MusicPersistence
-from .use_cases import MusicDownloader
-from .use_cases import MusicService
+from .adapters.json_adapter import JsonAdapter
+from .adapters.music_adapter import MusicAdapter
+from .configuration.app_settings import AppSettings
+from .persistence.music_persistence import MusicPersistence
+from .use_cases.music_downloader import MusicDownloader
+from .use_cases.music_service import MusicService
 
 
-app_components = [adapters, persistence, use_cases]
+app_components = [adapters, controllers, persistence, use_cases]
 root_path = os.path.dirname(os.path.abspath(__file__))
 
 

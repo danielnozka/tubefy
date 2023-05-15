@@ -3,9 +3,11 @@ import logging
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
-from . import MusicDownloader
-from ..adapters import MusicAdapter
-from ..persistence import MusicPersistence
+from ..adapters.music_adapter import MusicAdapter
+from ..exceptions.song_already_downloaded_exception import SongAlreadyDownloadedException
+from ..exceptions.song_not_found_exception import SongNotFoundException
+from .music_downloader import MusicDownloader
+from ..persistence.music_persistence import MusicPersistence
 from ..tools.typing import JsonType
 
 
@@ -30,7 +32,7 @@ class MusicService:
 
         if song_exists:
 
-            self._log.warning(f'Song with ID {song_id} already downloaded')
+            raise SongAlreadyDownloadedException(song_id)
 
         else:
 
@@ -61,6 +63,6 @@ class MusicService:
 
         else:
 
-            self._log.warning(f'Song with ID {song_id} does not exist')
+            raise SongNotFoundException(song_id)
 
         self._log.debug(f'End [funcName](song_id=\'{song_id}\')')
