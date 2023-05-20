@@ -1,6 +1,7 @@
 import cherrypy
 import logging
 
+from .exceptions.controller_not_exposed_exception import ControllerNotExposedException
 from .exceptions.server_stopped_exception import ServerStoppedException
 from .tools.server import ServerRoutesDispatcher
 from .tools.typing import ControllerInstanceType
@@ -57,7 +58,17 @@ class Server:
     def register_controller(self, controller_instance: ControllerInstanceType) -> None:
 
         self._log.debug(f'Registering controller \'{controller_instance.__class__.__name__}\'...')
-        self._routes_dispatcher.register_controller_instance(controller_instance)
+
+        try:
+
+            self._routes_dispatcher.register_controller_instance(controller_instance)
+
+        except ControllerNotExposedException as exception:
+
+            self._log.error(f'Error registering controller \'{controller_instance.__class__.__name__}\'. '
+                            f'The controller class was not exposed properly')
+
+            raise exception
 
     def stop(self) -> None:
 

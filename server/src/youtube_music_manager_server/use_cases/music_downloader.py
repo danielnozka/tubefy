@@ -6,6 +6,7 @@ import py7zr
 from datetime import datetime
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
+from ..exceptions.song_download_exception import SongDownloadException
 from string import Template
 from youtube_dl import YoutubeDL
 
@@ -21,6 +22,7 @@ class MusicDownloader:
     _current_directory = os.path.dirname(__file__)
     _ffmpeg_windows_binary_files = os.path.join(_current_directory, 'ffmpeg.7z')
     _ffmpeg_linux_path = '/usr/bin/ffmpeg'
+    _max_download_attempts = 3
 
     @inject
     def __init__(self, music_persistence: MusicPersistence = Provide['music_persistence']):
@@ -34,22 +36,39 @@ class MusicDownloader:
 
         self._log.debug(f'Start [funcName](song_id=\'{input_song.id}\')')
 
-        with YoutubeDL(self._get_downloader_options(input_song)) as downloader:
+        download_attempt = 0
 
-            downloader.download([self._get_song_url(input_song)])
+        while download_attempt < self._max_download_attempts:
 
-        song = Song(id_=input_song.id,
-                    title=input_song.title,
-                    artist=input_song.artist,
-                    creation_date=datetime.now(),
-                    file=self._get_song_mp3_file(input_song),
-                    file_size_megabytes=self._get_song_mp3_file_megabytes(input_song),
-                    audio_codec=input_song.audio_codec,
-                    audio_bit_rate=input_song.audio_bit_rate)
+            try:
 
-        self._log.debug(f'End [funcName](song_id=\'{input_song.id}\')')
+                with YoutubeDL(self._get_downloader_options(input_song)) as downloader:
 
-        return song
+                    downloader.download([self._get_song_url(input_song)])
+
+                song = Song(id_=input_song.id,
+                            title=input_song.title,
+                            artist=input_song.artist,
+                            creation_date=datetime.now(),
+                            file=self._get_song_mp3_file(input_song),
+                            file_size_megabytes=self._get_song_mp3_file_megabytes(input_song),
+                            audio_codec=input_song.audio_codec,
+                            audio_bit_rate=input_song.audio_bit_rate)
+
+                self._log.debug(f'End [funcName](song_id=\'{input_song.id}\')')
+
+                return song
+
+            except Exception as exception:
+
+                self._log.warning(f'Exception found while downloading song on attempt {download_attempt + 1}',
+                                  extra={'exception': f'{exception.__class__.__name__}: {exception}'})
+
+                download_attempt += 1
+
+        else:
+
+            raise SongDownloadException
 
     def _get_ffmpeg_location(self) -> str:
 
