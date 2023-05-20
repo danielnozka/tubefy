@@ -30,8 +30,11 @@ class MusicContext:
 
         query = (f'INSERT INTO {self._songs_table.name}({self._songs_table.id_column}, '
                  f'{self._songs_table.title_column}, {self._songs_table.artist_column}, '
-                 f'{self._songs_table.creation_date_column}, {self._songs_table.file_column}) '
-                 f'VALUES("{song.id}", "{song.title}", "{song.artist}", "{song.creation_date}", "{song.file}")')
+                 f'{self._songs_table.creation_date_column}, {self._songs_table.file_column}, '
+                 f'{self._songs_table.file_size_megabytes_column}, {self._songs_table.audio_codec_column}, '
+                 f'{self._songs_table.audio_bit_rate_column}) VALUES("{song.id}", "{song.title}", "{song.artist}", '
+                 f'"{song.creation_date}", "{song.file}", "{song.file_size_megabytes}", "{song.audio_codec}", '
+                 f'{song.audio_bit_rate})')
 
         self._make_query(query)
 
@@ -76,7 +79,10 @@ class MusicContext:
                  f'{self._songs_table.title_column} TEXT NOT NULL, '
                  f'{self._songs_table.artist_column} TEXT NOT NULL, '
                  f'{self._songs_table.creation_date_column} TEXT NOT NULL, '
-                 f'{self._songs_table.file_column} TEXT NOT NULL)')
+                 f'{self._songs_table.file_column} TEXT NOT NULL,'
+                 f'{self._songs_table.file_size_megabytes_column} REAL NOT NULL,'
+                 f'{self._songs_table.audio_codec_column} TEXT NOT NULL,'
+                 f'{self._songs_table.audio_bit_rate_column} INTEGER NOT NULL)')
 
         self._make_query(query)
 
@@ -131,3 +137,6 @@ class MusicContext:
         artist_column = 'artist'
         creation_date_column = 'creation_date'
         file_column = 'file'
+        file_size_megabytes_column = 'file_size_megabytes'
+        audio_codec_column = 'audio_codec'
+        audio_bit_rate_column = 'audio_bit_rate'

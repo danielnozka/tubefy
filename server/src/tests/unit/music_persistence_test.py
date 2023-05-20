@@ -36,6 +36,9 @@ class MusicPersistenceTest:
         assert type(database_song.creation_date) == str
         assert database_song.creation_date == unit_tests_database_song.creation_date
         assert database_song.file == unit_tests_database_song.file
+        assert database_song.file_size_megabytes >= unit_tests_database_song.file_size_megabytes
+        assert database_song.audio_codec == unit_tests_database_song.audio_codec
+        assert database_song.audio_bit_rate == unit_tests_database_song.audio_bit_rate
 
     @staticmethod
     def test_song_is_deleted(unit_tests_database_song: DatabaseSong, music_persistence: MusicPersistence) -> None:

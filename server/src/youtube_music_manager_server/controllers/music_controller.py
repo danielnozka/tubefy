@@ -27,13 +27,13 @@ class MusicController:
 
     @http_put('/{song_id}')
     @expect_json
-    def add_song(self, song_id: str) -> None:
+    def download_song(self, song_id: str) -> None:
 
         self._log.debug(f'Start [funcName](song_id=\'{song_id}\')')
 
         try:
 
-            self._music_service.add_song(song_id, get_json_content())
+            self._music_service.download_song(song_id, get_json_content())
             self._log.debug(f'End [funcName](song_id=\'{song_id}\')')
 
         except Exception as exception:

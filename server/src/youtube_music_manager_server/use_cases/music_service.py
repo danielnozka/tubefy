@@ -25,7 +25,7 @@ class MusicService:
         self._music_downloader = music_downloader
         self._music_persistence = music_persistence
 
-    def add_song(self, song_id: str, input_data: JsonType) -> None:
+    def download_song(self, song_id: str, input_data: JsonType) -> None:
 
         self._log.debug(f'Start [funcName](song_id=\'{song_id}\')')
         song_exists = self._music_persistence.get_song_by_id(song_id) is not None

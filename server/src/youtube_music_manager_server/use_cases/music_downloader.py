@@ -9,9 +9,8 @@ from dependency_injector.wiring import Provide
 from string import Template
 from youtube_dl import YoutubeDL
 
-from ..configuration.app_settings import AppSettings
 from ..domain.song import Song
-from ..dtos.song_dto import SongDto
+from ..dtos.input_song import InputSong
 from ..persistence.music_persistence import MusicPersistence
 
 
@@ -24,30 +23,29 @@ class MusicDownloader:
     _ffmpeg_linux_path = '/usr/bin/ffmpeg'
 
     @inject
-    def __init__(self,
-                 app_settings: AppSettings = Provide['app_settings'],
-                 music_persistence: MusicPersistence = Provide['music_persistence']):
+    def __init__(self, music_persistence: MusicPersistence = Provide['music_persistence']):
 
-        self._codec = app_settings.music_downloader_settings.audio_codec
-        self._bit_rate = app_settings.music_downloader_settings.audio_bit_rate
         self._music_persistence = music_persistence
         self._ffmpeg_location = self._get_ffmpeg_location()
         self._file_template = Template(os.path.join(self._music_persistence.get_music_files_directory(),
                                                     '${song_artist} - ${song_title}.%(ext)s'))
 
-    def download_song(self, input_song: SongDto) -> Song:
+    def download_song(self, input_song: InputSong) -> Song:
 
         self._log.debug(f'Start [funcName](song_id=\'{input_song.id}\')')
 
-        with YoutubeDL(self._get_downloader_options(input_song.title, input_song.artist)) as downloader:
+        with YoutubeDL(self._get_downloader_options(input_song)) as downloader:
 
-            downloader.download([self._get_song_url(input_song.id)])
+            downloader.download([self._get_song_url(input_song)])
 
         song = Song(id_=input_song.id,
                     title=input_song.title,
                     artist=input_song.artist,
                     creation_date=datetime.now(),
-                    file=self._get_song_mp3_file(input_song.title, input_song.artist))
+                    file=self._get_song_mp3_file(input_song),
+                    file_size_megabytes=self._get_song_mp3_file_megabytes(input_song),
+                    audio_codec=input_song.audio_codec,
+                    audio_bit_rate=input_song.audio_bit_rate)
 
         self._log.debug(f'End [funcName](song_id=\'{input_song.id}\')')
 
@@ -75,25 +73,25 @@ class MusicDownloader:
 
             z.extractall(self._current_directory)
 
-    def _get_downloader_options(self, song_title: str, song_artist: str) -> dict:
+    def _get_downloader_options(self, input_song: InputSong) -> dict:
 
         options = {
             'ffmpeg_location': self._ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
-            'outtmpl': self._get_song_file_template(song_title, song_artist),
+            'outtmpl': self._get_song_file_template(input_song),
             'postprocessors': [
                 {
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': self._codec,
-                    'preferredquality': self._bit_rate,
+                    'preferredcodec': input_song.audio_codec,
+                    'preferredquality': str(input_song.audio_bit_rate),
                 }
             ],
             'postprocessor_args': [
                 '-metadata',
-                f'title={song_title}',
+                f'title={input_song.title}',
                 '-metadata',
-                f'artist={song_artist}'
+                f'artist={input_song.artist}'
             ],
             'prefer_ffmpeg': True,
             'quiet': True
@@ -101,17 +99,24 @@ class MusicDownloader:
 
         return options
 
-    def _get_song_file_template(self, song_title: str, song_artist: str) -> str:
+    def _get_song_file_template(self, input_song: InputSong) -> str:
 
-        return self._file_template.substitute(song_title=song_title, song_artist=song_artist)
+        return self._file_template.substitute(song_title=input_song.title, song_artist=input_song.artist)
 
-    def _get_song_mp3_file(self, song_title: str, song_artist: str) -> str:
+    def _get_song_url(self, input_song: InputSong) -> str:
 
-        song_file_template = self._get_song_file_template(song_title, song_artist)
-        song_mp3_file = song_file_template % {'ext': self._codec}
+        return self._url_template.substitute(song_id=input_song.id)
+
+    def _get_song_mp3_file(self, input_song: InputSong) -> str:
+
+        song_file_template = self._get_song_file_template(input_song)
+        song_mp3_file = song_file_template % {'ext': input_song.audio_codec}
 
         return song_mp3_file
 
-    def _get_song_url(self, song_id: str) -> str:
+    def _get_song_mp3_file_megabytes(self, input_song: InputSong) -> float:
 
-        return self._url_template.substitute(song_id=song_id)
+        song_mp3_file = self._get_song_mp3_file(input_song)
+        song_mp3_file_megabytes = os.stat(song_mp3_file).st_size / (1024 ** 2)
+
+        return song_mp3_file_megabytes

@@ -4,7 +4,8 @@ from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
 from ..domain.song import Song
-from ..dtos.song_dto import SongDto
+from ..dtos.input_song import InputSong
+from ..dtos.output_song import OutputSong
 from .json_adapter import JsonAdapter
 from ..persistence.domain.database_song import DatabaseSong
 from ..tools.typing import JsonType
@@ -20,13 +21,19 @@ class MusicAdapter:
 
         self._json_adapter = json_adapter
 
-    def adapt_input(self, song_id: str, input_data: JsonType) -> SongDto:
+    def adapt_input(self, song_id: str, input_data: JsonType) -> InputSong:
 
         self._log.debug(f'Start [funcName](song_id=\'{song_id}\')')
-        song = SongDto(id_=song_id, title=input_data['title'], artist=input_data['artist'])
+
+        input_song = InputSong(id_=song_id,
+                               title=input_data['title'],
+                               artist=input_data['artist'],
+                               audio_codec=input_data['audioCodec'].lower(),
+                               audio_bit_rate=int(input_data['audioBitRate']))
+
         self._log.debug(f'End [funcName](song_id=\'{song_id}\')')
 
-        return song
+        return input_song
 
     def adapt_to_persist(self, song: Song) -> DatabaseSong:
 
@@ -36,7 +43,10 @@ class MusicAdapter:
                                      title=song.title,
                                      artist=song.artist,
                                      creation_date=song.creation_date.strftime(self._datetime_format),
-                                     file=song.file)
+                                     file=song.file,
+                                     file_size_megabytes=song.file_size_megabytes,
+                                     audio_codec=song.audio_codec,
+                                     audio_bit_rate=song.audio_bit_rate)
 
         self._log.debug(f'End [funcName](song_id=\'{song.id}\')')
 
@@ -50,9 +60,15 @@ class MusicAdapter:
 
         for song in songs:
 
-            song_dto = SongDto(id_=song.id, title=song.title, artist=song.artist)
-            song_output = self._json_adapter.adapt(song_dto)
-            result.append(song_output)
+            output_song = OutputSong(id_=song.id,
+                                     title=song.title,
+                                     artist=song.artist,
+                                     file_size_megabytes=song.file_size_megabytes,
+                                     audio_codec=song.audio_codec.upper(),
+                                     audio_bit_rate=song.audio_bit_rate)
+
+            output_song_json = self._json_adapter.adapt(output_song)
+            result.append(output_song_json)
 
         self._log.debug('End [funcName]()')
 

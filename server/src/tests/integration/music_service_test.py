@@ -17,7 +17,7 @@ logging.getLogger('urllib3').disabled = True
 class MusicServiceTest:
 
     @classmethod
-    def test_song_is_added(cls, integration_tests_song: Song, integration_tests_song_input_data: dict) -> None:
+    def test_song_is_downloaded(cls, integration_tests_song: Song, integration_tests_song_input_data: dict) -> None:
 
         response = cls._request_song_to_be_added(integration_tests_song, integration_tests_song_input_data)
 
@@ -50,6 +50,9 @@ class MusicServiceTest:
         assert output_song.get('id') == integration_tests_song.id
         assert output_song.get('title') == integration_tests_song.title
         assert output_song.get('artist') == integration_tests_song.artist
+        assert output_song.get('fileSizeMegabytes') >= integration_tests_song.file_size_megabytes
+        assert output_song.get('audioCodec').lower() == integration_tests_song.audio_codec
+        assert output_song.get('audioBitRate') == integration_tests_song.audio_bit_rate
 
     @classmethod
     def test_song_is_deleted(cls, integration_tests_song: Song) -> None:
