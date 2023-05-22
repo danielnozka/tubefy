@@ -8,7 +8,6 @@ from . import controllers
 from . import persistence
 from . import use_cases
 
-from .adapters.json_adapter import JsonAdapter
 from .adapters.music_adapter import MusicAdapter
 from .configuration.app_settings import AppSettings
 from .persistence.music_persistence import MusicPersistence
@@ -26,7 +25,6 @@ class ModuleInitializer(DeclarativeContainer):
                              root_path=root_path,
                              settings_file=os.path.join(root_path, 'app_settings.json'))
 
-    json_adapter = Singleton(JsonAdapter)
     music_adapter = Singleton(MusicAdapter)
     music_persistence = Singleton(MusicPersistence)
     music_downloader = Singleton(MusicDownloader)

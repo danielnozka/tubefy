@@ -1,6 +1,7 @@
 from youtube_music_manager_server.adapters.music_adapter import MusicAdapter
 from youtube_music_manager_server.domain.song import Song
 from youtube_music_manager_server.dtos.input_song import InputSong
+from youtube_music_manager_server.dtos.output_song import OutputSong
 from youtube_music_manager_server.persistence.domain.database_song import DatabaseSong
 
 
@@ -50,12 +51,12 @@ class MusicAdapterTest:
         assert type(result) == list
         assert len(result) == 1
 
-        adapted_song = result[0]
+        output_song = result[0]
 
-        assert type(adapted_song) == dict
-        assert adapted_song.get('id') == unit_tests_database_song.id
-        assert adapted_song.get('title') == unit_tests_database_song.title
-        assert adapted_song.get('artist') == unit_tests_database_song.artist
-        assert adapted_song.get('fileSizeMegabytes') == unit_tests_database_song.file_size_megabytes
-        assert adapted_song.get('audioCodec').lower() == unit_tests_database_song.audio_codec
-        assert adapted_song.get('audioBitRate') == unit_tests_database_song.audio_bit_rate
+        assert isinstance(output_song, OutputSong)
+        assert output_song.id == unit_tests_database_song.id
+        assert output_song.title == unit_tests_database_song.title
+        assert output_song.artist == unit_tests_database_song.artist
+        assert output_song.file_size_megabytes == unit_tests_database_song.file_size_megabytes
+        assert output_song.audio_codec.lower() == unit_tests_database_song.audio_codec
+        assert output_song.audio_bit_rate == unit_tests_database_song.audio_bit_rate

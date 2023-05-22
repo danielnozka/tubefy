@@ -1,12 +1,8 @@
 import logging
 
-from dependency_injector.wiring import inject
-from dependency_injector.wiring import Provide
-
 from ..domain.song import Song
 from ..dtos.input_song import InputSong
 from ..dtos.output_song import OutputSong
-from .json_adapter import JsonAdapter
 from ..persistence.domain.database_song import DatabaseSong
 from ..tools.typing import JsonType
 
@@ -15,11 +11,6 @@ class MusicAdapter:
 
     _log = logging.getLogger(__name__)
     _datetime_format = '%d-%m-%Y %H:%M:%S.%f'
-
-    @inject
-    def __init__(self, json_adapter: JsonAdapter = Provide['json_adapter']):
-
-        self._json_adapter = json_adapter
 
     def adapt_input(self, song_id: str, input_data: JsonType) -> InputSong:
 
@@ -52,7 +43,7 @@ class MusicAdapter:
 
         return database_song
 
-    def adapt_output(self, songs: list[DatabaseSong]) -> JsonType:
+    def adapt_output(self, songs: list[DatabaseSong]) -> list[OutputSong]:
 
         self._log.debug('Start [funcName]()')
 
@@ -67,8 +58,7 @@ class MusicAdapter:
                                      audio_codec=song.audio_codec.upper(),
                                      audio_bit_rate=song.audio_bit_rate)
 
-            output_song_json = self._json_adapter.adapt(output_song)
-            result.append(output_song_json)
+            result.append(output_song)
 
         self._log.debug('End [funcName]()')
 

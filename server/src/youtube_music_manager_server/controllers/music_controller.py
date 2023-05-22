@@ -3,6 +3,7 @@ import logging
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
+from ..dtos.output_song import OutputSong
 from ..tools.server import expect_json
 from ..tools.server import get_json_content
 from ..tools.server import http_delete
@@ -11,7 +12,6 @@ from ..tools.server import http_put
 from ..tools.server import return_exception
 from ..tools.server import return_json
 from ..tools.server import route
-from ..tools.typing import JsonType
 from ..use_cases.music_service import MusicService
 
 
@@ -45,7 +45,7 @@ class MusicController:
 
     @http_get('/')
     @return_json
-    def get_all_songs(self) -> JsonType:
+    def get_all_songs(self) -> list[OutputSong]:
 
         self._log.debug('Start [funcName]()')
 

@@ -4,6 +4,7 @@ from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
 from ..adapters.music_adapter import MusicAdapter
+from ..dtos.output_song import OutputSong
 from ..exceptions.song_already_downloaded_exception import SongAlreadyDownloadedException
 from ..exceptions.song_not_found_exception import SongNotFoundException
 from .music_downloader import MusicDownloader
@@ -43,7 +44,7 @@ class MusicService:
 
         self._log.debug(f'End [funcName](song_id=\'{song_id}\')')
 
-    def get_all_songs(self) -> JsonType:
+    def get_all_songs(self) -> list[OutputSong]:
 
         self._log.debug('Start [funcName]()')
         songs = self._music_persistence.get_all_songs()
