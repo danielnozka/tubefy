@@ -1,11 +1,7 @@
 {
-    "musicDownloaderSettings": {
-        "audioCodec": "mp3",
-        "audioBitRate": "320"
-    },
     "persistenceSettings": {
-        "musicDatabaseDirectory": "./test_data",
-        "musicFilesDirectory": "./test_data"
+        "audioDatabaseDirectory": "./test_data",
+        "audioFilesDirectory": "./test_data"
     },
     "serverSettings": {
         "host": "localhost",

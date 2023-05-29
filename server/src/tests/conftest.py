@@ -7,44 +7,45 @@ from dependency_injector.providers import Singleton
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
-from . import integration as integration_tests
-from . import unit as unit_tests
-from .integration import fixtures as integration_tests_fixtures
-from .unit import fixtures as unit_tests_fixtures
-from youtube_music_manager_server import main
-from youtube_music_manager_server.configuration.app_settings import AppSettings
-from youtube_music_manager_server.module_initializer import app_components
-from youtube_music_manager_server.module_initializer import ModuleInitializer
-from youtube_music_manager_server.module_initializer import root_path
+from . import fixtures
+from . import audio_service_test
+from youtube_audio_manager_server import main as app_module
+from youtube_audio_manager_server.configuration.app_settings import AppSettings
+from youtube_audio_manager_server.main import Main as App
+from youtube_audio_manager_server.module_initializer import app_components
+from youtube_audio_manager_server.module_initializer import ModuleInitializer
+from youtube_audio_manager_server.module_initializer import root_path
 
 
 test_settings_file = os.path.join(os.path.dirname(__file__), 'test_app_settings.json')
-integration_tests_plugins = [f'tests.integration.fixtures.{module}'
-                             for _, module, _ in pkgutil.iter_modules(['./integration/fixtures'])]
-unit_tests_plugins = [f'tests.unit.fixtures.{module}'
-                      for _, module, _ in pkgutil.iter_modules(['./unit/fixtures'])]
-pytest_plugins = integration_tests_plugins + unit_tests_plugins
+pytest_plugins = [f'{fixtures.__name__}.{module}' for _, module, _ in pkgutil.iter_modules(['./fixtures'])]
 
 
 @pytest.fixture(scope='session', autouse=True)
-def module_initializer() -> None:
+def setup_module_initializer() -> None:
 
-    modules_to_wire = [__name__, main]
-    packages_to_wire = [integration_tests, integration_tests_fixtures, unit_tests, unit_tests_fixtures, *app_components]
+    modules_to_wire = [__name__, app_module, audio_service_test]
+    packages_to_wire = [fixtures, *app_components]
+    module_initializer_ = ModuleInitializer()
+    module_initializer_.wire(modules=modules_to_wire, packages=packages_to_wire)
+    module_initializer_.app_settings.override(Singleton(AppSettings, root_path, test_settings_file))
 
-    module_initializer = ModuleInitializer()
-    module_initializer.wire(modules=modules_to_wire, packages=packages_to_wire)
-    module_initializer.app_settings.override(Singleton(AppSettings, root_path, test_settings_file))
 
+@pytest.fixture(scope='session', autouse=True)
+def setup(setup_module_initializer) -> None:
+
+    app = App()
+    app.start(testing=True)
     yield
+    app.stop()
     teardown()
 
 
 @inject
 def teardown(app_settings: AppSettings = Provide['app_settings']) -> None:
 
-    delete_directory(app_settings.persistence_settings.music_database_directory)
-    delete_directory(app_settings.persistence_settings.music_files_directory)
+    delete_directory(app_settings.persistence_settings.audio_database_directory)
+    delete_directory(app_settings.persistence_settings.audio_files_directory)
 
 
 def delete_directory(directory: str) -> None:

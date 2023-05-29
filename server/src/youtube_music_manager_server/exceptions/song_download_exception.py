@@ -1,3 +1,0 @@
-class SongDownloadException(Exception):
-
-    pass
