@@ -106,6 +106,9 @@ class AudioDownloader:
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': input_audio_recording.codec,
                     'preferredquality': str(input_audio_recording.bit_rate),
+                },
+                {
+                    'key': 'EmbedThumbnail'
                 }
             ],
             'postprocessor_args': [
@@ -115,7 +118,8 @@ class AudioDownloader:
                 f'artist={input_audio_recording.artist}'
             ],
             'prefer_ffmpeg': True,
-            'quiet': True
+            'quiet': True,
+            'writethumbnail': True
         }
 
         return options
