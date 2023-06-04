@@ -18,8 +18,7 @@ class Main:
     @inject
     def __init__(self, app_settings: AppSettings = Provide['app_settings']):
 
-        self._app_settings = app_settings
-        LoggingBuilder().configure(os.path.join(app_settings.root_path, 'log_settings.json'))
+        LoggingBuilder(app_settings.root_path, os.path.join(app_settings.root_path, 'log_settings.json')).configure()
         self._log = logging.getLogger(__name__)
         self._server = Server(app_settings.root_path,
                               app_settings.server_settings.host,

@@ -9,6 +9,7 @@ from dependency_injector.wiring import Provide
 
 from . import fixtures
 from . import audio_service_test
+from . import video_service_test
 from youtube_audio_manager_server import main as app_module
 from youtube_audio_manager_server.configuration.app_settings import AppSettings
 from youtube_audio_manager_server.main import Main as App
@@ -24,7 +25,7 @@ pytest_plugins = [f'{fixtures.__name__}.{module}' for _, module, _ in pkgutil.it
 @pytest.fixture(scope='session', autouse=True)
 def setup_module_initializer() -> None:
 
-    modules_to_wire = [__name__, app_module, audio_service_test]
+    modules_to_wire = [__name__, app_module, audio_service_test, video_service_test]
     packages_to_wire = [fixtures, *app_components]
     module_initializer_ = ModuleInitializer()
     module_initializer_.wire(modules=modules_to_wire, packages=packages_to_wire)
