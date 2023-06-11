@@ -5,6 +5,9 @@ from youtube_search import YoutubeSearch
 from ..exceptions.video_search_exception import VideoSearchException
 
 
+logging.getLogger('urllib3').propagate = False
+
+
 class VideoGetter:
 
     _log = logging.getLogger(__name__)
