@@ -1,4 +1,5 @@
 import cherrypy
+import cherrypy_cors
 import logging
 
 from .exceptions.controller_not_exposed_exception import ControllerNotExposedException
@@ -28,7 +29,8 @@ class Server:
             '/': {
                 'tools.staticdir.on': True,
                 'tools.staticdir.dir': root_path,
-                'request.dispatch': self._routes_dispatcher
+                'request.dispatch': self._routes_dispatcher,
+                'cors.expose.on': True
             }
         }
 
@@ -38,6 +40,7 @@ class Server:
 
         try:
 
+            cherrypy_cors.install()
             cherrypy.config.update(self._server_settings)
             cherrypy.tree.mount(self, '/', self._server_settings)
             cherrypy.engine.signals.subscribe()
