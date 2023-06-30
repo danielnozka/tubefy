@@ -6,8 +6,10 @@ import os
 
 class LoggingBuilder:
 
-    _config_handlers_key = 'handlers'
-    _handler_filename_key = 'filename'
+    _config_handlers_key: str = 'handlers'
+    _handler_filename_key: str = 'filename'
+    _root_path: str
+    _config: dict
 
     def __init__(self, root_path: str, config_file: str):
 

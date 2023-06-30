@@ -1,38 +1,39 @@
 import logging
 
+from logging import Logger
+
 from ..domain.audio_recording import AudioRecording
-from ..dtos.input_audio_recording import InputAudioRecording
+from ..dtos.input_audio_recording_options import InputAudioRecordingOptions
 from ..dtos.output_audio_recording import OutputAudioRecording
 from ..tools.typing import JsonType
 
 
 class AudioAdapter:
 
-    _log = logging.getLogger(__name__)
+    _log: Logger = logging.getLogger(__name__)
 
-    def adapt_input(self, audio_recording_id: str, input_data: JsonType) -> InputAudioRecording:
+    def adapt_input(self, input_data: JsonType) -> InputAudioRecordingOptions:
 
-        self._log.debug(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
+        self._log.debug('Start [funcName]()')
 
-        input_audio_recording = InputAudioRecording(id_=audio_recording_id,
-                                                    title=input_data['title'],
-                                                    artist=input_data['artist'],
-                                                    codec=input_data['codec'].lower(),
-                                                    bit_rate=int(input_data['bitRate']))
+        input_audio_recording_options = InputAudioRecordingOptions(title=input_data['title'],
+                                                                   artist=input_data['artist'],
+                                                                   codec=input_data['codec'].lower(),
+                                                                   bit_rate=int(input_data['bitRate']))
 
-        self._log.debug(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
+        self._log.debug('End [funcName]()')
 
-        return input_audio_recording
+        return input_audio_recording_options
 
     def adapt_output(self, audio_recordings: list[AudioRecording]) -> list[OutputAudioRecording]:
 
         self._log.debug('Start [funcName]()')
 
-        result = []
+        result: list[OutputAudioRecording] = []
 
         for audio_recording in audio_recordings:
 
-            output_audio_recording = OutputAudioRecording(id_=audio_recording.id,
+            output_audio_recording = OutputAudioRecording(video_id=audio_recording.video_id,
                                                           title=audio_recording.title,
                                                           artist=audio_recording.artist,
                                                           file_size_megabytes=audio_recording.file_size_megabytes,

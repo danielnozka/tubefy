@@ -18,7 +18,7 @@
     "handlers": { 
         "console_handler": {
             "class": "logging.StreamHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "console_formatter"
         },
         "file_handler": {

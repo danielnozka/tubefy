@@ -18,8 +18,8 @@ from youtube_audio_manager_server.module_initializer import ModuleInitializer
 from youtube_audio_manager_server.module_initializer import root_path
 
 
-test_settings_file = os.path.join(os.path.dirname(__file__), 'test_app_settings.json')
-pytest_plugins = [f'{fixtures.__name__}.{module}' for _, module, _ in pkgutil.iter_modules(['./fixtures'])]
+test_settings_file: str = os.path.join(os.path.dirname(__file__), 'test_app_settings.json')
+pytest_plugins: list[str] = [f'{fixtures.__name__}.{module}' for _, module, _ in pkgutil.iter_modules(['./fixtures'])]
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -33,7 +33,7 @@ def setup_module_initializer() -> None:
 
 
 @pytest.fixture(scope='session', autouse=True)
-def setup(setup_module_initializer) -> None:
+def setup(setup_module_initializer: None) -> None:
 
     app = App()
     app.start(testing=True)

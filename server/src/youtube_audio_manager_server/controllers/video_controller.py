@@ -2,6 +2,7 @@ import logging
 
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
+from logging import Logger
 
 from ..dtos.output_video_search_result import OutputVideoSearchResult
 from ..tools.server import http_get
@@ -14,14 +15,15 @@ from ..use_cases.video_service import VideoService
 @route('/video')
 class VideoController:
 
-    _log = logging.getLogger(__name__)
+    _log: Logger = logging.getLogger(__name__)
+    _video_service: VideoService
 
     @inject
     def __init__(self, video_service: VideoService = Provide['video_service']):
 
         self._video_service = video_service
 
-    @http_get('/')
+    @http_get('')
     @return_json
     def search_videos(self, search_query: str) -> list[OutputVideoSearchResult]:
 
@@ -37,6 +39,6 @@ class VideoController:
         except Exception as exception:
 
             self._log.error(f'End [funcName](search_query=\'{search_query}\') with exceptions',
-                            extra={'exception': f'{exception.__class__.__name__}: {exception}'})
+                            extra={'exception': exception})
 
             return_exception(exception)

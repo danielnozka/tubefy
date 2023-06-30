@@ -6,7 +6,9 @@ from ..server import get_request_id
 
 class LoggingFormatter(Formatter):
 
-    _function_name_template = '[funcName]'
+    _function_name_template: str = '[funcName]'
+    _main_format: str
+    _exception_format: str
 
     def __init__(self, main_format: str, exception_format, date_format):
 
@@ -19,11 +21,16 @@ class LoggingFormatter(Formatter):
         self._select_format(record)
         record.correlation = get_request_id()
         record.msg = self._get_message_with_function_name(record)
+
+        if self._record_has_exception(record):
+
+            setattr(record, 'exception', self._get_formatted_exception(record))
+
         return super().format(record)
 
     def _select_format(self, record: LogRecord) -> None:
 
-        if hasattr(record, 'exception'):
+        if self._record_has_exception(record):
 
             self._style._fmt = self._exception_format
 
@@ -31,6 +38,18 @@ class LoggingFormatter(Formatter):
 
             self._style._fmt = self._main_format
 
+    @staticmethod
+    def _record_has_exception(record: LogRecord) -> bool:
+
+        return hasattr(record, 'exception')
+
     def _get_message_with_function_name(self, record: LogRecord) -> str:
 
         return record.msg.replace(self._function_name_template, record.funcName)
+
+    @staticmethod
+    def _get_formatted_exception(record: LogRecord) -> str:
+
+        exception = getattr(record, 'exception')
+
+        return f'{exception.__class__.__name__}: {exception}'

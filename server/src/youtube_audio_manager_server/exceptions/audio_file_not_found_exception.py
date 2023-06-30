@@ -1,6 +1,6 @@
 class AudioFileNotFoundException(Exception):
 
-    status_code = 404
+    status_code: int = 404
 
     def __init__(self, audio_file: str):
 

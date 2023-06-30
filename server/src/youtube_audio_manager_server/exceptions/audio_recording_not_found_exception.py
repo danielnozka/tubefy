@@ -1,7 +1,10 @@
+from uuid import UUID
+
+
 class AudioRecordingNotFoundException(Exception):
 
-    status_code = 404
+    status_code: int = 404
 
-    def __init__(self, audio_id: str):
+    def __init__(self, user_id: UUID, video_id: str):
 
-        super().__init__(f'Audio recording with ID \'{audio_id}\' does not exist')
+        super().__init__(f'Audio recording for user \'{user_id}\' and video ID \'{video_id}\' does not exist')

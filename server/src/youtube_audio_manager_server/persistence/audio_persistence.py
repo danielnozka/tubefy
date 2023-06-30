@@ -3,6 +3,7 @@ import os
 
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
+from uuid import UUID
 
 from ..configuration.app_settings import AppSettings
 from ..domain.audio_recording import AudioRecording
@@ -13,6 +14,8 @@ from .audio_context import AudioContext
 class AudioPersistence:
 
     _log = logging.getLogger(__name__)
+    _context: AudioContext
+    _audio_files_directory: str
 
     @inject
     def __init__(self, app_settings: AppSettings = Provide['app_settings']):
@@ -20,13 +23,22 @@ class AudioPersistence:
         self._context = AudioContext()
         self._audio_files_directory = os.path.abspath(app_settings.persistence_settings.audio_files_directory)
 
-        if not self._audio_files_directory_exists():
+        if not self._directory_exists(self._audio_files_directory):
 
-            self._create_audio_files_directory()
+            self._create_directory(self._audio_files_directory)
 
-    def get_audio_files_directory(self) -> str:
+    def get_audio_files_directory_for_user(self, user_id: UUID) -> str:
 
-        return self._audio_files_directory
+        self._log.debug(f'Start [funcName](user_id=\'{user_id}\')')
+        user_audio_files_directory = os.path.join(self._audio_files_directory, str(user_id))
+
+        if not self._directory_exists(user_audio_files_directory):
+
+            self._create_directory(user_audio_files_directory)
+
+        self._log.debug(f'End [funcName](user_id=\'{user_id}\')')
+
+        return user_audio_files_directory
 
     def add_audio_recording(self, audio_recording: AudioRecording) -> None:
 
@@ -34,19 +46,19 @@ class AudioPersistence:
         self._context.add_audio_recording(audio_recording)
         self._log.debug(f'End [funcName]({audio_recording})')
 
-    def get_all_audio_recordings(self) -> list[AudioRecording]:
+    def get_all_audio_recordings(self, user_id: UUID) -> list[AudioRecording]:
 
-        self._log.debug(f'Start [funcName]()')
-        result = self._context.get_all_audio_recordings()
-        self._log.debug(f'End [funcName]()')
+        self._log.debug(f'Start [funcName](user_id=\'{user_id}\')')
+        result = self._context.get_all_audio_recordings(user_id)
+        self._log.debug(f'End [funcName](user_id=\'{user_id}\')')
 
         return result
 
-    def get_audio_recording_by_id(self, audio_recording_id: str) -> AudioRecording | None:
+    def get_audio_recording_by_video_id(self, user_id: UUID, video_id: str) -> AudioRecording | None:
 
-        self._log.debug(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
-        result = self._context.get_audio_recording_by_id(audio_recording_id)
-        self._log.debug(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
+        self._log.debug(f'Start [funcName](user_id=\'{user_id}\', video_id=\'{video_id}\')')
+        result = self._context.get_audio_recording_by_video_id(user_id, video_id)
+        self._log.debug(f'End [funcName](user_id=\'{user_id}\', video_id=\'{video_id}\')')
 
         return result
 
@@ -57,13 +69,15 @@ class AudioPersistence:
         self._delete_audio_recording_file(audio_recording)
         self._log.debug(f'End [funcName]({audio_recording})')
 
-    def _audio_files_directory_exists(self) -> bool:
+    @staticmethod
+    def _directory_exists(directory_path: str) -> bool:
 
-        return os.path.isdir(self._audio_files_directory)
+        return os.path.isdir(directory_path)
 
-    def _create_audio_files_directory(self) -> None:
+    @staticmethod
+    def _create_directory(directory_path: str) -> None:
 
-        os.makedirs(self._audio_files_directory, exist_ok=True)
+        os.makedirs(directory_path, exist_ok=True)
 
     @staticmethod
     def _delete_audio_recording_file(audio_recording: AudioRecording) -> None:

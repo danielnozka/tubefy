@@ -5,6 +5,7 @@ import requests
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 from requests import Response
+from string import Template
 
 from youtube_audio_manager_server.configuration.app_settings import AppSettings
 from youtube_audio_manager_server.domain.audio_recording import AudioRecording
@@ -16,13 +17,14 @@ logging.getLogger('urllib3').disabled = True
 
 class AudioServiceTest:
 
-    _audio_route = 'audio'
+    _end_point: Template = Template('/users/${user_id}/audio/${video_id}')
 
     @classmethod
     def test_audio_recording_is_downloaded(cls, test_audio_recording: AudioRecording,
-                                           test_input_audio_recording: dict) -> None:
+                                           test_input_audio_recording_options: dict) -> None:
 
-        response = cls._request_audio_recording_to_be_downloaded(test_audio_recording, test_input_audio_recording)
+        response = cls._request_audio_recording_to_be_downloaded(test_audio_recording,
+                                                                 test_input_audio_recording_options)
 
         assert response.status_code == 200
         assert os.path.isfile(test_audio_recording.file)
@@ -35,17 +37,18 @@ class AudioServiceTest:
 
     @classmethod
     def test_downloading_the_same_audio_recording_twice_raises_exception(cls, test_audio_recording: AudioRecording,
-                                                                         test_input_audio_recording: dict) -> None:
+                                                                         test_input_audio_recording_options: dict) -> \
+            None:
 
-        response = cls._request_audio_recording_to_be_downloaded(test_audio_recording, test_input_audio_recording)
+        response = cls._request_audio_recording_to_be_downloaded(test_audio_recording,
+                                                                 test_input_audio_recording_options)
 
         assert response.status_code == 409
 
     @classmethod
-    def test_audio_recording_is_returned(cls, test_audio_recording: AudioRecording,
-                                         test_input_audio_recording: dict) -> None:
+    def test_audio_recording_is_returned(cls, test_audio_recording: AudioRecording) -> None:
 
-        response = cls._request_audio_recordings_to_be_returned()
+        response = cls._request_audio_recordings_to_be_returned(test_audio_recording)
 
         assert response.status_code == 200
 
@@ -57,7 +60,7 @@ class AudioServiceTest:
         output_audio_recording = json_response[0]
 
         assert type(output_audio_recording) == dict
-        assert output_audio_recording.get('id') == test_audio_recording.id
+        assert output_audio_recording.get('videoId') == test_audio_recording.video_id
         assert output_audio_recording.get('title') == test_audio_recording.title
         assert output_audio_recording.get('artist') == test_audio_recording.artist
         assert output_audio_recording.get('fileSizeMegabytes') >= test_audio_recording.file_size_megabytes
@@ -73,9 +76,9 @@ class AudioServiceTest:
         assert not os.path.isfile(test_audio_recording.file)
 
     @classmethod
-    def test_no_audio_recordings_are_returned(cls) -> None:
+    def test_no_audio_recordings_are_returned(cls, test_audio_recording: AudioRecording) -> None:
 
-        response = cls._request_audio_recordings_to_be_returned()
+        response = cls._request_audio_recordings_to_be_returned(test_audio_recording)
 
         assert response.status_code == 200
 
@@ -95,19 +98,23 @@ class AudioServiceTest:
     @classmethod
     @inject
     def _request_audio_recording_to_be_downloaded(cls, test_audio_recording: AudioRecording,
-                                                  test_input_audio_recording: dict,
+                                                  test_input_audio_recording_options: dict,
                                                   app_settings: AppSettings = Provide['app_settings']) -> Response:
 
-        url = f'http://localhost:{app_settings.server_settings.port}/{cls._audio_route}/{test_audio_recording.id}'
-        response = requests.put(url, json=test_input_audio_recording)
+        end_point = cls._end_point.substitute(user_id=test_audio_recording.user_id,
+                                              video_id=test_audio_recording.video_id)
+        url = f'http://localhost:{app_settings.server_settings.port}' + end_point
+        response = requests.put(url, json=test_input_audio_recording_options)
 
         return response
 
     @classmethod
     @inject
-    def _request_audio_recordings_to_be_returned(cls, app_settings: AppSettings = Provide['app_settings']) -> Response:
+    def _request_audio_recordings_to_be_returned(cls, test_audio_recording: AudioRecording,
+                                                 app_settings: AppSettings = Provide['app_settings']) -> Response:
 
-        url = f'http://localhost:{app_settings.server_settings.port}/{cls._audio_route}/'
+        end_point = cls._end_point.substitute(user_id=test_audio_recording.user_id, video_id='')
+        url = f'http://localhost:{app_settings.server_settings.port}' + end_point
         response = requests.get(url)
 
         return response
@@ -117,7 +124,9 @@ class AudioServiceTest:
     def _request_audio_recording_to_be_deleted(cls, test_audio_recording: AudioRecording,
                                                app_settings: AppSettings = Provide['app_settings']) -> Response:
 
-        url = f'http://localhost:{app_settings.server_settings.port}/{cls._audio_route}/{test_audio_recording.id}'
+        end_point = cls._end_point.substitute(user_id=test_audio_recording.user_id,
+                                              video_id=test_audio_recording.video_id)
+        url = f'http://localhost:{app_settings.server_settings.port}' + end_point
         response = requests.delete(url)
 
         return response

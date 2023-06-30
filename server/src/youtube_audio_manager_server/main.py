@@ -3,6 +3,7 @@ import os
 
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
+from logging import Logger
 
 from .configuration.app_settings import AppSettings
 from .controllers import app_controllers
@@ -15,6 +16,9 @@ from .tools.logging.logging_builder import LoggingBuilder
 
 class Main:
 
+    _log: Logger
+    _server: Server
+
     @inject
     def __init__(self, app_settings: AppSettings = Provide['app_settings']):
 
@@ -26,7 +30,7 @@ class Main:
 
     def start(self, testing: bool = False) -> None:
 
-        self._log.debug('Starting application...')
+        self._log.info('Starting application...')
 
         try:
 
@@ -39,7 +43,7 @@ class Main:
 
     def stop(self) -> None:
 
-        self._log.debug('Stopping application...')
+        self._log.info('Stopping application...')
         self._server.stop()
 
     def _register_controllers(self) -> None:

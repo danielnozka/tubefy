@@ -2,12 +2,12 @@ import os
 
 from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Singleton
+from types import ModuleType
 
 from . import adapters
 from . import controllers
 from . import persistence
 from . import use_cases
-
 from .adapters.audio_adapter import AudioAdapter
 from .adapters.video_adapter import VideoAdapter
 from .configuration.app_settings import AppSettings
@@ -18,8 +18,8 @@ from .use_cases.video_getter import VideoGetter
 from .use_cases.video_service import VideoService
 
 
-app_components = [adapters, controllers, persistence, use_cases]
-root_path = os.path.dirname(os.path.abspath(__file__))
+app_components: list[ModuleType] = [adapters, controllers, persistence, use_cases]
+root_path: str = os.path.dirname(os.path.abspath(__file__))
 
 
 class ModuleInitializer(DeclarativeContainer):
