@@ -1,4 +1,4 @@
-class VideoSearchException(Exception):
+class YoutubeSearchException(Exception):
 
     def __init__(self, exception: Exception):
 

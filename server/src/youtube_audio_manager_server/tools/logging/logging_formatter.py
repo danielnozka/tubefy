@@ -24,7 +24,7 @@ class LoggingFormatter(Formatter):
 
         if self._record_has_exception(record):
 
-            setattr(record, 'exception', self._get_formatted_exception(record))
+            setattr(record, 'error', self._get_formatted_exception(record))
 
         return super().format(record)
 

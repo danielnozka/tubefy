@@ -1,5 +1,6 @@
 from .audio_controller import AudioController
-from .video_controller import VideoController
+from .search_controller import SearchController
+from ..tools.typing import ControllerClassType
 
 
-app_controllers = [AudioController, VideoController]
+app_controllers: list[ControllerClassType] = [AudioController, SearchController]

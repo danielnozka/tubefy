@@ -12,7 +12,6 @@ from youtube_audio_manager_server.domain.audio_recording import AudioRecording
 
 
 logging.getLogger('urllib3').propagate = False
-logging.getLogger('urllib3').disabled = True
 
 
 class AudioServiceTest:

@@ -5,13 +5,13 @@
         "console_formatter": {
             "()": "youtube_audio_manager_server.tools.logging.logging_formatter.LoggingFormatter",
             "main_format": "%(asctime)s.%(msecs)03d [%(levelname)s] - [%(name)s] %(message)s",
-            "exception_format": "%(asctime)s.%(msecs)03d [%(levelname)s] - [%(name)s] %(message)s - %(exception)s",
+            "exception_format": "%(asctime)s.%(msecs)03d [%(levelname)s] - [%(name)s] %(message)s - %(error)s",
             "date_format": "%d-%m-%Y %H:%M:%S"
         },
         "file_formatter": {
             "()": "youtube_audio_manager_server.tools.logging.logging_formatter.LoggingFormatter",
             "main_format": "{\"correlationId\": \"%(correlation)s\", \"date\": \"%(asctime)s.%(msecs)03d\", \"level\": \"%(levelname)s\", \"logger\": \"%(module)s\", \"message\": \"%(message)s\"}",
-            "exception_format": "{\"correlationId\": \"%(correlation)s\", \"date\": \"%(asctime)s.%(msecs)03d\", \"level\": \"%(levelname)s\", \"logger\": \"%(module)s\", \"message\": \"%(message)s\", \"exception\": \"%(exception)s\"}",
+            "exception_format": "{\"correlationId\": \"%(correlation)s\", \"date\": \"%(asctime)s.%(msecs)03d\", \"level\": \"%(levelname)s\", \"logger\": \"%(module)s\", \"message\": \"%(message)s\", \"exception\": \"%(error)s\"}",
             "date_format": "%d-%m-%Y %H:%M:%S"
         }
     },
