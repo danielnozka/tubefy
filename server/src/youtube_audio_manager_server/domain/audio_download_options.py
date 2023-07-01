@@ -1,4 +1,4 @@
-class InputAudioRecordingOptions:
+class AudioDownloadOptions:
 
     title: str
     artist: str
@@ -18,7 +18,7 @@ class InputAudioRecordingOptions:
 
     def __str__(self) -> str:
 
-        return (f'input_audio_recording_options.title=\'{self.title}\', '
-                f'input_audio_recording_options.artist=\'{self.artist}\', '
-                f'input_audio_recording_options.codec=\'{self.codec}\', '
-                f'input_audio_recording_options.bit_rate={self.bit_rate}')
+        return (f'audio_download_options.title=\'{self.title}\', '
+                f'audio_download_options.artist=\'{self.artist}\', '
+                f'audio_download_options.codec=\'{self.codec}\', '
+                f'audio_download_options.bit_rate={self.bit_rate}')

@@ -14,9 +14,10 @@ from youtube_audio_manager_server.domain.audio_recording import AudioRecording
 logging.getLogger('urllib3').propagate = False
 
 
-class AudioServiceTest:
+class UserAudioServiceTest:
 
-    _end_point: Template = Template('/users/${user_id}/audio/${video_id}')
+    _end_point_base: Template = Template('/users/${user_id}/audio')
+    _end_point_with_video: Template = Template(_end_point_base.template + '/${video_id}')
 
     @classmethod
     def test_audio_recording_is_downloaded(cls, test_audio_recording: AudioRecording,
@@ -100,8 +101,8 @@ class AudioServiceTest:
                                                   test_input_audio_recording_options: dict,
                                                   app_settings: AppSettings = Provide['app_settings']) -> Response:
 
-        end_point = cls._end_point.substitute(user_id=test_audio_recording.user_id,
-                                              video_id=test_audio_recording.video_id)
+        end_point = cls._end_point_with_video.substitute(user_id=test_audio_recording.user_id,
+                                                         video_id=test_audio_recording.video_id)
         url = f'http://localhost:{app_settings.server_settings.port}' + end_point
         response = requests.put(url, json=test_input_audio_recording_options)
 
@@ -112,7 +113,7 @@ class AudioServiceTest:
     def _request_audio_recordings_to_be_returned(cls, test_audio_recording: AudioRecording,
                                                  app_settings: AppSettings = Provide['app_settings']) -> Response:
 
-        end_point = cls._end_point.substitute(user_id=test_audio_recording.user_id, video_id='')
+        end_point = cls._end_point_base.substitute(user_id=test_audio_recording.user_id)
         url = f'http://localhost:{app_settings.server_settings.port}' + end_point
         response = requests.get(url)
 
@@ -123,8 +124,8 @@ class AudioServiceTest:
     def _request_audio_recording_to_be_deleted(cls, test_audio_recording: AudioRecording,
                                                app_settings: AppSettings = Provide['app_settings']) -> Response:
 
-        end_point = cls._end_point.substitute(user_id=test_audio_recording.user_id,
-                                              video_id=test_audio_recording.video_id)
+        end_point = cls._end_point_with_video.substitute(user_id=test_audio_recording.user_id,
+                                                         video_id=test_audio_recording.video_id)
         url = f'http://localhost:{app_settings.server_settings.port}' + end_point
         response = requests.delete(url)
 

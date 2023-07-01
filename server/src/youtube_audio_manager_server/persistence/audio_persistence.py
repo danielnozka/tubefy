@@ -14,6 +14,7 @@ from .audio_context import AudioContext
 class AudioPersistence:
 
     _log = logging.getLogger(__name__)
+    _temporal_data_directory: str = 'temp'
     _context: AudioContext
     _audio_files_directory: str
 
@@ -40,32 +41,45 @@ class AudioPersistence:
 
         return user_audio_files_directory
 
-    def add_audio_recording(self, audio_recording: AudioRecording) -> None:
+    def get_temporal_data_directory(self) -> str:
+
+        self._log.debug('Start [funcName]()')
+        temporal_data_directory = os.path.join(self._audio_files_directory, self._temporal_data_directory)
+
+        if not self._directory_exists(temporal_data_directory):
+
+            self._create_directory(temporal_data_directory)
+
+        self._log.debug('End [funcName]()')
+
+        return temporal_data_directory
+
+    def save_user_audio_recording(self, audio_recording: AudioRecording) -> None:
 
         self._log.debug(f'Start [funcName]({audio_recording})')
-        self._context.add_audio_recording(audio_recording)
+        self._context.save_user_audio_recording(audio_recording)
         self._log.debug(f'End [funcName]({audio_recording})')
 
-    def get_all_audio_recordings(self, user_id: UUID) -> list[AudioRecording]:
+    def get_all_user_audio_recordings(self, user_id: UUID) -> list[AudioRecording]:
 
         self._log.debug(f'Start [funcName](user_id=\'{user_id}\')')
-        result = self._context.get_all_audio_recordings(user_id)
+        result = self._context.get_all_user_audio_recordings(user_id)
         self._log.debug(f'End [funcName](user_id=\'{user_id}\')')
 
         return result
 
-    def get_audio_recording_by_video_id(self, user_id: UUID, video_id: str) -> AudioRecording | None:
+    def get_user_audio_recording_by_video_id(self, user_id: UUID, video_id: str) -> AudioRecording | None:
 
         self._log.debug(f'Start [funcName](user_id=\'{user_id}\', video_id=\'{video_id}\')')
-        result = self._context.get_audio_recording_by_video_id(user_id, video_id)
+        result = self._context.get_user_audio_recording_by_video_id(user_id, video_id)
         self._log.debug(f'End [funcName](user_id=\'{user_id}\', video_id=\'{video_id}\')')
 
         return result
 
-    def delete_audio_recording(self, audio_recording: AudioRecording) -> None:
+    def delete_user_audio_recording(self, audio_recording: AudioRecording) -> None:
 
         self._log.debug(f'Start [funcName]({audio_recording})')
-        self._context.delete_audio_recording(audio_recording)
+        self._context.delete_user_audio_recording(audio_recording)
         self._delete_audio_recording_file(audio_recording)
         self._log.debug(f'End [funcName]({audio_recording})')
 

@@ -11,10 +11,10 @@ from . import persistence
 from . import use_cases
 from .adapters.audio_adapter import AudioAdapter
 from .adapters.search_adapter import SearchAdapter
+from .communications.youtube_audio_downloader import YoutubeAudioDownloader
 from .communications.youtube_videos_getter import YoutubeVideosGetter
 from .configuration.app_settings import AppSettings
 from .persistence.audio_persistence import AudioPersistence
-from .use_cases.audio_downloader import AudioDownloader
 from .use_cases.audio_service import AudioService
 from .use_cases.search_service import SearchService
 
@@ -31,8 +31,8 @@ class ModuleInitializer(DeclarativeContainer):
 
     audio_adapter = Singleton(AudioAdapter)
     search_adapter = Singleton(SearchAdapter)
+    youtube_audio_downloader = Singleton(YoutubeAudioDownloader)
     youtube_videos_getter = Singleton(YoutubeVideosGetter)
     audio_persistence = Singleton(AudioPersistence)
-    audio_downloader = Singleton(AudioDownloader)
     audio_service = Singleton(AudioService)
     search_service = Singleton(SearchService)

@@ -41,7 +41,7 @@ class AudioContext:
 
             self._create_database()
 
-    def add_audio_recording(self, audio_recording: AudioRecording) -> None:
+    def save_user_audio_recording(self, audio_recording: AudioRecording) -> None:
 
         query = (f'INSERT INTO {self._AudioTable.table_name}({self._AudioTable.id_column}, '
                  f'{self._AudioTable.video_id_column}, {self._AudioTable.user_id_column}, '
@@ -54,7 +54,7 @@ class AudioContext:
 
         self._make_query(query)
 
-    def get_all_audio_recordings(self, user_id: UUID) -> list[AudioRecording]:
+    def get_all_user_audio_recordings(self, user_id: UUID) -> list[AudioRecording]:
 
         query = f'SELECT * FROM {self._AudioTable.table_name} WHERE {self._AudioTable.user_id_column}="{user_id}"'
         query_result = self._make_query(query)
@@ -62,7 +62,7 @@ class AudioContext:
 
         return result
 
-    def get_audio_recording_by_video_id(self, user_id: UUID, video_id: str) -> AudioRecording | None:
+    def get_user_audio_recording_by_video_id(self, user_id: UUID, video_id: str) -> AudioRecording | None:
 
         query = (f'SELECT * FROM {self._AudioTable.table_name} WHERE {self._AudioTable.user_id_column}="{user_id}" AND '
                  f'{self._AudioTable.video_id_column}="{video_id}"')
@@ -76,7 +76,7 @@ class AudioContext:
 
             return AudioRecording(*query_result[0])
 
-    def delete_audio_recording(self, audio_recording: AudioRecording) -> None:
+    def delete_user_audio_recording(self, audio_recording: AudioRecording) -> None:
 
         query = f'DELETE FROM {self._AudioTable.table_name} WHERE {self._AudioTable.id_column}="{audio_recording.id}"'
         self._make_query(query)
