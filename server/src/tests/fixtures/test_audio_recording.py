@@ -5,8 +5,8 @@ from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 from uuid import uuid4
 
-from youtube_audio_manager_server.configuration.app_settings import AppSettings
-from youtube_audio_manager_server.domain.audio_recording import AudioRecording
+from tubefy.configuration.app_settings import AppSettings
+from tubefy.domain.audio_recording import AudioRecording
 
 
 @pytest.fixture(scope='session')

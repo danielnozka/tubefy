@@ -1,5 +1,9 @@
+from uuid import UUID
+
+
 class OutputAudioRecording:
 
+    id: UUID
     video_id: str
     title: str
     artist: str
@@ -8,6 +12,7 @@ class OutputAudioRecording:
     bit_rate: int
 
     def __init__(self,
+                 id_: UUID,
                  video_id: str,
                  title: str,
                  artist: str,
@@ -15,6 +20,7 @@ class OutputAudioRecording:
                  codec: str,
                  bit_rate: int):
 
+        self.id = id_
         self.video_id = video_id
         self.title = title
         self.artist = artist

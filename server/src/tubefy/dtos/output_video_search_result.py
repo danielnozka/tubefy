@@ -1,4 +1,4 @@
-class OutputSearchResult:
+class OutputVideoSearchResult:
 
     video_id: str
     video_title: str

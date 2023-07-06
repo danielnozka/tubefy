@@ -8,24 +8,24 @@ from ..dtos.output_audio_recording import OutputAudioRecording
 from ..tools.typing import JsonType
 
 
-class AudioAdapter:
+class UserAudioAdapter:
 
     _log: Logger = logging.getLogger(__name__)
 
-    def adapt_input(self, input_data: JsonType) -> AudioDownloadOptions:
+    def adapt_audio_download_options(self, audio_download_options_json: JsonType) -> AudioDownloadOptions:
 
         self._log.debug('Start [funcName]()')
 
-        audio_download_options = AudioDownloadOptions(title=input_data['title'],
-                                                      artist=input_data['artist'],
-                                                      codec=input_data['codec'].lower(),
-                                                      bit_rate=int(input_data['bitRate']))
+        audio_download_options = AudioDownloadOptions(title=audio_download_options_json['title'],
+                                                      artist=audio_download_options_json['artist'],
+                                                      codec=audio_download_options_json['codec'].lower(),
+                                                      bit_rate=int(audio_download_options_json['bitRate']))
 
         self._log.debug('End [funcName]()')
 
         return audio_download_options
 
-    def adapt_output(self, audio_recordings: list[AudioRecording]) -> list[OutputAudioRecording]:
+    def adapt_output_audio_recordings(self, audio_recordings: list[AudioRecording]) -> list[OutputAudioRecording]:
 
         self._log.debug('Start [funcName]()')
 
@@ -33,7 +33,8 @@ class AudioAdapter:
 
         for audio_recording in audio_recordings:
 
-            output_audio_recording = OutputAudioRecording(video_id=audio_recording.video_id,
+            output_audio_recording = OutputAudioRecording(id_=audio_recording.id,
+                                                          video_id=audio_recording.video_id,
                                                           title=audio_recording.title,
                                                           artist=audio_recording.artist,
                                                           file_size_megabytes=audio_recording.file_size_megabytes,

@@ -8,14 +8,14 @@ from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
 from . import fixtures
-from . import search_service_test
 from . import user_audio_service_test
-from youtube_audio_manager_server import main as app_module
-from youtube_audio_manager_server.configuration.app_settings import AppSettings
-from youtube_audio_manager_server.main import Main as App
-from youtube_audio_manager_server.module_initializer import app_components
-from youtube_audio_manager_server.module_initializer import ModuleInitializer
-from youtube_audio_manager_server.module_initializer import root_path
+from . import video_search_service_test
+from tubefy import main as app_module
+from tubefy.configuration.app_settings import AppSettings
+from tubefy.main import Main as App
+from tubefy.module_initializer import app_components
+from tubefy.module_initializer import ModuleInitializer
+from tubefy.module_initializer import root_path
 
 
 test_settings_file: str = os.path.join(os.path.dirname(__file__), 'test_app_settings.json')
@@ -25,7 +25,7 @@ pytest_plugins: list[str] = [f'{fixtures.__name__}.{module}' for _, module, _ in
 @pytest.fixture(scope='session', autouse=True)
 def setup_module_initializer() -> None:
 
-    modules_to_wire = [__name__, app_module, search_service_test, user_audio_service_test]
+    modules_to_wire = [__name__, app_module, user_audio_service_test, video_search_service_test]
     packages_to_wire = [fixtures, *app_components]
     module_initializer_ = ModuleInitializer()
     module_initializer_.wire(modules=modules_to_wire, packages=packages_to_wire)

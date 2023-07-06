@@ -7,6 +7,16 @@ from ..typing import ControllerMethodType
 class ServerResponseHandler:
 
     @classmethod
+    def return_audio(cls, method: ControllerMethodType) -> ControllerMethodType:
+
+        return cherrypy.tools.set_audio_response()(method)
+
+    @classmethod
+    def return_downloadable_file(cls, method: ControllerMethodType) -> ControllerMethodType:
+
+        return cherrypy.tools.set_downloadable_file_response()(method)
+
+    @classmethod
     def return_json(cls, method: ControllerMethodType) -> ControllerMethodType:
 
         return cherrypy.tools.set_json_response()(method)
@@ -15,6 +25,16 @@ class ServerResponseHandler:
     def return_exception(cls, exception: Exception = None) -> None:
 
         raise cherrypy.HTTPError(cls._get_exception_status_code(exception), cls._format_exception_message(exception))
+
+    @staticmethod
+    def set_audio_response() -> None:
+
+        cherrypy.serving.response.headers['Content-Type'] = 'audio/mpeg'
+
+    @staticmethod
+    def set_downloadable_file_response() -> None:
+
+        cherrypy.serving.response.headers['Content-Disposition'] = 'attachment'
 
     @staticmethod
     def set_json_response() -> None:
@@ -52,4 +72,7 @@ class ServerResponseHandler:
         return message
 
 
+cherrypy.tools.set_audio_response = cherrypy.Tool('before_handler', ServerResponseHandler.set_audio_response)
+cherrypy.tools.set_downloadable_file_response = \
+    cherrypy.Tool('before_handler', ServerResponseHandler.set_downloadable_file_response)
 cherrypy.tools.set_json_response = cherrypy.Tool('before_handler', ServerResponseHandler.set_json_response)

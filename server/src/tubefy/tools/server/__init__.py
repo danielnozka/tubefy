@@ -7,6 +7,8 @@ expect_json = ServerRequestHandler.expect_json_content
 get_json_content = ServerRequestHandler.get_json_content
 get_request_id = ServerRequestHandler.get_request_id
 
+return_audio = ServerResponseHandler.return_audio
+return_downloadable_file = ServerResponseHandler.return_downloadable_file
 return_exception = ServerResponseHandler.return_exception
 return_json = ServerResponseHandler.return_json
 

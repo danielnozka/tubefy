@@ -4,34 +4,34 @@ from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 from logging import Logger
 
-from ..dtos.output_search_result import OutputSearchResult
+from ..dtos.output_video_search_result import OutputVideoSearchResult
 from ..tools.server import http_get
 from ..tools.server import return_exception
 from ..tools.server import return_json
 from ..tools.server import route
-from ..use_cases.search_service import SearchService
+from ..use_cases.video_search_service import VideoSearchService
 
 
 @route('/search')
-class SearchController:
+class VideoSearchController:
 
     _log: Logger = logging.getLogger(__name__)
-    _search_service: SearchService
+    _video_search_service: VideoSearchService
 
     @inject
-    def __init__(self, search_service: SearchService = Provide['search_service']):
+    def __init__(self, video_search_service: VideoSearchService = Provide['video_search_service']):
 
-        self._search_service = search_service
+        self._video_search_service = video_search_service
 
     @http_get('')
     @return_json
-    def search_videos(self, query: str) -> list[OutputSearchResult]:
+    def search_videos(self, query: str) -> list[OutputVideoSearchResult]:
 
         self._log.info(f'Start [funcName](query=\'{query}\')')
 
         try:
 
-            result = self._search_service.search(query)
+            result = self._video_search_service.search_videos(query)
             self._log.info(f'End [funcName](query=\'{query}\')')
 
             return result
