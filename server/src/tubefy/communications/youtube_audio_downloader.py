@@ -65,6 +65,10 @@ class YoutubeAudioDownloader:
 
             raise AudioDownloadException
 
+    def get_default_codec(self) -> str:
+
+        return self._default_codec
+
     def _get_ffmpeg_location(self) -> str:
 
         if platform.system() == 'Windows':

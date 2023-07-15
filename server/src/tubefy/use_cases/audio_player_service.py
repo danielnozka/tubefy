@@ -31,10 +31,17 @@ class AudioPlayerService:
     def play_audio_sample(self, video_id: str) -> bytes:
 
         self._log.debug(f'Start [funcName](video_id=\'{video_id}\')')
-        sample_files_directory = self._sample_audio_persistence.get_sample_files_directory()
-        filename = video_id
-        file, _ = self._youtube_audio_downloader.download_audio(video_id, sample_files_directory, filename)
-        result = self._open_file(file)
+        sample_audio_file = self._sample_audio_persistence.get_sample_audio_file(video_id)
+
+        if sample_audio_file is None:
+
+            sample_files_directory = self._sample_audio_persistence.get_sample_files_directory()
+            filename = video_id
+            sample_audio_file, _ = self._youtube_audio_downloader.download_audio(video_id,
+                                                                                 sample_files_directory,
+                                                                                 filename)
+
+        result = self._open_file(sample_audio_file)
         self._log.debug(f'End [funcName](video_id=\'{video_id}\')')
 
         return result
