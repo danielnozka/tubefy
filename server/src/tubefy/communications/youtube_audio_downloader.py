@@ -5,7 +5,7 @@ import py7zr
 
 from logging import Logger
 from string import Template
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 
 from ..domain.audio_download_options import AudioDownloadOptions
 from ..exceptions.audio_download_exception import AudioDownloadException
@@ -114,6 +114,8 @@ class YoutubeAudioDownloader:
             'ffmpeg_location': self._ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
+            'logger': self._log,
+            'nocheckcertificate': True,
             'outtmpl': output_template,
             'postprocessors': [
                 {
@@ -135,6 +137,8 @@ class YoutubeAudioDownloader:
             'ffmpeg_location': self._ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
+            'logger': self._log,
+            'nocheckcertificate': True,
             'outtmpl': output_template,
             'postprocessors': [
                 {
