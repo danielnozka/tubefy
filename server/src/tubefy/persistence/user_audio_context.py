@@ -27,7 +27,7 @@ class UserAudioContext:
         codec_column: str = 'codec'
         bit_rate_column: str = 'bit_rate'
 
-    _database_file: str = 'audio.db'
+    _database_file: str = 'tubefy.db'
     _audio_database_directory: str
     _database: str
 

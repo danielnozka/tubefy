@@ -1,5 +1,4 @@
 import cherrypy
-import cherrypy_cors
 import logging
 
 from logging import Logger
@@ -46,7 +45,6 @@ class Server:
 
         try:
 
-            cherrypy_cors.install()
             cherrypy.config.update(self._server_settings)
             cherrypy.tree.mount(self, '/', self._server_settings)
             cherrypy.engine.signals.subscribe()

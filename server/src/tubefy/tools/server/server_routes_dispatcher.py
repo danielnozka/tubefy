@@ -3,6 +3,7 @@ import cherrypy
 from typing import Callable
 
 from ...exceptions.controller_not_exposed_exception import ControllerNotExposedException
+from .server_cors_handler import ServerCorsHandler
 from ..typing import ControllerClassType
 from ..typing import ControllerInstanceType
 from ..typing import ControllerMethodType
@@ -10,11 +11,14 @@ from ..typing import ControllerMethodType
 
 class ServerRoutesDispatcher(cherrypy.dispatch.RoutesDispatcher):
 
-    _exposed_controllers = {}
+    _exposed_controllers: dict = {}
+    _server_cors_handler: ServerCorsHandler
 
     def __init__(self):
 
         super().__init__()
+        self._server_cors_handler = ServerCorsHandler()
+        self._server_cors_handler.setup()
 
     @classmethod
     def expose_controller_class(cls, controller_route: str) -> Callable[[ControllerClassType], ControllerClassType]:
@@ -57,6 +61,12 @@ class ServerRoutesDispatcher(cherrypy.dispatch.RoutesDispatcher):
                              action=method_name,
                              controller=controller_instance,
                              conditions=method_info['method_type'])
+
+                self.connect(name=f'{controller_name}.{method_name}.OPTIONS',
+                             route=f"{exposed_controller_info['controller_route']}{method_info['method_route']}",
+                             action='handle_options_request',
+                             controller=self._server_cors_handler,
+                             conditions=dict(method=['OPTIONS']))
 
         else:
 

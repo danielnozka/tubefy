@@ -55,7 +55,7 @@ class VideoSearchServiceTest:
     @classmethod
     @inject
     def _request_sample_audio_to_be_played(cls, test_audio_recording: AudioRecording,
-                                             app_settings: AppSettings = Provide['app_settings']) -> Response:
+                                           app_settings: AppSettings = Provide['app_settings']) -> Response:
 
         sample_player_end_point = cls._sample_player_end_point.substitute(video_id=test_audio_recording.video_id)
         url = f'http://localhost:{app_settings.server_settings.port}' + sample_player_end_point
