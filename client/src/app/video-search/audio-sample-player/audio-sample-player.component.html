@@ -1,0 +1,19 @@
+<img [src]="video.videoThumbnailUrl" class="search-result-video-thumbnail">
+<div class="search-result-video-content">
+<mat-toolbar color="primary" class="search-result-video-title">
+  <span>{{ video.videoTitle }}</span>
+</mat-toolbar>
+<div class="search-result-video-player">
+  <mat-slider color="primary" step="1.0" min="0.0" max="{{ audioSampleDuration }}">
+    <input matSliderThumb [(ngModel)]="audioSampleCurrentTime" (valueChange)="updateAudioSampleSliderPosition($event)">
+  </mat-slider>
+  <div *ngIf="loadingAudioSample" class="search-result-video-player-spinner">
+    <mat-spinner [diameter]="20"></mat-spinner>
+  </div>
+  <button mat-icon-button *ngIf="!loadingAudioSample" (click)="audioSample.paused ? playAudioSample() : pauseAudioSample()" color="primary" class="search-result-video-player-buttons">
+    <mat-icon>{{audioSample.paused ? 'play_circle_filled' : 'pause_circle_filled'}}</mat-icon>
+  </button>
+  <button mat-icon-button (click)="openAudioRecordingSavingMenu()" color="primary" class="search-result-video-player-buttons">
+    <mat-icon>add_circle</mat-icon>
+  </button>
+</div>

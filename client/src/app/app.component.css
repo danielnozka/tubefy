@@ -1,0 +1,28 @@
+#app-header, #app-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#app-header-logo {
+    height: 40px;
+    width: auto;
+    margin-left: 10px;
+    margin-right: 20px;
+}
+
+#app-header-title {
+    font-size: 20px;
+}
+
+#app-header-filler {
+    flex: 1 1 auto;
+}
+
+#app-search-bar {
+    display: flex;
+    width: 100%;
+}
+
+#app-search-button {
+    margin-right: 5px;
+}

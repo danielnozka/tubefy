@@ -1,0 +1,32 @@
+<div id="audio-recording-saving-options-dialog">
+  <h1 mat-dialog-title id="audio-recording-saving-options-dialog-title">Audio saving options</h1>
+  <div mat-dialog-content id="audio-recording-saving-options-dialog-forms">
+    <mat-form-field>
+      <mat-label>Artist</mat-label>
+      <input matInput [(ngModel)]="selectedArtist">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input matInput [(ngModel)]="selectedTitle">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Codec</mat-label>
+      <mat-select [(ngModel)]="selectedCodec">
+        <mat-option [value]="option" *ngFor="let option of codecs">{{ option }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Bit rate (kbps)</mat-label>
+      <mat-select [(ngModel)]="selectedBitRate">
+        <mat-option [value]="option" *ngFor="let option of bitRates">{{ option }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions id="audio-recording-saving-options-dialog-buttons" align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" [disabled]="!selectedTitle.trim() || !selectedArtist.trim()" (click)="saveAudioRecording()">Save</button>
+  </div>
+  <div id="audio-recording-saving-options-dialog-progress-bar">
+    <mat-progress-bar mode="indeterminate" *ngIf="showProgressBar"></mat-progress-bar>
+  </div>
+</div>

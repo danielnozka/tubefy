@@ -1,0 +1,38 @@
+.search-result-video-thumbnail {
+    height: 80px;
+    width: 142px;
+}
+
+.search-result-video-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 80px;
+}
+
+.search-result-video-title {
+    font-size: 14px;
+    max-width: 438px;
+}
+
+.search-result-video-player {
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 10px;
+}
+
+mat-slider {
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.search-result-video-player-buttons, .search-result-video-player-spinner {
+    width: 50px;
+}
+
+.search-result-video-player-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
