@@ -1,0 +1,45 @@
+#audio-recording-results-header-title {
+  font-size: 18px;
+}
+
+#audio-recording-results-container {
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+#audio-recording-results-container-without-results {
+  font-family: Roboto;
+  font-size: 16px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+#audio-recording-results-container-with-results {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding-top: 15px;
+}
+
+#audio-recording-results-container-with-results-empty-filter {
+  font-family: Roboto;
+  font-size: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

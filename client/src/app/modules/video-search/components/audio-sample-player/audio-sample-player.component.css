@@ -1,0 +1,38 @@
+.video-thumbnail {
+  height: 80px;
+  width: 142px;
+}
+
+.audio-sample-player {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 80px;
+}
+
+.video-title {
+  font-size: 14px;
+  max-width: 438px;
+}
+
+.audio-sample-player-controllers {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 10px;
+}
+
+mat-slider {
+  flex-grow: 1;
+  margin-right: 20px;
+}
+
+.audio-sample-player-button, .audio-sample-player-spinner {
+  width: 50px;
+}
+
+.audio-sample-player-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

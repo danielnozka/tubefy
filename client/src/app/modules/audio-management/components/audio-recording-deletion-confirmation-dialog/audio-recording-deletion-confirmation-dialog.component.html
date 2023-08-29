@@ -1,0 +1,15 @@
+<div id="audio-recording-deletion-confirmation-dialog">
+  <h1 mat-dialog-title id="audio-recording-deletion-confirmation-dialog-title">Audio recording removal</h1>
+  <div mat-dialog-content id="audio-recording-deletion-confirmation-dialog-content">
+    <span>Are you sure you want to remove</span><br>
+    <span style="font-weight: 500;">{{ audioRecording.artist }} - {{ audioRecording.title }}</span><br>
+    <span>audio recording?</span>
+  </div>
+  <div mat-dialog-actions id="audio-recording-deletion-confirmation-dialog-buttons">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" (click)="deleteAudioRecording()">Delete</button>
+  </div>
+  <div id="audio-recording-deletion-confirmation-dialog-progress-bar">
+    <mat-progress-bar mode="indeterminate" *ngIf="deletingAudioRecording"></mat-progress-bar>
+  </div>
+</div>

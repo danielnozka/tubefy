@@ -1,0 +1,45 @@
+#audio-recording-deletion-confirmation-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0px;
+}
+
+#audio-recording-deletion-confirmation-dialog-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+}
+
+#audio-recording-deletion-confirmation-dialog-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#audio-recording-deletion-confirmation-dialog-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 15px;
+  padding-bottom: 30px;
+  gap: 10px;
+}
+
+#audio-recording-deletion-confirmation-dialog-progress-bar {
+  height: 10px;
+  padding-bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+mat-progress-bar { 
+  height: 9px; 
+}
+
+mat-progress-bar .mdc-linear-progress__bar-inner {
+  border-top-width: 9px;
+}

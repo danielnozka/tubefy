@@ -1,6 +1,7 @@
 import { Component} from '@angular/core';
-import { VideoSearchComponent } from './video-search/video-search.component';
+import { MatButton } from '@angular/material/button';
 import { ViewChild } from '@angular/core';
+import { VideoSearchResultsComponent } from './modules/video-search/components/video-search-results-component/video-search-results.component';
 
 @Component({
   selector: 'tubefy-app',
@@ -9,24 +10,32 @@ import { ViewChild } from '@angular/core';
 })
 export class AppComponent {
   
-  public audioManagementEnabled: boolean = false;
-  public videoSearchEnabled: boolean = true;
-  public searchQuery: string = 'rick astley never gonna give you up';
+  public showAudioRecordingResultsComponent: boolean = false;
+  public showVideoSearchResultsComponent: boolean = true;
+  public searchQuery: string = '';
+  public userId: string = 'f42c756a-46a3-46a8-9af4-72e8cfeef685';
+  private _videoSearchComponentSearchQuery: string = '';
+  private _audioManagementFilterQuery: string = '';
 
-  @ViewChild('videoSearchComponent') private _videoSearchComponent!: VideoSearchComponent;
+  @ViewChild('searchButton') public searchButton!: MatButton;
+  @ViewChild(VideoSearchResultsComponent) private _videoSearchResultsComponent!: VideoSearchResultsComponent;
 
-  public showVideoSearchContent(): void {
-    this.audioManagementEnabled = false;
-    this.videoSearchEnabled = true;
+  public showVideoSearchResultsComponentContent(): void {
+    this._audioManagementFilterQuery = this.searchQuery;
+    this.searchQuery = this._videoSearchComponentSearchQuery;
+    this.showAudioRecordingResultsComponent = false;
+    this.showVideoSearchResultsComponent = true;
   }
 
-  public showAudioManagementContent(): void {
-    this.audioManagementEnabled = true;
-    this.videoSearchEnabled = false;
+  public showAudioRecordingResultsComponentContent(): void {
+    this._videoSearchComponentSearchQuery = this.searchQuery;
+    this.searchQuery = this._audioManagementFilterQuery;
+    this.showAudioRecordingResultsComponent = true;
+    this.showVideoSearchResultsComponent = false;
   }
 
   public searchVideos(): void {
-    this._videoSearchComponent.searchVideos(this.searchQuery);
+    this._videoSearchResultsComponent.searchVideos(this.searchQuery);
   }
 
 }
