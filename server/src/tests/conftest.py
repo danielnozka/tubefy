@@ -3,6 +3,7 @@ import pkgutil
 import pytest
 import shutil
 
+from dependency_injector.providers import Factory
 from dependency_injector.providers import Singleton
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
@@ -10,6 +11,7 @@ from dependency_injector.wiring import Provide
 from . import fixtures
 from . import user_audio_service_test
 from . import video_search_service_test
+from .mocks.sample_audio_cleaner_mock import SampleAudioCleanerMock
 from tubefy import main as app_module
 from tubefy.configuration.app_settings import AppSettings
 from tubefy.main import Main as App
@@ -27,9 +29,10 @@ def setup_module_initializer() -> None:
 
     modules_to_wire = [__name__, app_module, user_audio_service_test, video_search_service_test]
     packages_to_wire = [fixtures, *app_components]
-    module_initializer_ = ModuleInitializer()
-    module_initializer_.wire(modules=modules_to_wire, packages=packages_to_wire)
-    module_initializer_.app_settings.override(Singleton(AppSettings, root_path, test_settings_file))
+    module_initializer = ModuleInitializer()
+    module_initializer.wire(modules=modules_to_wire, packages=packages_to_wire)
+    module_initializer.app_settings.override(Singleton(AppSettings, root_path, test_settings_file))
+    module_initializer.sample_audio_cleaner.override(Factory(SampleAudioCleanerMock))
 
 
 @pytest.fixture(scope='session', autouse=True)

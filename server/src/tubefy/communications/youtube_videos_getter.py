@@ -12,7 +12,7 @@ logging.getLogger('urllib3').propagate = False
 class YoutubeVideosGetter:
 
     _log: Logger = logging.getLogger(__name__)
-    _max_results: int = 10
+    _max_results: int = 20
 
     def get(self, query: str) -> list[dict]:
 

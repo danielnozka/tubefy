@@ -2,9 +2,12 @@ import os
 
 from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provider
+from typing import Callable
 
 from ..communications.youtube_audio_downloader import YoutubeAudioDownloader
 from ..configuration.app_settings import AppSettings
+from .sample_audio_cleaner import SampleAudioCleaner
 
 
 class SampleAudioPersistence:
@@ -12,11 +15,13 @@ class SampleAudioPersistence:
     _sample_files_directory: str = 'samples'
     _sample_files_directory_path: str
     _youtube_audio_downloader: YoutubeAudioDownloader
+    _sample_audio_cleaner: SampleAudioCleaner
 
     @inject
     def __init__(self,
                  app_settings: AppSettings = Provide['app_settings'],
-                 youtube_audio_downloader: YoutubeAudioDownloader = Provide['youtube_audio_downloader']):
+                 youtube_audio_downloader: YoutubeAudioDownloader = Provide['youtube_audio_downloader'],
+                 sample_audio_cleaner_provider: Callable[[str], SampleAudioCleaner] = Provider['sample_audio_cleaner']):
 
         self._sample_files_directory_path = os.path.join(
             os.path.abspath(app_settings.persistence_settings.audio_files_directory),
@@ -28,6 +33,8 @@ class SampleAudioPersistence:
             self._create_directory(self._sample_files_directory_path)
 
         self._youtube_audio_downloader = youtube_audio_downloader
+        self._sample_audio_cleaner = sample_audio_cleaner_provider(self._sample_files_directory_path)
+        self._sample_audio_cleaner.cleanup()
 
     def get_sample_files_directory(self) -> str:
 

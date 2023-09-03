@@ -1,6 +1,7 @@
 import os
 
 from dependency_injector.containers import DeclarativeContainer
+from dependency_injector.providers import Factory
 from dependency_injector.providers import Singleton
 from types import ModuleType
 
@@ -14,6 +15,7 @@ from .adapters.video_search_adapter import VideoSearchAdapter
 from .communications.youtube_audio_downloader import YoutubeAudioDownloader
 from .communications.youtube_videos_getter import YoutubeVideosGetter
 from .configuration.app_settings import AppSettings
+from .persistence.sample_audio_cleaner import SampleAudioCleaner
 from .persistence.sample_audio_persistence import SampleAudioPersistence
 from .persistence.user_audio_persistence import UserAudioPersistence
 from .use_cases.audio_player_service import AudioPlayerService
@@ -35,6 +37,7 @@ class ModuleInitializer(DeclarativeContainer):
     video_search_adapter = Singleton(VideoSearchAdapter)
     youtube_audio_downloader = Singleton(YoutubeAudioDownloader)
     youtube_videos_getter = Singleton(YoutubeVideosGetter)
+    sample_audio_cleaner = Factory(SampleAudioCleaner)
     sample_audio_persistence = Singleton(SampleAudioPersistence)
     user_audio_persistence = Singleton(UserAudioPersistence)
     audio_player_service = Singleton(AudioPlayerService)
