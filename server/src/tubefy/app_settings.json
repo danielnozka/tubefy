@@ -1,4 +1,7 @@
 {
+    "authenticationSettings": {
+        "jsonWebTokenSecretKey": "733f7260a0ef8ca2f0f9057fc6c3dcb03815bc12"
+    },
     "persistenceSettings": {
         "audioDatabaseDirectory": "./data",
         "audioFilesDirectory": "./data"

@@ -8,11 +8,19 @@ from uuid import UUID
 
 from ..configuration.app_settings import AppSettings
 from ..domain.audio_recording import AudioRecording
+from ..domain.user import User
 from ..exceptions.database_connection_exception import DatabaseConnectionException
 from ..exceptions.database_query_exception import DatabaseQueryException
 
 
-class UserAudioContext:
+class TubefyContext:
+
+    class _UsersTable:
+
+        table_name: str = 'users'
+        id_column: str = 'id'
+        username_column: str = 'username'
+        token_column: str = 'token'
 
     class _AudioRecordingsTable:
 
@@ -40,6 +48,27 @@ class UserAudioContext:
         if not self._database_file_exists():
 
             self._create_database()
+
+    def get_user_by_username(self, username: str) -> User | None:
+
+        query = f'SELECT * FROM {self._UsersTable.table_name} WHERE {self._UsersTable.username_column}="{username}"'
+        query_result = self._make_query(query)
+
+        if self._query_result_is_empty(query_result):
+
+            return None
+
+        else:
+
+            return User(*query_result[0])
+
+    def register_user(self, user: User) -> None:
+
+        query = (f'INSERT INTO {self._UsersTable.table_name}({self._UsersTable.id_column}, '
+                 f'{self._UsersTable.username_column}, {self._UsersTable.token_column}) '
+                 f'VALUES("{user.id}", "{user.username}", "{user.token}")')
+
+        self._make_query(query)
 
     def save_user_audio_recording(self, audio_recording: AudioRecording) -> None:
 
@@ -108,18 +137,25 @@ class UserAudioContext:
 
             self._create_database_directory()
 
-        query = (f'CREATE TABLE {self._AudioRecordingsTable.table_name} '
-                 f'({self._AudioRecordingsTable.id_column} TEXT NOT NULL PRIMARY KEY, '
-                 f'{self._AudioRecordingsTable.video_id_column} TEXT NOT NULL, '
-                 f'{self._AudioRecordingsTable.user_id_column} TEXT NOT NULL, '
-                 f'{self._AudioRecordingsTable.title_column} TEXT NOT NULL, '
-                 f'{self._AudioRecordingsTable.artist_column} TEXT NOT NULL, '
-                 f'{self._AudioRecordingsTable.file_column} TEXT NOT NULL,'
-                 f'{self._AudioRecordingsTable.file_size_megabytes_column} REAL NOT NULL,'
-                 f'{self._AudioRecordingsTable.codec_column} TEXT NOT NULL,'
-                 f'{self._AudioRecordingsTable.bit_rate_column} INTEGER NOT NULL)')
+        users_query = (f'CREATE TABLE {self._UsersTable.table_name} '
+                       f'({self._UsersTable.id_column} TEXT NOT NULL PRIMARY KEY, '
+                       f'{self._UsersTable.username_column} TEXT NOT NULL, '
+                       f'{self._UsersTable.token_column} TEXT NOT NULL)')
 
-        self._make_query(query)
+        self._make_query(users_query)
+
+        audio_recordings_query = (f'CREATE TABLE {self._AudioRecordingsTable.table_name} '
+                                  f'({self._AudioRecordingsTable.id_column} TEXT NOT NULL PRIMARY KEY, '
+                                  f'{self._AudioRecordingsTable.video_id_column} TEXT NOT NULL, '
+                                  f'{self._AudioRecordingsTable.user_id_column} TEXT NOT NULL, '
+                                  f'{self._AudioRecordingsTable.title_column} TEXT NOT NULL, '
+                                  f'{self._AudioRecordingsTable.artist_column} TEXT NOT NULL, '
+                                  f'{self._AudioRecordingsTable.file_column} TEXT NOT NULL,'
+                                  f'{self._AudioRecordingsTable.file_size_megabytes_column} REAL NOT NULL,'
+                                  f'{self._AudioRecordingsTable.codec_column} TEXT NOT NULL,'
+                                  f'{self._AudioRecordingsTable.bit_rate_column} INTEGER NOT NULL)')
+
+        self._make_query(audio_recordings_query)
 
     def _database_directory_exists(self) -> bool:
 

@@ -8,19 +8,19 @@ from uuid import UUID
 from ..configuration.app_settings import AppSettings
 from ..domain.audio_recording import AudioRecording
 from ..exceptions.audio_file_not_found_exception import AudioFileNotFoundException
-from .user_audio_context import UserAudioContext
+from .tubefy_context import TubefyContext
 
 
 class UserAudioPersistence:
 
     _log = logging.getLogger(__name__)
-    _context: UserAudioContext
+    _context: TubefyContext
     _audio_files_directory: str
 
     @inject
     def __init__(self, app_settings: AppSettings = Provide['app_settings']):
 
-        self._context = UserAudioContext()
+        self._context = TubefyContext()
         self._audio_files_directory = os.path.abspath(app_settings.persistence_settings.audio_files_directory)
 
         if not self._directory_exists(self._audio_files_directory):

@@ -9,6 +9,7 @@ from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 
 from . import fixtures
+from . import authentication_service_test
 from . import user_audio_service_test
 from . import video_search_service_test
 from .mocks.sample_audio_cleaner_mock import SampleAudioCleanerMock
@@ -27,7 +28,8 @@ pytest_plugins: list[str] = [f'{fixtures.__name__}.{module}' for _, module, _ in
 @pytest.fixture(scope='session', autouse=True)
 def setup_module_initializer() -> None:
 
-    modules_to_wire = [__name__, app_module, user_audio_service_test, video_search_service_test]
+    tests = [authentication_service_test, user_audio_service_test, video_search_service_test]
+    modules_to_wire = [__name__, app_module, *tests]
     packages_to_wire = [fixtures, *app_components]
     module_initializer = ModuleInitializer()
     module_initializer.wire(modules=modules_to_wire, packages=packages_to_wire)

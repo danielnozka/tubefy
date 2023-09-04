@@ -14,5 +14,6 @@ return_json = ServerResponseHandler.return_json
 
 http_delete = ServerRoutesDispatcher.expose_controller_http_delete_method
 http_get = ServerRoutesDispatcher.expose_controller_http_get_method
+http_post = ServerRoutesDispatcher.expose_controller_http_post_method
 http_put = ServerRoutesDispatcher.expose_controller_http_put_method
 route = ServerRoutesDispatcher.expose_controller_class

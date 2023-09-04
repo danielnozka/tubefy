@@ -37,6 +37,11 @@ class ServerRoutesDispatcher(cherrypy.dispatch.RoutesDispatcher):
         return cls._expose_controller_http_method(method_route, 'GET')
 
     @classmethod
+    def expose_controller_http_post_method(cls, method_route: str) -> ControllerMethodType:
+
+        return cls._expose_controller_http_method(method_route, 'POST')
+
+    @classmethod
     def expose_controller_http_put_method(cls, method_route: str) -> ControllerMethodType:
 
         return cls._expose_controller_http_method(method_route, 'PUT')
