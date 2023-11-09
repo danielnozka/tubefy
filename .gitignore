@@ -1,9 +1,9 @@
-# Client
+# Frontend
 .angular/
 .vscode/
 node_modules/
 
-# Server
+# Backend
 __pycache__/
 .pytest_cache/
 .idea/
