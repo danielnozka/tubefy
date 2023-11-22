@@ -14,7 +14,7 @@ from ..tools.server import route
 from ..use_cases.authentication_service import AuthenticationService
 
 
-@route('')
+@route('/api/auth')
 class AuthenticationController:
 
     _log: Logger = logging.getLogger(__name__)

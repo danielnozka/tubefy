@@ -1,7 +1,4 @@
-from logging import Formatter
-from logging import LogRecord
-
-from ..server import get_request_id
+from logging import Formatter, LogRecord
 
 
 class LoggingFormatter(Formatter):
@@ -19,7 +16,7 @@ class LoggingFormatter(Formatter):
     def format(self, record: LogRecord) -> str:
 
         self._select_format(record)
-        record.correlation = get_request_id()
+        record.correlation = 'aaaa'
         record.msg = self._get_message_with_function_name(record)
 
         if self._record_has_exception(record):

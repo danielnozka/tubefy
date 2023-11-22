@@ -3,7 +3,7 @@ import logging
 from logging import Logger
 from youtube_search import YoutubeSearch
 
-from ..exceptions.youtube_search_exception import YoutubeSearchException
+from ..exceptions import YoutubeSearchException
 
 
 logging.getLogger('urllib3').propagate = False
