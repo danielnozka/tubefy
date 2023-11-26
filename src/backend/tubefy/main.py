@@ -1,14 +1,13 @@
 import logging
-import os
 
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
 from .configuration import AppSettings
 from .controllers import app_controllers
-from .module_initializer import app_components, ModuleInitializer
+from .module_initializer import APP_COMPONENTS, ModuleInitializer
 from .server import Server
-from .tools.logging import LoggingBuilder
+from .services import LoggingBuilder
 
 
 class Main:
@@ -17,9 +16,13 @@ class Main:
     _server: Server
 
     @inject
-    def __init__(self, app_settings: AppSettings = Provide['app_settings']):
+    def __init__(
+        self,
+        app_settings: AppSettings = Provide['app_settings'],
+        logging_builder: LoggingBuilder = Provide['logging_builder']
+    ):
 
-        LoggingBuilder(app_settings.root_path, os.path.join(app_settings.root_path, 'log_settings.json')).configure()
+        logging_builder.build()
         self._log = logging.getLogger(__name__)
         self._server = Server(app_settings.server_settings.host, app_settings.server_settings.port)
 
@@ -40,6 +43,6 @@ class Main:
 if __name__ == '__main__':
 
     module_initializer = ModuleInitializer()
-    module_initializer.wire(modules=[__name__], packages=app_components)
+    module_initializer.wire(modules=[__name__], packages=APP_COMPONENTS)
     main = Main()
     main.start()
