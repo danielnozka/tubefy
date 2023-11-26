@@ -1,64 +1,51 @@
-import os
+import logging
 
-from dependency_injector.wiring import inject
-from dependency_injector.wiring import Provide
-from dependency_injector.wiring import Provider
-from typing import Callable
+from dependency_injector.wiring import inject, Provide
+from logging import Logger
+from pathlib import Path
+from string import Template
 
-from ..communications.youtube_audio_downloader import YoutubeAudioDownloader
-from ..configuration.app_settings import AppSettings
-from .sample_audio_cleaner import SampleAudioCleaner
+from ..configuration import AppSettings, AudioConversionSettings
+from ..domain import VideoAudioSample
+from ..services import DirectoryBuilder
 
 
-class SampleAudioPersistence:
+class VideoAudioSamplePersistence:
 
+    _log: Logger = logging.getLogger(__name__)
     _sample_files_directory: str = 'samples'
-    _sample_files_directory_path: str
-    _youtube_audio_downloader: YoutubeAudioDownloader
-    _sample_audio_cleaner: SampleAudioCleaner
+    _sample_files_directory_path: Path
+    _sample_file_path_template: Template
+    _audio_conversion_settings: AudioConversionSettings
 
     @inject
-    def __init__(self,
-                 app_settings: AppSettings = Provide['app_settings'],
-                 youtube_audio_downloader: YoutubeAudioDownloader = Provide['youtube_audio_downloader'],
-                 sample_audio_cleaner_provider: Callable[[str], SampleAudioCleaner] = Provider['sample_audio_cleaner']):
+    def __init__(
+        self,
+        app_settings: AppSettings = Provide['app_settings'],
+        directory_builder: DirectoryBuilder = Provide['directory_builder']
+    ):
 
-        self._sample_files_directory_path = os.path.join(
-            os.path.abspath(app_settings.persistence_settings.audio_files_directory),
-            self._sample_files_directory
+        self._sample_files_directory_path = directory_builder.build(
+            app_settings.persistence_settings.audio_files_directory_path.joinpath(self._sample_files_directory)
         )
+        self._audio_conversion_settings = app_settings.audio_conversion_settings
+        self._sample_file_path_template = Template(f'${{file_path}}.{self._audio_conversion_settings.default_codec}')
 
-        if not self._directory_exists(self._sample_files_directory_path):
+    def get_video_audio_sample(self, video_id: str) -> VideoAudioSample:
 
-            self._create_directory(self._sample_files_directory_path)
+        self._log.debug(f'Start [funcName](video_id=\'{video_id}\')')
+        result = VideoAudioSample(video_id=video_id, file_path=self._get_video_audio_sample_file_path(video_id))
+        self._log.debug(f'End [funcName](video_id=\'{video_id}\')')
 
-        self._youtube_audio_downloader = youtube_audio_downloader
-        self._sample_audio_cleaner = sample_audio_cleaner_provider(self._sample_files_directory_path)
-        self._sample_audio_cleaner.cleanup()
-
-    def get_sample_files_directory(self) -> str:
-
-        return self._sample_files_directory_path
-
-    def get_sample_audio_file(self, video_id: str) -> str | None:
-
-        sample_audio_file = os.path.join(self._sample_files_directory_path,
-                                         f'{video_id}.{self._youtube_audio_downloader.get_default_codec()}')
-
-        if os.path.isfile(sample_audio_file):
-
-            return sample_audio_file
-
-        else:
-
-            return None
+        return result
 
     @staticmethod
-    def _directory_exists(directory_path: str) -> bool:
+    def video_audio_sample_exists(video_audio_sample: VideoAudioSample) -> bool:
 
-        return os.path.isdir(directory_path)
+        return video_audio_sample.file_path.exists()
 
-    @staticmethod
-    def _create_directory(directory_path: str) -> None:
+    def _get_video_audio_sample_file_path(self, video_id: str) -> Path:
 
-        os.makedirs(directory_path, exist_ok=True)
+        return self._sample_files_directory_path.joinpath(
+            self._sample_file_path_template.substitute(file_path=video_id)
+        )

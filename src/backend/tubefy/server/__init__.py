@@ -1,5 +1,5 @@
 from .controllers_router import ControllersRouter
-from .domain import BaseController, BaseDto
+from .domain import BaseController, BaseInputDto, BaseOutputDto, FileDto
 from .server import Server
 
 

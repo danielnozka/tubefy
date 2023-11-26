@@ -1,1 +1,2 @@
+from .video_audio_sample_getter import VideoAudioSampleGetter
 from .video_search_handler import VideoSearchHandler

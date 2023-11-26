@@ -1,1 +1,2 @@
+from .audio_download_exception import AudioDownloadException
 from .youtube_search_exception import YoutubeSearchException

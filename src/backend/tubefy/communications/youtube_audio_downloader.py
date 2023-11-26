@@ -1,38 +1,36 @@
 import logging
-import os
-import platform
-import py7zr
 
+from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from string import Template
 from yt_dlp import YoutubeDL
 
-from ..domain.audio_download_options import AudioDownloadOptions
-from ..exceptions.audio_download_exception import AudioDownloadException
+from ..configuration import AppSettings, AudioConversionSettings
+from ..domain import BaseVideoAudio
+from ..dtos import AudioDownloadOptionsInput
+from ..exceptions import AudioDownloadException
 
 
 class YoutubeAudioDownloader:
 
     _log: Logger = logging.getLogger(__name__)
     _url_template: Template = Template('https://www.youtube.com/watch?v=${video_id}')
-    _current_directory: str = os.path.dirname(__file__)
-    _ffmpeg_windows_binary_files: str = os.path.join(_current_directory, 'ffmpeg.7z')
-    _ffmpeg_linux_path: str = '/usr/bin/ffmpeg'
     _max_download_attempts: int = 3
-    _default_codec: str = 'mp3'
-    _default_bit_rate: int = 96
-    _output_template: Template = Template('${file_path}.%(ext)s')
-    _ffmpeg_location: str
+    _output_template: Template = Template('${file_path_without_extension}.%(ext)s')
+    _audio_conversion_settings: AudioConversionSettings
 
-    def __init__(self):
+    @inject
+    def __init__(self, app_settings: AppSettings = Provide['app_settings']):
 
-        self._ffmpeg_location = self._get_ffmpeg_location()
+        self._audio_conversion_settings = app_settings.audio_conversion_settings
 
-    def download_audio(self, video_id: str, download_directory: str, filename: str,
-                       audio_download_options: AudioDownloadOptions | None = None) -> tuple[str, float]:
+    def download(
+        self,
+        video_audio: BaseVideoAudio,
+        audio_download_options_input: AudioDownloadOptionsInput | None = None
+    ) -> None:
 
-        self._log.debug(f'Start [funcName](video_id=\'{video_id}\', download_directory=\'{download_directory}\', '
-                        f'filename=\'{filename}\', {audio_download_options})')
+        self._log.debug(f'Start [funcName]({video_audio}, {audio_download_options_input})')
 
         download_attempt = 1
 
@@ -40,24 +38,20 @@ class YoutubeAudioDownloader:
 
             try:
 
-                downloader_options = self._get_downloader_options(download_directory, filename, audio_download_options)
+                downloader_options = self._get_downloader_options(video_audio, audio_download_options_input)
 
                 with YoutubeDL(downloader_options) as downloader:
 
-                    downloader.download([self._get_audio_recording_url(video_id)])
+                    downloader.download([self._get_audio_recording_url(video_audio.video_id)])
 
-                output_file = self._get_output_file(download_directory, filename)
-                output_file_megabytes = self._get_file_megabytes(output_file)
+                self._log.debug(f'End [funcName]({video_audio}, {audio_download_options_input})')
 
-                self._log.debug(f'End [funcName](video_id=\'{video_id}\', download_directory=\'{download_directory}\', '
-                                f'filename=\'{filename}\', {audio_download_options})')
-
-                return output_file, output_file_megabytes
+                return
 
             except Exception as exception:
 
                 self._log.warning(f'Exception found while downloading audio on attempt {download_attempt}',
-                                  extra={'exception': f'{exception.__class__.__name__}: {exception}'})
+                                  extra={'exception': exception})
 
                 download_attempt += 1
 
@@ -65,53 +59,28 @@ class YoutubeAudioDownloader:
 
             raise AudioDownloadException
 
-    def get_default_codec(self) -> str:
+    def _get_downloader_options(
+        self,
+        video_audio: BaseVideoAudio,
+        audio_download_options_input: AudioDownloadOptionsInput | None = None
+    ) -> dict:
 
-        return self._default_codec
+        output_template = self._get_output_template(video_audio)
 
-    def _get_ffmpeg_location(self) -> str:
-
-        if platform.system() == 'Windows':
-
-            self._extract_ffmpeg_binary_files()
-
-            return self._current_directory
-
-        elif platform.system() == 'Linux':
-
-            return self._ffmpeg_linux_path
-
-        else:
-
-            self._log.warning('Operative System does not match Windows or Linux. FFMPEG path might cause problems')
-
-            return self._current_directory
-
-    def _extract_ffmpeg_binary_files(self) -> None:
-
-        with py7zr.SevenZipFile(self._ffmpeg_windows_binary_files, mode='r') as z:
-
-            z.extractall(self._current_directory)
-
-    def _get_downloader_options(self, download_directory: str, filename: str,
-                                audio_download_options: AudioDownloadOptions | None = None) -> dict:
-
-        output_template = self._get_output_template(download_directory, filename)
-
-        if audio_download_options is None:
+        if audio_download_options_input is None:
 
             downloader_options = self._get_default_downloader_options(output_template)
 
         else:
 
-            downloader_options = self._get_custom_downloader_options(output_template, audio_download_options)
+            downloader_options = self._get_custom_downloader_options(output_template, audio_download_options_input)
 
         return downloader_options
 
     def _get_default_downloader_options(self, output_template: str) -> dict:
 
         options = {
-            'ffmpeg_location': self._ffmpeg_location,
+            'ffmpeg_location': self._audio_conversion_settings.ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
             'logger': self._log,
@@ -120,8 +89,8 @@ class YoutubeAudioDownloader:
             'postprocessors': [
                 {
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': self._default_codec,
-                    'preferredquality': str(self._default_bit_rate),
+                    'preferredcodec': self._audio_conversion_settings.default_codec,
+                    'preferredquality': str(self._audio_conversion_settings.default_bit_rate),
                 }
             ],
             'prefer_ffmpeg': True,
@@ -130,11 +99,13 @@ class YoutubeAudioDownloader:
 
         return options
 
-    def _get_custom_downloader_options(self, output_template: str,
-                                       audio_download_options: AudioDownloadOptions) -> dict:
+    def _get_custom_downloader_options(
+        self, output_template: str,
+        audio_download_options_input: AudioDownloadOptionsInput
+    ) -> dict:
 
         options = {
-            'ffmpeg_location': self._ffmpeg_location,
+            'ffmpeg_location': self._audio_conversion_settings.ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
             'logger': self._log,
@@ -143,8 +114,8 @@ class YoutubeAudioDownloader:
             'postprocessors': [
                 {
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': audio_download_options.codec,
-                    'preferredquality': str(audio_download_options.bit_rate)
+                    'preferredcodec': audio_download_options_input.codec,
+                    'preferredquality': str(audio_download_options_input.bit_rate)
                 },
                 {
                     'key': 'EmbedThumbnail'
@@ -152,9 +123,9 @@ class YoutubeAudioDownloader:
             ],
             'postprocessor_args': [
                 '-metadata',
-                f'title={audio_download_options.title}',
+                f'title={audio_download_options_input.title}',
                 '-metadata',
-                f'artist={audio_download_options.artist}'
+                f'artist={audio_download_options_input.artist}'
             ],
             'prefer_ffmpeg': True,
             'quiet': True,
@@ -163,28 +134,12 @@ class YoutubeAudioDownloader:
 
         return options
 
-    def _get_output_template(self, download_directory: str, filename: str) -> str:
+    def _get_output_template(self, video_audio: BaseVideoAudio) -> str:
 
-        return self._output_template.substitute(file_path=os.path.join(download_directory, filename))
+        return self._output_template.substitute(
+            file_path_without_extension=video_audio.file_path.parent.joinpath(video_audio.file_path.stem)
+        )
 
     def _get_audio_recording_url(self, video_id: str) -> str:
 
         return self._url_template.substitute(video_id=video_id)
-
-    def _get_output_file(self, download_directory: str, filename: str,
-                         audio_download_options: AudioDownloadOptions | None = None) -> str:
-
-        if audio_download_options is None:
-
-            output_file = f'{os.path.join(download_directory, filename)}.{self._default_codec}'
-
-        else:
-
-            output_file = f'{os.path.join(download_directory, filename)}.{audio_download_options.codec}'
-
-        return output_file
-
-    @staticmethod
-    def _get_file_megabytes(file_path: str) -> float:
-
-        return os.stat(file_path).st_size / (1024 ** 2)

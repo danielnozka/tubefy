@@ -1,7 +1,7 @@
-from .videos_search_controller import VideoSearchController
+from .video_handler_controller import VideoHandlerController
 from ..server import BaseController
 
 
 app_controllers: list[type[BaseController]] = [
-    VideoSearchController
+    VideoHandlerController
 ]

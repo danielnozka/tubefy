@@ -1,7 +1,7 @@
-from ..server import BaseDto
+from ..server import BaseOutputDto
 
 
-class VideoOutput(BaseDto):
+class VideoOutput(BaseOutputDto):
 
     id: str
     title: str

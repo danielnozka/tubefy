@@ -1,1 +1,2 @@
+from .youtube_audio_downloader import YoutubeAudioDownloader
 from .youtube_videos_getter import YoutubeVideosGetter

@@ -1,1 +1,2 @@
+from .video_audio_adapter import VideoAudioAdapter
 from .youtube_videos_adapter import YoutubeVideosAdapter

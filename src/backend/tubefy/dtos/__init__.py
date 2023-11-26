@@ -1,1 +1,3 @@
+from .audio_download_options_input import AudioDownloadOptionsInput
+from .video_audio_output import VideoAudioOutput
 from .video_output import VideoOutput

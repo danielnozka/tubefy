@@ -2,7 +2,7 @@ from humps import camelize
 from pydantic import BaseModel
 
 
-class BaseDto(BaseModel):
+class BaseOutputDto(BaseModel):
 
     class Config:
 
