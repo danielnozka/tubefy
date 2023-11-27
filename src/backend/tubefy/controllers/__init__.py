@@ -2,6 +2,6 @@ from .video_handler_controller import VideoHandlerController
 from ..server import BaseController
 
 
-app_controllers: list[type[BaseController]] = [
+APP_CONTROLLERS: list[type[BaseController]] = [
     VideoHandlerController
 ]

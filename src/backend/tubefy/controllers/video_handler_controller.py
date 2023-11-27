@@ -41,7 +41,7 @@ class VideoHandlerController(BaseController):
 
             self._log.error(f'End [funcName](query=\'{query}\') with exceptions', extra={'exception': exception})
 
-    @http_get('/{video_id}/sample')
+    @http_get('/{video_id}/audio')
     def get_video_audio_sample(self, video_id: str) -> VideoAudioOutput:
 
         self._log.info(f'Start [funcName](video_id=\'{video_id}\')')

@@ -4,7 +4,7 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
 from .configuration import AppSettings
-from .controllers import app_controllers
+from .controllers import APP_CONTROLLERS
 from .module_initializer import APP_COMPONENTS, ModuleInitializer
 from .server import Server
 from .services import LoggingBuilder
@@ -32,7 +32,7 @@ class Main:
 
         try:
 
-            self._server.register_controllers(app_controllers)
+            self._server.register_controllers(APP_CONTROLLERS)
             self._server.start()
 
         except Exception as exception:
