@@ -17,8 +17,12 @@ class YoutubeVideosAdapter:
 
         for video in videos_message:
 
-            output_video = VideoOutput(id=video['id'], title=video['title'], thumbnail_url=video['thumbnails'][0])
-            result.append(output_video)
+            video_output: VideoOutput = VideoOutput(
+                id=video['id'],
+                title=video['title'],
+                thumbnail_url=video['thumbnails'][0]
+            )
+            result.append(video_output)
 
         self._log.debug('End [funcName]()')
 

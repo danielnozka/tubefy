@@ -3,7 +3,7 @@ import logging
 from logging import Logger
 from youtube_search import YoutubeSearch
 
-from ..exceptions import YoutubeSearchException
+from ..exceptions import YoutubeVideoSearchException
 
 
 logging.getLogger('urllib3').propagate = False
@@ -21,10 +21,11 @@ class YoutubeVideosGetter:
         try:
 
             result = YoutubeSearch(query, self._max_results).to_dict()
+
             self._log.debug(f'End [funcName](query=\'{query}\')')
 
             return result
 
         except Exception as exception:
 
-            raise YoutubeSearchException(exception)
+            raise YoutubeVideoSearchException(exception)

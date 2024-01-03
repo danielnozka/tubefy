@@ -1,106 +1,151 @@
 import logging
 
-from dependency_injector.wiring import inject
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import inject, Provide
+from fastapi import APIRouter, Request
 from logging import Logger
 from uuid import UUID
 
-from ..dtos.output_audio_recording import OutputAudioRecording
-from ..tools.server import expect_json
-from ..tools.server import get_json_content
-from ..tools.server import http_delete
-from ..tools.server import http_get
-from ..tools.server import http_put
-from ..tools.server import return_audio
-from ..tools.server import return_downloadable_file
-from ..tools.server import return_exception
-from ..tools.server import return_json
-from ..tools.server import route
-from ..use_cases.user_audio_service import UserAudioService
+from .app_base_controller import AppBaseController
+from .user_authentication_controller import UserAuthenticationController
+from ..dtos import AudioDownloadOptionsInput, AudioOutput, AudioRecordingOutput
+from ..use_cases import AudioRecordingAdder, AudioRecordingDeleter, AudioRecordingGetter, UserGetter
 
 
-@route('/audio/users/{user_id}')
-class UserAudioController:
+class UserAudioController(AppBaseController):
 
+    api_router: APIRouter = APIRouter(prefix='/api', tags=['user_audio'])
     _log: Logger = logging.getLogger(__name__)
-    _user_audio_service: UserAudioService
+    _audio_recording_adder: AudioRecordingAdder
+    _audio_recording_deleter: AudioRecordingDeleter
+    _audio_recording_getter: AudioRecordingGetter
+    _user_getter: UserGetter
 
     @inject
-    def __init__(self, user_audio_service: UserAudioService = Provide['user_audio_service']):
+    def __init__(
+        self,
+        audio_recording_adder: AudioRecordingAdder = Provide['audio_recording_adder'],
+        audio_recording_deleter: AudioRecordingDeleter = Provide['audio_recording_deleter'],
+        audio_recording_getter: AudioRecordingGetter = Provide['audio_recording_getter'],
+        user_getter: UserGetter = Provide['user_getter']
+    ):
 
-        self._user_audio_service = user_audio_service
+        self.api_router.add_api_route(
+            path='/videos/{video_id}/audio',
+            endpoint=self.add_user_audio_recording,
+            methods=['POST']
+        )
+        self.api_router.add_api_route(
+            path='/audio',
+            endpoint=self.get_all_user_audio_recordings,
+            methods=['GET']
+        )
+        self.api_router.add_api_route(
+            path='/audio/{audio_recording_id}',
+            endpoint=self.get_user_audio_recording,
+            methods=['GET']
+        )
+        self.api_router.add_api_route(
+            path='/audio/{audio_recording_id}',
+            endpoint=self.delete_user_audio_recording,
+            methods=['DELETE']
+        )
+        self._audio_recording_adder = audio_recording_adder
+        self._audio_recording_deleter = audio_recording_deleter
+        self._audio_recording_getter = audio_recording_getter
+        self._user_getter = user_getter
 
-    @http_put('/videos/{video_id}')
-    @expect_json
-    def save_user_audio_recording(self, user_id: UUID, video_id: str) -> None:
+    async def add_user_audio_recording(
+        self,
+        video_id: str,
+        audio_download_options_input: AudioDownloadOptionsInput,
+        request: Request
+    ) -> None:
 
-        self._log.info(f'Start [funcName](user_id=\'{user_id}\', video_id=\'{video_id}\')')
+        self._log.info(
+            f'Start [funcName](video_id={video_id}, audio_download_options_input={audio_download_options_input})'
+        )
 
         try:
 
-            self._user_audio_service.save_user_audio_recording(user_id, video_id, get_json_content())
-            self._log.info(f'End [funcName](user_id=\'{user_id}\', video_id=\'{video_id}\')')
+            token = await self._authenticate_request(request)
+            user = self._user_getter.get(token)
+            self._audio_recording_adder.add(video_id, audio_download_options_input, user)
+            self._log.info(
+                f'End [funcName](video_id={video_id}, audio_download_options_input={audio_download_options_input})'
+            )
 
         except Exception as exception:
 
-            self._log.error(f'End [funcName](user_id=\'{user_id}\', video_id=\'{video_id}\') with exceptions',
-                            extra={'exception': exception})
+            self._log.error(
+                f'End [funcName](video_id={video_id}, audio_download_options_input={audio_download_options_input}) '
+                f'with exceptions',
+                extra={'exception': exception}
+            )
 
-            return_exception(exception)
+            raise exception
 
-    @http_get('/recordings')
-    @return_json
-    def get_all_user_audio_recordings(self, user_id: UUID) -> list[OutputAudioRecording]:
+    async def get_all_user_audio_recordings(self, request: Request) -> list[AudioRecordingOutput]:
 
-        self._log.info(f'Start [funcName](user_id=\'{user_id}\')')
+        self._log.info('Start [funcName]()')
 
         try:
 
-            result = self._user_audio_service.get_all_user_audio_recordings(user_id)
-            self._log.info(f'End [funcName](user_id=\'{user_id}\')')
+            token = await self._authenticate_request(request)
+            user = self._user_getter.get(token)
+            result = self._audio_recording_getter.get_all(user)
+            self._log.info('End [funcName]()')
 
             return result
 
         except Exception as exception:
 
-            self._log.error(f'End [funcName](user_id=\'{user_id}\') with exceptions', extra={'exception': exception})
+            self._log.error('End [funcName]() with exceptions', extra={'exception': exception})
 
-            return_exception(exception)
+            raise exception
 
-    @http_delete('/recordings/{recording_id}')
-    def delete_user_audio_recording(self, user_id: UUID, recording_id: UUID) -> None:
+    async def get_user_audio_recording(self, audio_recording_id: UUID, request: Request) -> AudioOutput:
 
-        self._log.info(f'Start [funcName](user_id=\'{user_id}\', recording_id=\'{recording_id}\')')
-
-        try:
-
-            self._user_audio_service.delete_user_audio_recording(user_id, recording_id)
-            self._log.info(f'End [funcName](user_id=\'{user_id}\', recording_id=\'{recording_id}\')')
-
-        except Exception as exception:
-
-            self._log.error(f'End [funcName](user_id=\'{user_id}\', recording_id=\'{recording_id}\') with exceptions',
-                            extra={'exception': exception})
-
-            return_exception(exception)
-
-    @http_get('/recordings/{recording_id}')
-    @return_audio
-    @return_downloadable_file
-    def download_user_audio_recording(self, user_id: UUID, recording_id: UUID) -> bytes:
-
-        self._log.info(f'Start [funcName](user_id=\'{user_id}\', recording_id=\'{recording_id}\')')
+        self._log.info(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
         try:
 
-            result = self._user_audio_service.download_user_audio_recording(user_id, recording_id)
-            self._log.info(f'End [funcName](user_id=\'{user_id}\', recording_id=\'{recording_id}\')')
+            token = await self._authenticate_request(request)
+            user = self._user_getter.get(token)
+            result = self._audio_recording_getter.get(audio_recording_id, user)
+            self._log.info(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
             return result
 
         except Exception as exception:
 
-            self._log.error(f'End [funcName](user_id=\'{user_id}\', recording_id=\'{recording_id}\') with exceptions',
-                            extra={'exception': exception})
+            self._log.error(
+                f'End [funcName](audio_recording_id=\'{audio_recording_id}\') with exceptions',
+                extra={'exception': exception}
+            )
 
-            return_exception(exception)
+            raise exception
+
+    async def delete_user_audio_recording(self, audio_recording_id: UUID, request: Request) -> None:
+
+        self._log.info(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
+
+        try:
+
+            token = await self._authenticate_request(request)
+            user = self._user_getter.get(token)
+            self._audio_recording_deleter.delete(audio_recording_id, user)
+            self._log.info(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
+
+        except Exception as exception:
+
+            self._log.error(
+                f'End [funcName](audio_recording_id=\'{audio_recording_id}\') with exceptions',
+                extra={'exception': exception}
+            )
+
+            raise exception
+
+    @staticmethod
+    async def _authenticate_request(request: Request) -> str:
+
+        return await UserAuthenticationController.authenticate_request(request)

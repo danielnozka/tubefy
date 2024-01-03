@@ -1,7 +1,8 @@
-class UsernameAlreadyRegisteredException(Exception):
+from .app_base_exception import AppBaseException
 
-    status_code: int = 409
+
+class UsernameAlreadyRegisteredException(AppBaseException):
 
     def __init__(self, username: str):
 
-        super().__init__(f'Username \'{username}\' already registered')
+        super().__init__(status_code=409, detail=f'Username \'{username}\' already registered')

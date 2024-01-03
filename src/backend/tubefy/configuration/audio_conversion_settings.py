@@ -5,17 +5,12 @@ from pathlib import Path
 
 class AudioConversionSettings:
 
-    default_bit_rate: int
-    default_codec: str
+    audio_sample_bit_rate: int
+    audio_sample_codec: str
     ffmpeg_location: Path
 
-    def __init__(
-        self,
-        default_bit_rate: int,
-        default_codec: str,
-        ffmpeg_location: str
-    ):
+    def __init__(self, audio_sample_bit_rate: int, audio_sample_codec: str, ffmpeg_location: str):
 
-        self.default_bit_rate = int(os.environ.get('DEFAULT_BIT_RATE', default_bit_rate))
-        self.default_codec = os.environ.get('DEFAULT_CODEC', default_codec)
+        self.audio_sample_bit_rate = int(os.environ.get('AUDIO_SAMPLE_BIT_RATE', audio_sample_bit_rate))
+        self.audio_sample_codec = os.environ.get('AUDIO_SAMPLE_CODEC', audio_sample_codec)
         self.ffmpeg_location = Path(os.environ.get('FFMPEG_LOCATION', ffmpeg_location))

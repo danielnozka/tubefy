@@ -1,7 +1,10 @@
-class AudioFileNotFoundException(Exception):
+from pathlib import Path
 
-    status_code: int = 404
+from .app_base_exception import AppBaseException
 
-    def __init__(self, audio_file: str):
 
-        super().__init__(f'Audio file \'{audio_file}\' does not exist')
+class AudioFileNotFoundException(AppBaseException):
+
+    def __init__(self, audio_file_path: Path):
+
+        super().__init__(status_code=404, detail=f'Audio file \'{audio_file_path}\' does not exist')

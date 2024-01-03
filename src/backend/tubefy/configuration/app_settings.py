@@ -10,22 +10,23 @@ from .server_settings import ServerSettings
 class AppSettings:
 
     audio_conversion_settings: AudioConversionSettings
+    logging_settings: dict
     persistence_settings: PersistenceSettings
     server_settings: ServerSettings
-    _settings_file: str = 'app_settings.json'
-    _root_path: Path
-    _settings: dict
 
-    def __init__(self, root_path: Path):
+    def __init__(self, settings_file_path: Path):
 
-        self._root_path = root_path
-        self._open_settings_file()
-        self.audio_conversion_settings = AudioConversionSettings(**self._settings['audio_conversion_settings'])
-        self.persistence_settings = PersistenceSettings(**self._settings['persistence_settings'])
-        self.server_settings = ServerSettings(**self._settings['server_settings'])
+        settings = self._open_file(settings_file_path)
+        self.audio_conversion_settings = AudioConversionSettings(**settings['audio_conversion_settings'])
+        self.logging_settings = settings['logging_settings']
+        self.persistence_settings = PersistenceSettings(**settings['persistence_settings'])
+        self.server_settings = ServerSettings(**settings['server_settings'])
 
-    def _open_settings_file(self) -> None:
+    @staticmethod
+    def _open_file(file_path: Path) -> dict:
 
-        with open(self._root_path.joinpath(self._settings_file), 'r') as file:
+        with open(file_path, 'r') as file:
 
-            self._settings = json.load(file)
+            result = json.load(file)
+
+        return result

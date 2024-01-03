@@ -2,11 +2,13 @@ import logging
 
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
+from pathlib import Path
 from string import Template
+from uuid import uuid4
 from yt_dlp import YoutubeDL
 
 from ..configuration import AppSettings, AudioConversionSettings
-from ..domain import BaseVideoAudio
+from ..domain import AudioRecording, AudioSample, User
 from ..dtos import AudioDownloadOptionsInput
 from ..exceptions import AudioDownloadException
 
@@ -15,8 +17,8 @@ class YoutubeAudioDownloader:
 
     _log: Logger = logging.getLogger(__name__)
     _url_template: Template = Template('https://www.youtube.com/watch?v=${video_id}')
+    _output_file_template: Template = Template('${output_file_path}.%(ext)s')
     _max_download_attempts: int = 3
-    _output_template: Template = Template('${file_path_without_extension}.%(ext)s')
     _audio_conversion_settings: AudioConversionSettings
 
     @inject
@@ -24,93 +26,116 @@ class YoutubeAudioDownloader:
 
         self._audio_conversion_settings = app_settings.audio_conversion_settings
 
-    def download(
+    def download_audio_sample(self, video_id: str, output_directory: Path, output_filename: str) -> AudioSample:
+
+        self._log.debug(
+            f'Start [funcName](video_id=\'{video_id}\', output_directory=\'{output_directory}\', '
+            f'output_file_name=\'{output_filename}\')'
+        )
+        self._download(
+            video_id=video_id,
+            download_options=self._get_audio_sample_download_options(
+                output_directory=output_directory,
+                output_filename=output_filename
+            )
+        )
+        result: AudioSample = AudioSample(
+            id_=uuid4(),
+            video_id=video_id,
+            file_path=self._get_audio_sample_file_path(
+                output_directory=output_directory,
+                output_filename=output_filename
+            )
+        )
+        self._log.debug(
+            f'End [funcName](video_id=\'{video_id}\', output_directory=\'{output_directory}\', '
+            f'output_file_name=\'{output_filename}\')'
+        )
+
+        return result
+
+    def download_audio_recording(
         self,
-        video_audio: BaseVideoAudio,
-        audio_download_options_input: AudioDownloadOptionsInput | None = None
-    ) -> None:
+        video_id: str,
+        output_directory: Path,
+        output_filename: str,
+        audio_download_options_input: AudioDownloadOptionsInput,
+        user: User
+    ) -> AudioRecording:
 
-        self._log.debug(f'Start [funcName]({video_audio}, {audio_download_options_input})')
+        self._log.debug(
+            f'Start [funcName](video_id=\'{video_id}\', output_directory=\'{output_directory}\', '
+            f'output_file_name=\'{output_filename}\', audio_download_options_input={audio_download_options_input}, '
+            f'user={user})'
+        )
+        self._download(
+            video_id=video_id,
+            download_options=self._get_audio_recording_download_options(
+                output_directory=output_directory,
+                output_filename=output_filename,
+                audio_download_options_input=audio_download_options_input
+            )
+        )
+        result: AudioRecording = AudioRecording(
+            id_=uuid4(),
+            video_id=video_id,
+            file_path=self._get_audio_recording_file_path(
+                output_directory=output_directory,
+                output_filename=output_filename,
+                audio_download_options_input=audio_download_options_input
+            ),
+            title=audio_download_options_input.title,
+            artist=audio_download_options_input.artist,
+            codec=audio_download_options_input.codec,
+            bit_rate=audio_download_options_input.bit_rate,
+            user_id=user.id
+        )
+        self._log.debug(
+            f'End [funcName](video_id=\'{video_id}\', output_directory=\'{output_directory}\', '
+            f'output_file_name=\'{output_filename}\', audio_download_options_input={audio_download_options_input}, '
+            f'user={user})'
+        )
 
-        download_attempt = 1
+        return result
 
-        while download_attempt <= self._max_download_attempts:
+    def _get_audio_sample_download_options(self, output_directory: Path, output_filename: str) -> dict:
 
-            try:
-
-                downloader_options = self._get_downloader_options(video_audio, audio_download_options_input)
-
-                with YoutubeDL(downloader_options) as downloader:
-
-                    downloader.download([self._get_audio_recording_url(video_audio.video_id)])
-
-                self._log.debug(f'End [funcName]({video_audio}, {audio_download_options_input})')
-
-                return
-
-            except Exception as exception:
-
-                self._log.warning(f'Exception found while downloading audio on attempt {download_attempt}',
-                                  extra={'exception': exception})
-
-                download_attempt += 1
-
-        else:
-
-            raise AudioDownloadException
-
-    def _get_downloader_options(
-        self,
-        video_audio: BaseVideoAudio,
-        audio_download_options_input: AudioDownloadOptionsInput | None = None
-    ) -> dict:
-
-        output_template = self._get_output_template(video_audio)
-
-        if audio_download_options_input is None:
-
-            downloader_options = self._get_default_downloader_options(output_template)
-
-        else:
-
-            downloader_options = self._get_custom_downloader_options(output_template, audio_download_options_input)
-
-        return downloader_options
-
-    def _get_default_downloader_options(self, output_template: str) -> dict:
-
-        options = {
+        return {
             'ffmpeg_location': self._audio_conversion_settings.ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
-            'logger': self._log,
             'nocheckcertificate': True,
-            'outtmpl': output_template,
+            'outtmpl': self._get_output_file_template(
+                output_directory=output_directory,
+                output_filename=output_filename
+            ),
             'postprocessors': [
                 {
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': self._audio_conversion_settings.default_codec,
-                    'preferredquality': str(self._audio_conversion_settings.default_bit_rate),
+                    'preferredcodec': self._audio_conversion_settings.audio_sample_codec,
+                    'preferredquality': str(self._audio_conversion_settings.audio_sample_bit_rate),
                 }
             ],
             'prefer_ffmpeg': True,
             'quiet': True
         }
 
-        return options
-
-    def _get_custom_downloader_options(
-        self, output_template: str,
+    def _get_audio_recording_download_options(
+        self,
+        output_directory: Path,
+        output_filename: str,
         audio_download_options_input: AudioDownloadOptionsInput
     ) -> dict:
 
-        options = {
+        return {
             'ffmpeg_location': self._audio_conversion_settings.ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
-            'logger': self._log,
             'nocheckcertificate': True,
-            'outtmpl': output_template,
+            'outtmpl': self._get_output_file_template(
+                output_directory=output_directory,
+                output_filename=output_filename
+            ),
             'postprocessors': [
                 {
                     'key': 'FFmpegExtractAudio',
@@ -132,14 +157,44 @@ class YoutubeAudioDownloader:
             'writethumbnail': True
         }
 
-        return options
+    def _download(self, video_id: str, download_options: dict) -> None:
 
-    def _get_output_template(self, video_audio: BaseVideoAudio) -> str:
+        with YoutubeDL(download_options) as downloader:
 
-        return self._output_template.substitute(
-            file_path_without_extension=video_audio.file_path.parent.joinpath(video_audio.file_path.stem)
-        )
+            download_attempt: int = 1
 
-    def _get_audio_recording_url(self, video_id: str) -> str:
+            while download_attempt <= self._max_download_attempts:
 
-        return self._url_template.substitute(video_id=video_id)
+                try:
+
+                    downloader.download([self._url_template.substitute(video_id=video_id)])
+
+                    return
+
+                except Exception as exception:
+
+                    self._log.warning(f'Exception found while downloading audio on attempt {download_attempt}',
+                                      extra={'exception': exception})
+
+                    download_attempt += 1
+
+            else:
+
+                raise AudioDownloadException
+
+    def _get_output_file_template(self, output_directory: Path, output_filename: str) -> str:
+
+        return self._output_file_template.substitute(output_file_path=output_directory.joinpath(output_filename))
+
+    def _get_audio_sample_file_path(self, output_directory: Path, output_filename: str) -> Path:
+
+        return output_directory.joinpath(f'{output_filename}.{self._audio_conversion_settings.audio_sample_codec}')
+
+    @staticmethod
+    def _get_audio_recording_file_path(
+        output_directory: Path,
+        output_filename: str,
+        audio_download_options_input: AudioDownloadOptionsInput
+    ) -> Path:
+
+        return output_directory.joinpath(f'{output_filename}.{audio_download_options_input.codec}')

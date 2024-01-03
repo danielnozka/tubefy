@@ -16,7 +16,6 @@ class LoggingFormatter(Formatter):
     def format(self, record: LogRecord) -> str:
 
         self._select_format(record)
-        record.correlation = 'aaaa'
         record.msg = self._get_message_with_function_name(record)
 
         if self._record_has_exception(record):

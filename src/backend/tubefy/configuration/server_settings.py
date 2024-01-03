@@ -1,3 +1,6 @@
+import os
+
+
 class ServerSettings:
 
     host: str
@@ -5,5 +8,5 @@ class ServerSettings:
 
     def __init__(self, host: str, port: int):
 
-        self.host = host
-        self.port = port
+        self.host = os.environ.get('HOST', host)
+        self.port = os.environ.get('PORT', port)

@@ -1,16 +1,20 @@
-from ..server import BaseInputDto
+from humps import camelize
+from pydantic import BaseModel
 
 
-class AudioDownloadOptionsInput(BaseInputDto):
+class AudioDownloadOptionsInput(BaseModel):
 
     title: str
     artist: str
     codec: str
     bit_rate: int
 
+    class Config:
+
+        alias_generator = camelize
+        populate_by_name = True
+
     def __str__(self) -> str:
 
-        return (f'audio_download_options_input.title=\'{self.title}\', '
-                f'audio_download_options_input.artist=\'{self.artist}\', '
-                f'audio_download_options_input.codec=\'{self.codec}\', '
-                f'audio_download_options_input.bit_rate={self.bit_rate}')
+        return f'{self.__class__.__name__}(title=\'{self.title}\', artist=\'{self.artist}\', codec=\'{self.codec}\', ' \
+               f'bit_rate={self.bit_rate})'

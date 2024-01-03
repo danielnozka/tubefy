@@ -43,7 +43,4 @@ Thumbs.db
 __pycache__/
 .pytest_cache/
 data/
-ffmpeg.exe
-ffprobe.exe
-log/
 venv/
