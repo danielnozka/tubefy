@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.sql.expression import select
 from uuid import UUID
 
 from .domain import DatabaseAudioRecording, DatabaseAudioSample, DatabaseModel, DatabaseUser
@@ -32,7 +33,7 @@ class DatabaseContext:
 
         with self._make_session() as session:
 
-            return session.query(DatabaseAudioSample).filter(DatabaseAudioSample.video_id == video_id).first()
+            return session.scalars(select(DatabaseAudioSample).filter_by(video_id=video_id).limit(1)).first()
 
     def add_audio_sample(self, database_audio_sample: DatabaseAudioSample) -> None:
 
@@ -46,7 +47,7 @@ class DatabaseContext:
 
         with self._make_session() as session:
 
-            return session.query(DatabaseAudioSample).all()
+            return session.scalars(select(DatabaseAudioSample)).all()
 
     def delete_audio_sample(self, database_audio_sample: DatabaseAudioSample) -> None:
 
@@ -59,7 +60,7 @@ class DatabaseContext:
 
         with self._make_session() as session:
 
-            return session.query(DatabaseUser).filter(DatabaseUser.username == username).first()
+            return session.scalars(select(DatabaseUser).filter_by(username=username).limit(1)).first()
 
     def add_user(self, database_user: DatabaseUser) -> None:
 
@@ -73,8 +74,8 @@ class DatabaseContext:
 
         with self._make_session() as session:
 
-            return session.query(DatabaseAudioRecording).filter(
-                DatabaseAudioRecording.id == str(audio_recording_id)
+            return session.scalars(
+                select(DatabaseAudioRecording).filter_by(id=str(audio_recording_id)).limit(1)
             ).first()
 
     def add_audio_recording(self, database_audio_recording: DatabaseAudioRecording) -> None:
