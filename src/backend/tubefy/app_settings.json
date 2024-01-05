@@ -8,6 +8,11 @@
     "data_path": "./data",
     "audio_samples_deletion_interval_hours": 24.0
   },
+  "security_settings": {
+    "json_web_token_algorithm": "HS256",
+    "json_web_token_expiration_minutes": 60.0,
+    "json_web_token_key": "402614799e475bd82357efa28644ecf04ee2302cd2709cebc3590c6c1a17f15d"
+  },
   "server_settings": {
     "host": "0.0.0.0",
     "port": 9000
