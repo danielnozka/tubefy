@@ -49,6 +49,23 @@ class AudioSamplesPersistence:
         self._database_context.add_audio_sample(database_audio_sample)
         self._log.debug(f'End [funcName](database_audio_sample={database_audio_sample})')
 
+    def delete_all_audio_samples(self) -> None:
+
+        self._log.debug('Start [funcName]()')
+        database_audio_samples = self._database_context.get_all_audio_samples()
+
+        for database_audio_sample in database_audio_samples:
+
+            database_audio_sample_file_path: Path = Path(database_audio_sample.file_path)
+
+            if database_audio_sample_file_path.is_file():
+
+                database_audio_sample_file_path.unlink()
+
+            self._database_context.delete_audio_sample(database_audio_sample)
+
+        self._log.debug('End [funcName]()')
+
     def get_audio_samples_directory(self) -> Path:
 
         return self._sample_files_directory_path

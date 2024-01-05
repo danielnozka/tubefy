@@ -2,6 +2,7 @@ from .audio_recording_adder import AudioRecordingAdder
 from .audio_recording_deleter import AudioRecordingDeleter
 from .audio_recording_getter import AudioRecordingGetter
 from .audio_sample_getter import AudioSampleGetter
+from .audio_samples_deleter import AudioSamplesDeleter
 from .user_getter import UserGetter
 from .user_login_handler import UserLoginHandler
 from .user_registration_handler import UserRegistrationHandler

@@ -12,6 +12,7 @@ from .use_cases import (
     AudioRecordingDeleter,
     AudioRecordingGetter,
     AudioSampleGetter,
+    AudioSamplesDeleter,
     UserGetter,
     UserLoginHandler,
     UserRegistrationHandler,
@@ -40,6 +41,7 @@ class ModuleInitializer(DeclarativeContainer):
     audio_recording_deleter: Singleton[AudioRecordingDeleter] = Singleton(AudioRecordingDeleter)
     audio_recording_getter: Singleton[AudioRecordingGetter] = Singleton(AudioRecordingGetter)
     audio_sample_getter: Singleton[AudioSampleGetter] = Singleton(AudioSampleGetter)
+    audio_samples_deleter: Singleton[AudioSamplesDeleter] = Singleton(AudioSamplesDeleter)
     user_getter: Singleton[UserGetter] = Singleton(UserGetter)
     user_login_handler: Singleton[UserLoginHandler] = Singleton(UserLoginHandler)
     user_registration_handler: Singleton[UserRegistrationHandler] = Singleton(UserRegistrationHandler)

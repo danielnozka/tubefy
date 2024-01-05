@@ -1,6 +1,7 @@
 import logging
 import pkgutil
 import pytest
+import threading
 
 from dependency_injector.wiring import inject, Provide
 
@@ -23,6 +24,7 @@ def setup() -> None:
     module_initializer.wire(modules=[__name__], packages=[*APP_COMPONENTS, fixtures])
     setup_logging()
     yield
+    close_timer_threads()
     delete_test_data()
 
 
@@ -30,6 +32,15 @@ def setup() -> None:
 def setup_logging(logging_handler: LoggingHandler = Provide['logging_handler']) -> None:
 
     logging_handler.build()
+
+
+def close_timer_threads():
+
+    running_timer_threads = [thread for thread in threading.enumerate() if isinstance(thread, threading.Timer)]
+
+    for thread in running_timer_threads:
+
+        thread.cancel()
 
 
 @inject

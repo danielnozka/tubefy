@@ -42,6 +42,19 @@ class DatabaseContext:
             session.commit()
             session.refresh(database_audio_sample)
 
+    def get_all_audio_samples(self) -> list[DatabaseAudioSample]:
+
+        with self._make_session() as session:
+
+            return session.query(DatabaseAudioSample).all()
+
+    def delete_audio_sample(self, database_audio_sample: DatabaseAudioSample) -> None:
+
+        with self._make_session() as session:
+
+            session.delete(database_audio_sample)
+            session.commit()
+
     def get_user(self, username: str) -> DatabaseUser | None:
 
         with self._make_session() as session:

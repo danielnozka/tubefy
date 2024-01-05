@@ -6,7 +6,7 @@ from logging import Logger
 
 from .app_base_controller import AppBaseController
 from ..dtos import AudioOutput, VideoOutput
-from ..use_cases import AudioSampleGetter, VideoSearchHandler
+from ..use_cases import AudioSampleGetter, AudioSamplesDeleter, VideoSearchHandler
 
 
 class VideoHandlerController(AppBaseController):
@@ -20,6 +20,7 @@ class VideoHandlerController(AppBaseController):
     def __init__(
         self,
         audio_sample_getter: AudioSampleGetter = Provide['audio_sample_getter'],
+        audio_samples_deleter: AudioSamplesDeleter = Provide['audio_samples_deleter'],
         video_search_handler: VideoSearchHandler = Provide['video_search_handler']
     ):
 
@@ -35,6 +36,7 @@ class VideoHandlerController(AppBaseController):
         )
         self._audio_sample_getter = audio_sample_getter
         self._video_search_handler = video_search_handler
+        audio_samples_deleter.delete()
 
     async def search_videos(self, query: str) -> list[VideoOutput]:
 

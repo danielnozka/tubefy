@@ -22,18 +22,6 @@ class DirectoryHandler:
 
         return directory_absolute_path
 
-    def delete_directory_content(self, directory_path: Path) -> None:
-
-        self._log.debug(f'Start [funcName](directory_path=\'{directory_path}\')')
-
-        directory_absolute_path = self._get_directory_absolute_path(directory_path)
-
-        if self._is_directory(directory_absolute_path):
-
-            self._delete_directory_content_but_keep_directory(directory_absolute_path)
-
-        self._log.debug(f'End [funcName](directory_path=\'{directory_path}\')')
-
     def delete_directory(self, directory_path: Path) -> None:
 
         self._log.debug(f'Start [funcName](directory_path=\'{directory_path}\')')
@@ -42,7 +30,16 @@ class DirectoryHandler:
 
         if self._is_directory(directory_absolute_path):
 
-            self._delete_directory_content_and_directory(directory_absolute_path)
+            try:
+
+                self._delete_directory_recursively(directory_absolute_path)
+
+            except Exception as exception:
+
+                self._log.warning(
+                    f'Exception found while deleting directory \'{directory_path}\'',
+                    extra={'exception': exception}
+                )
 
         self._log.debug(f'End [funcName](directory_path=\'{directory_path}\')')
 
@@ -68,7 +65,7 @@ class DirectoryHandler:
 
             return False
 
-    def _delete_directory_content_but_keep_directory(self, directory_path: Path) -> None:
+    def _delete_directory_recursively(self, directory_path: Path) -> None:
 
         for item in directory_path.iterdir():
 
@@ -78,18 +75,6 @@ class DirectoryHandler:
 
             elif item.is_dir():
 
-                self._delete_directory_content_and_directory(item)
-
-    def _delete_directory_content_and_directory(self, directory_path: Path) -> None:
-
-        for item in directory_path.iterdir():
-
-            if item.is_file():
-
-                item.unlink()
-
-            elif item.is_dir():
-
-                self._delete_directory_content_and_directory(item)
+                self._delete_directory_recursively(item)
 
         directory_path.rmdir()
