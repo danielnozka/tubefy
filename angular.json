@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/tubefy",
+            "outputPath": "src/backend/tubefy/static",
             "index": "src/frontend/index.html",
             "browser": "src/frontend/main.ts",
             "polyfills": [
