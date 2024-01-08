@@ -1,9 +1,9 @@
-from humps import camelize
-from pydantic import BaseModel
 from uuid import UUID
 
+from .base_json_dto import BaseJsonDto
 
-class AudioRecordingOutput(BaseModel):
+
+class AudioRecordingOutput(BaseJsonDto):
 
     id: UUID
     video_id: str
@@ -11,8 +11,3 @@ class AudioRecordingOutput(BaseModel):
     artist: str
     codec: str
     bit_rate: int
-
-    class Config:
-
-        alias_generator = camelize
-        populate_by_name = True

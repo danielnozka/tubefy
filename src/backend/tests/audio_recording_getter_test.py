@@ -21,7 +21,7 @@ class AudioRecordingGetterTest:
 
     def test_user_authorization_is_required_to_get_all_audio_recordings(self, test_client: TestClient) -> None:
 
-        response = self._request_all_audio_recordings_without_authorization(test_client)
+        response: Response = self._request_all_audio_recordings_without_authorization(test_client)
         assert response.status_code == 401
 
     @pytest.mark.dependency(depends=['audio_recording_addition'], scope='session')
@@ -32,13 +32,16 @@ class AudioRecordingGetterTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_all_audio_recordings(json_web_token=json_web_token, test_client=test_client)
+        response: Response = self._request_all_audio_recordings(json_web_token=json_web_token, test_client=test_client)
         assert response.status_code == 200
-        json_response = response.json()
-        assert type(json_response) == list
+        json_response: list[dict[str, str | int]] = response.json()
+        assert type(json_response) is list
         assert len(json_response) > 0
-        audio_recording = json_response[0]
+        audio_recording: dict[str, str | int] = json_response[0]
         assert audio_recording.get('id') == str(audio_recording_id)
+
+        attribute: str
+        expected_value: str | int
 
         for attribute, expected_value in self._expected_audio_recording.items():
 
@@ -50,7 +53,7 @@ class AudioRecordingGetterTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_audio_recording_without_authorization(
+        response: Response = self._request_audio_recording_without_authorization(
             audio_recording_id=audio_recording_id,
             test_client=test_client
         )
@@ -64,7 +67,7 @@ class AudioRecordingGetterTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_audio_recording(
+        response: Response = self._request_audio_recording(
             audio_recording_id=audio_recording_id,
             json_web_token=json_web_token,
             test_client=test_client
@@ -77,7 +80,7 @@ class AudioRecordingGetterTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_audio_recording(
+        response: Response = self._request_audio_recording(
             audio_recording_id=uuid4(),
             json_web_token=json_web_token,
             test_client=test_client
@@ -90,7 +93,7 @@ class AudioRecordingGetterTest:
 
     def _request_all_audio_recordings(self, json_web_token: str, test_client: TestClient) -> Response:
 
-        return test_client.get(self._get_all_end_point, headers={'Authorization': f'Bearer {json_web_token}'})
+        return test_client.get(url=self._get_all_end_point, headers={'Authorization': f'Bearer {json_web_token}'})
 
     def _request_audio_recording_without_authorization(
         self,
@@ -98,7 +101,7 @@ class AudioRecordingGetterTest:
         test_client: TestClient
     ) -> Response:
 
-        return test_client.get(self._get_end_point.substitute(audio_recording_id=audio_recording_id))
+        return test_client.get(url=self._get_end_point.substitute(audio_recording_id=audio_recording_id))
 
     def _request_audio_recording(
         self,
@@ -108,7 +111,7 @@ class AudioRecordingGetterTest:
     ) -> Response:
 
         return test_client.get(
-            self._get_end_point.substitute(audio_recording_id=audio_recording_id),
+            url=self._get_end_point.substitute(audio_recording_id=audio_recording_id),
             headers={
                 'Authorization': f'Bearer {json_web_token}'
             }

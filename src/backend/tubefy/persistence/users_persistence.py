@@ -32,7 +32,7 @@ class UsersPersistence:
     def get_user(self, username: str) -> DatabaseUser | None:
 
         self._log.debug(f'Start [funcName](username=\'{username}\')')
-        result = self._database_context.get_user(username)
+        result: DatabaseUser | None = self._database_context.get_user(username)
         self._log.debug(f'End [funcName](username=\'{username}\')')
 
         return result

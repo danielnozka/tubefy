@@ -7,6 +7,7 @@ from uuid import UUID
 
 from .app_base_controller import AppBaseController
 from .user_authentication_controller import UserAuthenticationController
+from ..domain import User
 from ..dtos import AudioDownloadOptionsInput, AudioOutput, AudioRecordingOutput
 from ..use_cases import AudioRecordingAdder, AudioRecordingDeleter, AudioRecordingGetter, UserGetter
 
@@ -67,9 +68,13 @@ class UserAudioController(AppBaseController):
 
         try:
 
-            token = await self._authenticate_request(request)
-            user = self._user_getter.get(token)
-            self._audio_recording_adder.add(video_id, audio_download_options_input, user)
+            token: str = await self._authenticate_request(request)
+            user: User = self._user_getter.get(token)
+            self._audio_recording_adder.add(
+                video_id=video_id,
+                audio_download_options_input=audio_download_options_input,
+                user=user
+            )
             self._log.info(
                 f'End [funcName](video_id={video_id}, audio_download_options_input={audio_download_options_input})'
             )
@@ -77,7 +82,7 @@ class UserAudioController(AppBaseController):
         except Exception as exception:
 
             self._log.error(
-                f'End [funcName](video_id={video_id}, audio_download_options_input={audio_download_options_input}) '
+                msg=f'End [funcName](video_id={video_id}, audio_download_options_input={audio_download_options_input}) '
                 f'with exceptions',
                 extra={'exception': exception}
             )
@@ -90,16 +95,16 @@ class UserAudioController(AppBaseController):
 
         try:
 
-            token = await self._authenticate_request(request)
-            user = self._user_getter.get(token)
-            result = self._audio_recording_getter.get_all(user)
+            token: str = await self._authenticate_request(request)
+            user: User = self._user_getter.get(token)
+            result: list[AudioRecordingOutput] = self._audio_recording_getter.get_all(user)
             self._log.info('End [funcName]()')
 
             return result
 
         except Exception as exception:
 
-            self._log.error('End [funcName]() with exceptions', extra={'exception': exception})
+            self._log.error(msg='End [funcName]() with exceptions', extra={'exception': exception})
 
             raise exception
 
@@ -109,9 +114,9 @@ class UserAudioController(AppBaseController):
 
         try:
 
-            token = await self._authenticate_request(request)
-            user = self._user_getter.get(token)
-            result = self._audio_recording_getter.get(audio_recording_id, user)
+            token: str = await self._authenticate_request(request)
+            user: User = self._user_getter.get(token)
+            result: AudioOutput = self._audio_recording_getter.get(audio_recording_id=audio_recording_id, user=user)
             self._log.info(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
             return result
@@ -119,7 +124,7 @@ class UserAudioController(AppBaseController):
         except Exception as exception:
 
             self._log.error(
-                f'End [funcName](audio_recording_id=\'{audio_recording_id}\') with exceptions',
+                msg=f'End [funcName](audio_recording_id=\'{audio_recording_id}\') with exceptions',
                 extra={'exception': exception}
             )
 
@@ -131,15 +136,15 @@ class UserAudioController(AppBaseController):
 
         try:
 
-            token = await self._authenticate_request(request)
-            user = self._user_getter.get(token)
-            self._audio_recording_deleter.delete(audio_recording_id, user)
+            token: str = await self._authenticate_request(request)
+            user: User = self._user_getter.get(token)
+            self._audio_recording_deleter.delete(audio_recording_id=audio_recording_id, user=user)
             self._log.info(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
         except Exception as exception:
 
             self._log.error(
-                f'End [funcName](audio_recording_id=\'{audio_recording_id}\') with exceptions',
+                msg=f'End [funcName](audio_recording_id=\'{audio_recording_id}\') with exceptions',
                 extra={'exception': exception}
             )
 

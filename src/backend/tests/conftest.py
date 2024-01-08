@@ -42,6 +42,7 @@ def close_timer_threads():
 
     running_timer_threads: list[Timer] = [thread for thread in threading.enumerate() if isinstance(thread, Timer)]
 
+    thread: Timer
     for thread in running_timer_threads:
 
         thread.cancel()

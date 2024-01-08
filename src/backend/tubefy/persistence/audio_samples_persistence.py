@@ -38,7 +38,7 @@ class AudioSamplesPersistence:
     def get_audio_sample(self, video_id: str) -> DatabaseAudioSample | None:
 
         self._log.debug(f'Start [funcName](video_id=\'{video_id}\')')
-        result = self._database_context.get_audio_sample(video_id)
+        result: DatabaseAudioSample | None = self._database_context.get_audio_sample(video_id)
         self._log.debug(f'End [funcName](video_id=\'{video_id}\')')
 
         return result
@@ -52,8 +52,9 @@ class AudioSamplesPersistence:
     def delete_all_audio_samples(self) -> None:
 
         self._log.debug('Start [funcName]()')
-        database_audio_samples = self._database_context.get_all_audio_samples()
+        database_audio_samples: list[DatabaseAudioSample] = self._database_context.get_all_audio_samples()
 
+        database_audio_sample: DatabaseAudioSample
         for database_audio_sample in database_audio_samples:
 
             database_audio_sample_file_path: Path = Path(database_audio_sample.file_path)

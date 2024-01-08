@@ -43,7 +43,7 @@ class AudioRecordingsPersistence:
     def get_audio_recording(self, audio_recording_id: UUID) -> DatabaseAudioRecording | None:
 
         self._log.debug(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
-        result = self._database_context.get_audio_recording(audio_recording_id)
+        result: DatabaseAudioRecording | None = self._database_context.get_audio_recording(audio_recording_id)
         self._log.debug(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
         return result

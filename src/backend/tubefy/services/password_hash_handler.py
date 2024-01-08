@@ -15,7 +15,7 @@ class PasswordHashHandler:
     def hash_password(self, password: str) -> str:
 
         self._log.debug('Start [funcName]()')
-        result = self._context.hash(password)
+        result: str = self._context.hash(password)
         self._log.debug('End [funcName]()')
 
         return result
@@ -23,7 +23,7 @@ class PasswordHashHandler:
     def verify_password(self, password: str, hashed_password: str) -> bool:
 
         self._log.debug('Start [funcName]()')
-        result = self._context.verify(password, hashed_password)
+        result: bool = self._context.verify(password, hashed_password)
         self._log.debug('End [funcName]()')
 
         return result

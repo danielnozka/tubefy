@@ -18,7 +18,7 @@ class AudioRecordingDeleterTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_audio_recording_deletion_without_authorization(
+        response: Response = self._request_audio_recording_deletion_without_authorization(
             audio_recording_id=audio_recording_id,
             test_client=test_client
         )
@@ -32,7 +32,7 @@ class AudioRecordingDeleterTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_audio_recording_deletion(
+        response: Response = self._request_audio_recording_deletion(
             audio_recording_id=audio_recording_id,
             json_web_token=json_web_token,
             test_client=test_client
@@ -47,7 +47,7 @@ class AudioRecordingDeleterTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_audio_recording_deletion(
+        response: Response = self._request_audio_recording_deletion(
             audio_recording_id=audio_recording_id,
             json_web_token=json_web_token,
             test_client=test_client
@@ -57,10 +57,10 @@ class AudioRecordingDeleterTest:
     @pytest.mark.dependency(depends=['audio_recording_deletion'], scope='session')
     def test_no_audio_recordings_are_returned(self, json_web_token: str, test_client: TestClient) -> None:
 
-        response = self._request_all_audio_recordings(json_web_token=json_web_token, test_client=test_client)
+        response: Response = self._request_all_audio_recordings(json_web_token=json_web_token, test_client=test_client)
         assert response.status_code == 200
-        json_response = response.json()
-        assert type(json_response) == list
+        json_response: list = response.json()
+        assert type(json_response) is list
         assert len(json_response) == 0
 
     def _request_audio_recording_deletion_without_authorization(
@@ -69,7 +69,7 @@ class AudioRecordingDeleterTest:
         test_client: TestClient
     ) -> Response:
 
-        return test_client.delete(self._end_point.substitute(audio_recording_id=audio_recording_id))
+        return test_client.delete(url=self._end_point.substitute(audio_recording_id=audio_recording_id))
 
     def _request_audio_recording_deletion(
         self,
@@ -79,7 +79,7 @@ class AudioRecordingDeleterTest:
     ) -> Response:
 
         return test_client.delete(
-            self._end_point.substitute(audio_recording_id=audio_recording_id),
+            url=self._end_point.substitute(audio_recording_id=audio_recording_id),
             headers={
                 'Authorization': f'Bearer {json_web_token}'
             }
@@ -87,4 +87,4 @@ class AudioRecordingDeleterTest:
 
     def _request_all_audio_recordings(self, json_web_token: str, test_client: TestClient) -> Response:
 
-        return test_client.get(self._get_all_end_point, headers={'Authorization': f'Bearer {json_web_token}'})
+        return test_client.get(url=self._get_all_end_point, headers={'Authorization': f'Bearer {json_web_token}'})

@@ -7,6 +7,7 @@ from ..adapters import UserAdapter
 from ..dtos import UserInput
 from ..exceptions import UsernameAlreadyRegisteredException
 from ..persistence import UsersPersistence
+from ..persistence.domain import DatabaseUser
 
 
 class UserRegistrationHandler:
@@ -29,11 +30,11 @@ class UserRegistrationHandler:
 
         self._log.debug(f'Start [funcName](user_input={user_input})')
 
-        database_user = self._users_persistence.get_user(user_input.username)
+        database_user: DatabaseUser | None = self._users_persistence.get_user(user_input.username)
 
         if database_user is None:
 
-            database_user = self._user_adapter.adapt_to_persistence(user_input)
+            database_user: DatabaseUser = self._user_adapter.adapt_to_persistence(user_input)
             self._users_persistence.add_user(database_user)
 
         else:

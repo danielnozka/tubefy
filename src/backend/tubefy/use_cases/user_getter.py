@@ -5,7 +5,9 @@ from logging import Logger
 
 from ..adapters import UserAdapter
 from ..domain import User
+from ..exceptions import UserUnauthorizedException
 from ..persistence import UsersPersistence
+from ..persistence.domain import DatabaseUser
 from ..services import JsonWebTokenHandler
 
 
@@ -31,9 +33,14 @@ class UserGetter:
     def get(self, token: str) -> User:
 
         self._log.debug('Start [funcName]()')
-        username = self._json_web_token_handler.get_username(token)
-        database_user = self._users_persistence.get_user(username)
-        result = self._user_adapter.adapt_to_domain(database_user)
+        username: str = self._json_web_token_handler.get_username(token)
+        database_user: DatabaseUser | None = self._users_persistence.get_user(username)
+
+        if database_user is None:
+
+            raise UserUnauthorizedException('User not found')
+
+        result: User = self._user_adapter.adapt_to_domain(database_user)
         self._log.debug('End [funcName]()')
 
         return result

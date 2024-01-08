@@ -16,7 +16,7 @@ class DirectoryHandler:
     def create_directory(self, directory_path: Path) -> Path:
 
         self._log.debug(f'Start [funcName](directory_path=\'{directory_path}\')')
-        directory_absolute_path = self._get_directory_absolute_path(directory_path)
+        directory_absolute_path: Path = self._get_directory_absolute_path(directory_path)
         directory_absolute_path.mkdir(parents=True, exist_ok=True)
         self._log.debug(f'End [funcName](directory_path=\'{directory_path}\')')
 
@@ -26,7 +26,7 @@ class DirectoryHandler:
 
         self._log.debug(f'Start [funcName](directory_path=\'{directory_path}\')')
 
-        directory_absolute_path = self._get_directory_absolute_path(directory_path)
+        directory_absolute_path: Path = self._get_directory_absolute_path(directory_path)
 
         if self._is_directory(directory_absolute_path):
 
@@ -37,7 +37,7 @@ class DirectoryHandler:
             except Exception as exception:
 
                 self._log.warning(
-                    f'Exception found while deleting directory \'{directory_path}\'',
+                    msg=f'Exception found while deleting directory \'{directory_path}\'',
                     extra={'exception': exception}
                 )
 
@@ -67,6 +67,7 @@ class DirectoryHandler:
 
     def _delete_directory_recursively(self, directory_path: Path) -> None:
 
+        item: Path
         for item in directory_path.iterdir():
 
             if item.is_file():

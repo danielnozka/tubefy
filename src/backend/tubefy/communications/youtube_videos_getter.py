@@ -20,8 +20,7 @@ class YoutubeVideosGetter:
 
         try:
 
-            result = YoutubeSearch(query, self._max_results).to_dict()
-
+            result: list[dict] = YoutubeSearch(query, self._max_results).to_dict()
             self._log.debug(f'End [funcName](query=\'{query}\')')
 
             return result

@@ -61,7 +61,10 @@ class UserAuthenticationController(AppBaseController):
 
         except Exception as exception:
 
-            self._log.error(f'End [funcName](user_input={user_input}) with exceptions', extra={'exception': exception})
+            self._log.error(
+                msg=f'End [funcName](user_input={user_input}) with exceptions',
+                extra={'exception': exception}
+            )
 
             raise exception
 
@@ -71,13 +74,16 @@ class UserAuthenticationController(AppBaseController):
 
         try:
 
-            result = self._user_login_handler.log_in_user(user_input)
+            result: TokenOutput = self._user_login_handler.log_in_user(user_input)
             self._log.info(f'End [funcName](user_input={user_input})')
 
             return result
 
         except Exception as exception:
 
-            self._log.error(f'End [funcName](user_input={user_input}) with exceptions', extra={'exception': exception})
+            self._log.error(
+                msg=f'End [funcName](user_input={user_input}) with exceptions',
+                extra={'exception': exception}
+            )
 
             raise exception

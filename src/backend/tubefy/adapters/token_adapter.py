@@ -12,7 +12,7 @@ class TokenAdapter:
     def adapt(self, token: str) -> TokenOutput:
 
         self._log.debug('Start [funcName]()')
-        result = TokenOutput(access_token=token, token_type='bearer')
+        result: TokenOutput = TokenOutput(access_token=token, token_type='bearer')
         self._log.debug('End [funcName]()')
 
         return result

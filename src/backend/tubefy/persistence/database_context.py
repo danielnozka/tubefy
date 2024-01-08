@@ -96,7 +96,7 @@ class DatabaseContext:
     @contextmanager
     def _make_session(self) -> Session:
 
-        session = self._session_maker()
+        session: Session = self._session_maker()
 
         try:
 

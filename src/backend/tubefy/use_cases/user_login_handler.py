@@ -7,6 +7,7 @@ from ..adapters import TokenAdapter
 from ..dtos import TokenOutput, UserInput
 from ..exceptions import UserUnauthorizedException
 from ..persistence import UsersPersistence
+from ..persistence.domain import DatabaseUser
 from ..services import JsonWebTokenHandler, PasswordHashHandler
 
 
@@ -35,15 +36,14 @@ class UserLoginHandler:
     def log_in_user(self, user_input: UserInput) -> TokenOutput:
 
         self._log.debug(f'Start [funcName](user_input={user_input})')
-
-        database_user = self._users_persistence.get_user(user_input.username)
+        database_user: DatabaseUser | None = self._users_persistence.get_user(user_input.username)
 
         if database_user is not None:
 
             if self._password_hash_handler.verify_password(user_input.password, database_user.password) is True:
 
-                token = self._json_web_token_handler.get_token(database_user.username)
-                result = self._token_adapter.adapt(token)
+                token: str = self._json_web_token_handler.get_token(database_user.username)
+                result: TokenOutput = self._token_adapter.adapt(token)
                 self._log.debug(f'End [funcName](user_input={user_input})')
 
                 return result

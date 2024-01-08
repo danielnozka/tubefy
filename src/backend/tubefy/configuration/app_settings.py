@@ -18,7 +18,7 @@ class AppSettings:
 
     def __init__(self, settings_file_path: Path):
 
-        settings = self._open_file(settings_file_path)
+        settings: dict = self._open_file(settings_file_path)
         self.audio_conversion_settings = AudioConversionSettings(**settings['audio_conversion_settings'])
         self.logging_settings = settings['logging_settings']
         self.persistence_settings = PersistenceSettings(**settings['persistence_settings'])

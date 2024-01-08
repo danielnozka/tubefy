@@ -15,6 +15,7 @@ class YoutubeVideosAdapter:
 
         result: list[VideoOutput] = []
 
+        video: dict
         for video in videos_message:
 
             video_output: VideoOutput = VideoOutput(

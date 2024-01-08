@@ -44,14 +44,17 @@ class VideoHandlerController(AppBaseController):
 
         try:
 
-            result = self._video_search_handler.search(query)
+            result: list[VideoOutput] = self._video_search_handler.search(query)
             self._log.info(f'End [funcName](query=\'{query}\')')
 
             return result
 
         except Exception as exception:
 
-            self._log.error(f'End [funcName](query=\'{query}\') with exceptions', extra={'exception': exception})
+            self._log.error(
+                msg=f'End [funcName](query=\'{query}\') with exceptions',
+                extra={'exception': exception}
+            )
 
             raise exception
 
@@ -61,13 +64,16 @@ class VideoHandlerController(AppBaseController):
 
         try:
 
-            result = self._audio_sample_getter.get(video_id)
+            result: AudioOutput = self._audio_sample_getter.get(video_id)
             self._log.info(f'End [funcName](video_id=\'{video_id}\')')
 
             return result
 
         except Exception as exception:
 
-            self._log.error(f'End [funcName](video_id=\'{video_id}\') with exceptions', extra={'exception': exception})
+            self._log.error(
+                msg=f'End [funcName](video_id=\'{video_id}\') with exceptions',
+                extra={'exception': exception}
+            )
 
             raise exception

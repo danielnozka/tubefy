@@ -20,20 +20,26 @@ class AudioRecordingAdderTest:
 
     def test_user_authorization_is_required(self, test_client: TestClient) -> None:
 
-        response = self._request_audio_recording_to_be_added_without_authorization(test_client)
+        response: Response = self._request_audio_recording_to_be_added_without_authorization(test_client)
         assert response.status_code == 401
 
     def test_youtube_download_exception_is_caught(self, json_web_token: str, test_client: TestClient) -> None:
 
         with mock.patch.object(target=YoutubeDL, attribute='download', side_effect=Exception('Test exception')):
 
-            response = self._request_audio_recording_to_be_added(json_web_token=json_web_token, test_client=test_client)
+            response: Response = self._request_audio_recording_to_be_added(
+                json_web_token=json_web_token,
+                test_client=test_client
+            )
             assert response.status_code == 500
 
     @pytest.mark.dependency(name='audio_recording_addition', depends=['user_registration'], scope='session')
     def test_audio_recording_is_added(self, json_web_token: str, test_client: TestClient) -> None:
 
-        response = self._request_audio_recording_to_be_added(json_web_token=json_web_token, test_client=test_client)
+        response: Response = self._request_audio_recording_to_be_added(
+            json_web_token=json_web_token,
+            test_client=test_client
+        )
         assert response.status_code == 200
 
     @pytest.mark.dependency(depends=['audio_recording_addition'], scope='session')
@@ -43,17 +49,20 @@ class AudioRecordingAdderTest:
         test_client: TestClient
     ) -> None:
 
-        response = self._request_audio_recording_to_be_added(json_web_token=json_web_token, test_client=test_client)
+        response: Response = self._request_audio_recording_to_be_added(
+            json_web_token=json_web_token,
+            test_client=test_client
+        )
         assert response.status_code == 409
 
     def _request_audio_recording_to_be_added_without_authorization(self, test_client: TestClient) -> Response:
 
-        return test_client.post(self._end_point, json=self._audio_download_options)
+        return test_client.post(url=self._end_point, json=self._audio_download_options)
 
     def _request_audio_recording_to_be_added(self, json_web_token: str, test_client: TestClient) -> Response:
 
         return test_client.post(
-            self._end_point,
+            url=self._end_point,
             json=self._audio_download_options,
             headers={
                 'Authorization': f'Bearer {json_web_token}'

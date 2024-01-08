@@ -7,7 +7,7 @@ class LoggingFormatter(Formatter):
     _main_format: str
     _exception_format: str
 
-    def __init__(self, main_format: str, exception_format, date_format):
+    def __init__(self, main_format: str, exception_format: str, date_format: str):
 
         self._main_format = main_format
         self._exception_format = exception_format
@@ -46,6 +46,6 @@ class LoggingFormatter(Formatter):
     @staticmethod
     def _get_formatted_exception(record: LogRecord) -> str:
 
-        exception = getattr(record, 'exception')
+        exception: Exception = getattr(record, 'exception')
 
         return f'{exception.__class__.__name__}: {exception}'

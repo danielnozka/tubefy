@@ -11,7 +11,7 @@ from types import ModuleType
 from uuid import uuid4
 
 from . import adapters, communications, controllers, persistence, services, use_cases
-from .controllers import APP_CONTROLLERS
+from .controllers import APP_CONTROLLERS, AppBaseController
 from .exceptions import AppBaseException
 
 
@@ -53,9 +53,10 @@ class App(FastAPI):
 
     def _add_controllers(self) -> None:
 
+        AppController: type[AppBaseController]
         for AppController in APP_CONTROLLERS:
 
-            app_controller = AppController()
+            app_controller: AppBaseController = AppController()
             self.include_router(app_controller.api_router)
 
     def _add_exception_handlers(self) -> None:
@@ -65,8 +66,8 @@ class App(FastAPI):
 
     def _add_frontend(self) -> None:
 
-        frontend_build_directory = APP_ROOT_PATH.joinpath('static').joinpath('browser')
-        frontend_index_html_path = frontend_build_directory.joinpath('index.html')
+        frontend_build_directory: Path = APP_ROOT_PATH.joinpath('static').joinpath('browser')
+        frontend_index_html_path: Path = frontend_build_directory.joinpath('index.html')
 
         if frontend_index_html_path.is_file():
 

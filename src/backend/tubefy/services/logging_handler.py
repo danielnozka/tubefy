@@ -43,18 +43,18 @@ class LoggingHandler:
 
         with open(file_path, 'r') as file:
 
-            result = json.load(file)
-
-        return result
+            return json.load(file)
 
     def _setup_file_handlers(self) -> None:
 
+        handler_name: str
+        handler_options: dict
         for handler_name, handler_options in self._settings[self._handlers_key].items():
 
             if self._is_file_handler(handler_options):
 
-                file_handler_file_path = self._data_path.joinpath(handler_options[self._handler_filename_key])
-                self._update_file_handler_path(handler_name, file_handler_file_path)
+                file_handler_file_path: Path = self._data_path.joinpath(handler_options[self._handler_filename_key])
+                self._update_file_handler_path(handler_name=handler_name, handler_path=file_handler_file_path)
 
     def _is_file_handler(self, handler_options: dict) -> bool:
 

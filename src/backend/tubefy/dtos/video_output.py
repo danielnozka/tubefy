@@ -1,14 +1,8 @@
-from humps import camelize
-from pydantic import BaseModel
+from .base_json_dto import BaseJsonDto
 
 
-class VideoOutput(BaseModel):
+class VideoOutput(BaseJsonDto):
 
     id: str
     title: str
     thumbnail_url: str
-
-    class Config:
-
-        alias_generator = camelize
-        populate_by_name = True

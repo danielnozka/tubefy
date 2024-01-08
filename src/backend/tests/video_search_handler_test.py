@@ -16,18 +16,20 @@ class VideoSearchHandlerTest:
 
         with mock.patch.object(target=YoutubeSearch, attribute='__init__', side_effect=Exception('Test exception')):
 
-            response = self._request_video_search(test_client)
+            response: Response = self._request_video_search(test_client)
             assert response.status_code == 500
 
     def test_search_results_are_returned(self, test_client: TestClient) -> None:
 
-        response = self._request_video_search(test_client)
+        response: Response = self._request_video_search(test_client)
         assert response.status_code == 200
-        json_response = response.json()
-        assert type(json_response) == list
+        json_response: list[dict[str, str]] = response.json()
+        assert type(json_response) is list
         assert len(json_response) > 0
-        assert any([result.get('id') == self._result_video_id for result in json_response])
-        assert all([requests.get(result.get('thumbnailUrl')).status_code == 200 for result in json_response])
+        video_ids: list[str] = [result.get('id') for result in json_response]
+        assert any([video_id == self._result_video_id for video_id in video_ids])
+        thumbnail_responses: list[Response] = [requests.get(result.get('thumbnailUrl')) for result in json_response]
+        assert all([thumbnail_response.status_code == 200 for thumbnail_response in thumbnail_responses])
 
     def _request_video_search(self, test_client: TestClient) -> Response:
 

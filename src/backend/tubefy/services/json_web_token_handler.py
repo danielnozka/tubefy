@@ -26,7 +26,7 @@ class JsonWebTokenHandler:
     def get_token(self, username: str) -> str:
 
         self._log.debug(f'Start [funcName](username=\'{username}\')')
-        result = jwt.encode(
+        result: str = jwt.encode(
             claims=self._adapt_input_payload(username),
             key=self._key,
             algorithm=self._algorithm
@@ -41,8 +41,8 @@ class JsonWebTokenHandler:
 
         try:
 
-            payload = jwt.decode(token=token, key=self._key, algorithms=self._algorithm)
-            result = self._adapt_output_payload(payload)
+            payload: dict[str, str | int] = jwt.decode(token=token, key=self._key, algorithms=self._algorithm)
+            result: str = self._adapt_output_payload(payload)
 
             if result is not None:
 
@@ -68,6 +68,6 @@ class JsonWebTokenHandler:
         return datetime.utcnow() + timedelta(minutes=self._expiration_minutes)
 
     @staticmethod
-    def _adapt_output_payload(payload: dict[str, str | datetime]) -> str | None:
+    def _adapt_output_payload(payload: dict[str, str | int]) -> str | None:
 
         return payload.get('sub')

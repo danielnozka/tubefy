@@ -27,8 +27,8 @@ class VideoSearchHandler:
     def search(self, query: str) -> list[VideoOutput]:
 
         self._log.debug(f'Start [funcName](query=\'{query}\')')
-        videos_message = self._youtube_videos_getter.get(query)
-        result = self._youtube_videos_adapter.adapt(videos_message)
+        videos_message: list[dict] = self._youtube_videos_getter.get(query)
+        result: list[VideoOutput] = self._youtube_videos_adapter.adapt(videos_message)
         self._log.debug(f'End [funcName](query=\'{query}\')')
 
         return result

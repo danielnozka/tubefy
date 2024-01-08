@@ -5,10 +5,11 @@ from logging import Logger
 
 from ..adapters import AudioRecordingAdapter
 from ..communications import YoutubeAudioDownloader
-from ..domain import User
+from ..domain import AudioRecording, User
 from ..dtos import AudioDownloadOptionsInput
 from ..exceptions import AudioRecordingAlreadyDownloadedException
 from ..persistence import AudioRecordingsPersistence
+from ..persistence.domain import DatabaseAudioRecording
 
 
 class AudioRecordingAdder:
@@ -36,11 +37,14 @@ class AudioRecordingAdder:
             f'Start [funcName](video_id={video_id}, audio_download_options_input={audio_download_options_input}, '
             f'user={user})'
         )
-        audio_recording = next((x for x in user.audio_recordings if x.video_id == video_id), None)
+        audio_recording: AudioRecording | None = next(
+            iter(x for x in user.audio_recordings if x.video_id == video_id),
+            None
+        )
 
         if audio_recording is None:
 
-            audio_recording = self._youtube_audio_downloader.download_audio_recording(
+            audio_recording: AudioRecording = self._youtube_audio_downloader.download_audio_recording(
                 video_id=video_id,
                 output_directory=self._audio_recordings_persistence.get_user_audio_recordings_directory(user),
                 output_filename=self._audio_recordings_persistence.get_audio_recording_filename(
@@ -49,7 +53,7 @@ class AudioRecordingAdder:
                 audio_download_options_input=audio_download_options_input,
                 user=user
             )
-            database_audio_recording = self._audio_recording_adapter.adapt_to_persistence(
+            database_audio_recording: DatabaseAudioRecording = self._audio_recording_adapter.adapt_to_persistence(
                 audio_recording=audio_recording,
                 user=user
             )

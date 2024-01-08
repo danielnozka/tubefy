@@ -4,9 +4,10 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from uuid import UUID
 
-from ..domain import User
+from ..domain import AudioRecording, User
 from ..exceptions import AudioRecordingNotFoundException
 from ..persistence import AudioRecordingsPersistence
+from ..persistence.domain import DatabaseAudioRecording
 
 
 class AudioRecordingDeleter:
@@ -25,7 +26,10 @@ class AudioRecordingDeleter:
     def delete(self, audio_recording_id: UUID, user: User) -> None:
 
         self._log.debug(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\', user={user})')
-        audio_recording = next((x for x in user.audio_recordings if x.id == audio_recording_id), None)
+        audio_recording: AudioRecording | None = next(
+            (x for x in user.audio_recordings if x.id == audio_recording_id),
+            None
+        )
 
         if audio_recording is None:
 
@@ -33,6 +37,8 @@ class AudioRecordingDeleter:
 
         else:
 
-            database_audio_recording = self._audio_recordings_persistence.get_audio_recording(audio_recording_id)
+            database_audio_recording: DatabaseAudioRecording = self._audio_recordings_persistence.get_audio_recording(
+                audio_recording_id
+            )
             self._audio_recordings_persistence.delete_audio_recording(database_audio_recording)
             self._log.debug(f'End [funcName](audio_recording_id=\'{audio_recording_id}\', user={user})')

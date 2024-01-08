@@ -5,7 +5,7 @@ from logging import Logger
 from uuid import UUID
 
 from ..adapters import AudioRecordingAdapter
-from ..domain import User
+from ..domain import AudioRecording, User
 from ..dtos import AudioOutput, AudioRecordingOutput
 from ..exceptions import AudioFileNotFoundException, AudioRecordingNotFoundException
 
@@ -23,7 +23,9 @@ class AudioRecordingGetter:
     def get_all(self, user: User) -> list[AudioRecordingOutput]:
 
         self._log.debug(f'Start [funcName](user={user})')
-        result = [self._audio_recording_adapter.adapt_to_output(x) for x in user.audio_recordings]
+        result: list[AudioRecordingOutput] = [
+            self._audio_recording_adapter.adapt_to_output(x) for x in user.audio_recordings
+        ]
         self._log.debug(f'End [funcName](user={user})')
 
         return result
@@ -31,7 +33,10 @@ class AudioRecordingGetter:
     def get(self, audio_recording_id: UUID, user: User) -> AudioOutput:
 
         self._log.debug(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\', user={user})')
-        audio_recording = next((x for x in user.audio_recordings if x.id == audio_recording_id), None)
+        audio_recording: AudioRecording | None = next(
+            (x for x in user.audio_recordings if x.id == audio_recording_id),
+            None
+        )
 
         if audio_recording is None:
 
@@ -41,7 +46,7 @@ class AudioRecordingGetter:
 
             if audio_recording.file_path.is_file():
 
-                result = self._audio_recording_adapter.adapt_to_output_file(audio_recording)
+                result: AudioOutput = self._audio_recording_adapter.adapt_to_output_file(audio_recording)
                 self._log.debug(f'End [funcName](audio_recording_id=\'{audio_recording_id}\', user={user})')
 
                 return result
