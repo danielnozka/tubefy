@@ -12,7 +12,7 @@ from uuid import uuid4
 
 from . import adapters, communications, controllers, persistence, services, use_cases
 from .controllers import APP_CONTROLLERS, AppBaseController
-from .exceptions import AppBaseException
+from .exceptions.app_base_exception import AppBaseException
 
 
 logging.getLogger('asyncio').propagate = False
@@ -49,7 +49,7 @@ class App(FastAPI):
 
         except Exception as exception:
 
-            self._log.error('Stopped application because of exception', extra={'exception': exception})
+            self._log.error(msg='Stopped application because of exception', extra={'exception': exception})
 
     def _add_controllers(self) -> None:
 

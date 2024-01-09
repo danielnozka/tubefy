@@ -3,10 +3,10 @@ import logging
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
-from ..configuration import AppSettings
-from .domain import DatabaseUser
+from ..configuration.app_settings import AppSettings
+from .domain.database_user import DatabaseUser
 from .database_context import DatabaseContext
-from ..services import DirectoryHandler
+from ..services.directory_handler import DirectoryHandler
 
 
 class UsersPersistence:

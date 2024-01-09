@@ -3,12 +3,12 @@ import logging
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
-from ..adapters import UserAdapter
-from ..domain import User
-from ..exceptions import UserUnauthorizedException
-from ..persistence import UsersPersistence
-from ..persistence.domain import DatabaseUser
-from ..services import JsonWebTokenHandler
+from ..adapters.user_adapter import UserAdapter
+from ..domain.user import User
+from ..exceptions.user_unauthorized_exception import UserUnauthorizedException
+from ..persistence.users_persistence import UsersPersistence
+from ..persistence.domain.database_user import DatabaseUser
+from ..services.json_web_token_handler import JsonWebTokenHandler
 
 
 class UserGetter:

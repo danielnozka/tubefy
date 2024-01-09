@@ -3,11 +3,11 @@ import logging
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
-from ..adapters import UserAdapter
-from ..dtos import UserInput
-from ..exceptions import UsernameAlreadyRegisteredException
-from ..persistence import UsersPersistence
-from ..persistence.domain import DatabaseUser
+from ..adapters.user_adapter import UserAdapter
+from ..dtos.user_input import UserInput
+from ..exceptions.username_already_registered_exception import UsernameAlreadyRegisteredException
+from ..persistence.users_persistence import UsersPersistence
+from ..persistence.domain.database_user import DatabaseUser
 
 
 class UserRegistrationHandler:

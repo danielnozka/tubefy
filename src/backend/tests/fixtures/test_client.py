@@ -3,8 +3,8 @@ import pytest
 from dependency_injector.wiring import inject, Provide
 from fastapi.testclient import TestClient
 
-from tubefy import App
-from tubefy.configuration import AppSettings
+from tubefy.app import App
+from tubefy.configuration.app_settings import AppSettings
 
 
 @pytest.fixture(scope='session')

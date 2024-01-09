@@ -4,11 +4,11 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from uuid import UUID, uuid4
 
-from ..adapters import AudioRecordingAdapter
-from ..domain import User
-from ..dtos import UserInput
-from ..persistence.domain import DatabaseUser
-from ..services import PasswordHashHandler
+from ..adapters.audio_recording_adapter import AudioRecordingAdapter
+from ..domain.user import User
+from ..dtos.user_input import UserInput
+from ..persistence.domain.database_user import DatabaseUser
+from ..services.password_hash_handler import PasswordHashHandler
 
 
 class UserAdapter:

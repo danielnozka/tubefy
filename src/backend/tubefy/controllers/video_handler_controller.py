@@ -5,8 +5,11 @@ from fastapi import APIRouter
 from logging import Logger
 
 from .app_base_controller import AppBaseController
-from ..dtos import AudioOutput, VideoOutput
-from ..use_cases import AudioSampleGetter, AudioSamplesDeleter, VideoSearchHandler
+from ..dtos.audio_output import AudioOutput
+from ..dtos.video_output import VideoOutput
+from ..use_cases.audio_sample_getter import AudioSampleGetter
+from ..use_cases.audio_samples_deleter import AudioSamplesDeleter
+from ..use_cases.video_search_handler import VideoSearchHandler
 
 
 class VideoHandlerController(AppBaseController):

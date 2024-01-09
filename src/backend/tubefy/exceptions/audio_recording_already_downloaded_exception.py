@@ -1,4 +1,4 @@
-from ..domain import AudioRecording
+from ..domain.audio_recording import AudioRecording
 from .app_base_exception import AppBaseException
 
 

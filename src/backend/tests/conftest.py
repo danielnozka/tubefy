@@ -7,10 +7,14 @@ from dependency_injector.wiring import inject, Provide
 from threading import Timer
 
 from . import fixtures
-from tubefy import APP_COMPONENTS, ModuleInitializer
-from tubefy.configuration import AppSettings
-from tubefy.persistence import AudioRecordingsPersistence, AudioSamplesPersistence, UsersPersistence
-from tubefy.services import DirectoryHandler, LoggingHandler
+from tubefy.app import APP_COMPONENTS
+from tubefy.module_initializer import ModuleInitializer
+from tubefy.configuration.app_settings import AppSettings
+from tubefy.persistence.audio_recordings_persistence import AudioRecordingsPersistence
+from tubefy.persistence.audio_samples_persistence import AudioSamplesPersistence
+from tubefy.persistence.users_persistence import UsersPersistence
+from tubefy.services.directory_handler import DirectoryHandler
+from tubefy.services.logging_handler import LoggingHandler
 
 
 logging.getLogger('httpx').propagate = False

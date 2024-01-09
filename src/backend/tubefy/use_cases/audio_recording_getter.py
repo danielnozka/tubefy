@@ -4,10 +4,13 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from uuid import UUID
 
-from ..adapters import AudioRecordingAdapter
-from ..domain import AudioRecording, User
-from ..dtos import AudioOutput, AudioRecordingOutput
-from ..exceptions import AudioFileNotFoundException, AudioRecordingNotFoundException
+from ..adapters.audio_recording_adapter import AudioRecordingAdapter
+from ..domain.audio_recording import AudioRecording
+from ..domain.user import User
+from ..dtos.audio_output import AudioOutput
+from ..dtos.audio_recording_output import AudioRecordingOutput
+from ..exceptions.audio_file_not_found_exception import AudioFileNotFoundException
+from ..exceptions.audio_recording_not_found_exception import AudioRecordingNotFoundException
 
 
 class AudioRecordingGetter:

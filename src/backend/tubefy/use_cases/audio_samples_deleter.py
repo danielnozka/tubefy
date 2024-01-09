@@ -4,8 +4,8 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from threading import Timer
 
-from ..configuration import AppSettings
-from ..persistence import AudioSamplesPersistence
+from ..configuration.app_settings import AppSettings
+from ..persistence.audio_samples_persistence import AudioSamplesPersistence
 
 
 class AudioSamplesDeleter:

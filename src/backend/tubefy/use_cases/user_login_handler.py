@@ -3,12 +3,14 @@ import logging
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
-from ..adapters import TokenAdapter
-from ..dtos import TokenOutput, UserInput
-from ..exceptions import UserUnauthorizedException
-from ..persistence import UsersPersistence
-from ..persistence.domain import DatabaseUser
-from ..services import JsonWebTokenHandler, PasswordHashHandler
+from ..adapters.token_adapter import TokenAdapter
+from ..dtos.token_output import TokenOutput
+from ..dtos.user_input import UserInput
+from ..exceptions.user_unauthorized_exception import UserUnauthorizedException
+from ..persistence.users_persistence import UsersPersistence
+from ..persistence.domain.database_user import DatabaseUser
+from ..services.json_web_token_handler import JsonWebTokenHandler
+from ..services.password_hash_handler import PasswordHashHandler
 
 
 class UserLoginHandler:

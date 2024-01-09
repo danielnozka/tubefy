@@ -5,12 +5,12 @@ from logging import Logger
 from pathlib import Path
 from uuid import UUID
 
-from ..configuration import AppSettings
-from ..domain import User
-from ..dtos import AudioDownloadOptionsInput
+from ..configuration.app_settings import AppSettings
+from ..domain.user import User
+from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
 from .database_context import DatabaseContext
-from .domain import DatabaseAudioRecording
-from ..services import DirectoryHandler
+from .domain.database_audio_recording import DatabaseAudioRecording
+from ..services.directory_handler import DirectoryHandler
 
 
 class AudioRecordingsPersistence:

@@ -5,8 +5,8 @@ from dependency_injector.wiring import inject, Provide
 from jose import jwt, JWTError
 from logging import Logger
 
-from ..configuration import AppSettings
-from ..exceptions import UserUnauthorizedException
+from ..configuration.app_settings import AppSettings
+from ..exceptions.user_unauthorized_exception import UserUnauthorizedException
 
 
 class JsonWebTokenHandler:
@@ -42,7 +42,7 @@ class JsonWebTokenHandler:
         try:
 
             payload: dict[str, str | int] = jwt.decode(token=token, key=self._key, algorithms=self._algorithm)
-            result: str = self._adapt_output_payload(payload)
+            result: str | None = self._adapt_output_payload(payload)
 
             if result is not None:
 

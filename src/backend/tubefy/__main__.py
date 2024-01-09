@@ -1,9 +1,9 @@
 from dependency_injector.wiring import inject, Provide
 
 from .app import App, APP_COMPONENTS
-from .configuration import AppSettings
+from .configuration.app_settings import AppSettings
 from .module_initializer import ModuleInitializer
-from .services import LoggingHandler
+from .services.logging_handler import LoggingHandler
 
 
 @inject

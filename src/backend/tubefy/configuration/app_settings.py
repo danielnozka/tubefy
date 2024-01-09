@@ -30,6 +30,4 @@ class AppSettings:
 
         with open(file_path, 'r') as file:
 
-            result = json.load(file)
-
-        return result
+            return json.load(file)

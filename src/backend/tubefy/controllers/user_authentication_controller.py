@@ -6,9 +6,11 @@ from fastapi.security import OAuth2PasswordBearer
 from logging import Logger
 
 from .app_base_controller import AppBaseController
-from ..dtos import TokenOutput, UserInput
-from ..exceptions import AuthenticationRequiredException
-from ..use_cases import UserLoginHandler, UserRegistrationHandler
+from ..dtos.token_output import TokenOutput
+from ..dtos.user_input import UserInput
+from ..exceptions.authentication_required_exception import AuthenticationRequiredException
+from ..use_cases.user_login_handler import UserLoginHandler
+from ..use_cases.user_registration_handler import UserRegistrationHandler
 
 
 class UserAuthenticationController(AppBaseController):

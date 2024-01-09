@@ -7,9 +7,14 @@ from uuid import UUID
 
 from .app_base_controller import AppBaseController
 from .user_authentication_controller import UserAuthenticationController
-from ..domain import User
-from ..dtos import AudioDownloadOptionsInput, AudioOutput, AudioRecordingOutput
-from ..use_cases import AudioRecordingAdder, AudioRecordingDeleter, AudioRecordingGetter, UserGetter
+from ..domain.user import User
+from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
+from ..dtos.audio_output import AudioOutput
+from ..dtos.audio_recording_output import AudioRecordingOutput
+from ..use_cases.audio_recording_adder import AudioRecordingAdder
+from ..use_cases.audio_recording_deleter import AudioRecordingDeleter
+from ..use_cases.audio_recording_getter import AudioRecordingGetter
+from ..use_cases.user_getter import UserGetter
 
 
 class UserAudioController(AppBaseController):

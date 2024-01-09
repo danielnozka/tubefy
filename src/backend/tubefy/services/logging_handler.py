@@ -5,7 +5,7 @@ import logging.config
 from dependency_injector.wiring import inject, Provide
 from pathlib import Path
 
-from ..configuration import AppSettings
+from ..configuration.app_settings import AppSettings
 from .directory_handler import DirectoryHandler
 
 

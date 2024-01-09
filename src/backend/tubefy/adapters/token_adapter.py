@@ -2,7 +2,7 @@ import logging
 
 from logging import Logger
 
-from ..dtos import TokenOutput
+from ..dtos.token_output import TokenOutput
 
 
 class TokenAdapter:

@@ -4,9 +4,9 @@ from logging import Logger
 from pathlib import Path
 from uuid import UUID
 
-from ..domain import AudioSample
-from ..dtos import AudioOutput
-from ..persistence.domain import DatabaseAudioSample
+from ..domain.audio_sample import AudioSample
+from ..dtos.audio_output import AudioOutput
+from ..persistence.domain.database_audio_sample import DatabaseAudioSample
 
 
 class AudioSampleAdapter:

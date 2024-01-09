@@ -3,13 +3,13 @@ import logging
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
-from ..adapters import AudioSampleAdapter
-from ..communications import YoutubeAudioDownloader
-from ..domain import AudioSample
-from ..dtos import AudioOutput
-from ..exceptions import AudioFileNotFoundException
-from ..persistence import AudioSamplesPersistence
-from ..persistence.domain import DatabaseAudioSample
+from ..adapters.audio_sample_adapter import AudioSampleAdapter
+from ..communications.youtube_audio_downloader import YoutubeAudioDownloader
+from ..domain.audio_sample import AudioSample
+from ..dtos.audio_output import AudioOutput
+from ..exceptions.audio_file_not_found_exception import AudioFileNotFoundException
+from ..persistence.audio_samples_persistence import AudioSamplesPersistence
+from ..persistence.domain.database_audio_sample import DatabaseAudioSample
 
 
 class AudioSampleGetter:

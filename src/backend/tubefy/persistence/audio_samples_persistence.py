@@ -4,10 +4,10 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from pathlib import Path
 
-from ..configuration import AppSettings
+from ..configuration.app_settings import AppSettings
 from .database_context import DatabaseContext
-from .domain import DatabaseAudioSample
-from ..services import DirectoryHandler
+from .domain.database_audio_sample import DatabaseAudioSample
+from ..services.directory_handler import DirectoryHandler
 
 
 class AudioSamplesPersistence:

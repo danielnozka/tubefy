@@ -4,10 +4,11 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from uuid import UUID
 
-from ..domain import AudioRecording, User
-from ..exceptions import AudioRecordingNotFoundException
-from ..persistence import AudioRecordingsPersistence
-from ..persistence.domain import DatabaseAudioRecording
+from ..domain.audio_recording import AudioRecording
+from ..domain.user import User
+from ..exceptions.audio_recording_not_found_exception import AudioRecordingNotFoundException
+from ..persistence.audio_recordings_persistence import AudioRecordingsPersistence
+from ..persistence.domain.database_audio_recording import DatabaseAudioRecording
 
 
 class AudioRecordingDeleter:

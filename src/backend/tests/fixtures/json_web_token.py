@@ -2,7 +2,7 @@ import pytest
 
 from dependency_injector.wiring import inject, Provide
 
-from tubefy.services import JsonWebTokenHandler
+from tubefy.services.json_web_token_handler import JsonWebTokenHandler
 
 
 @pytest.fixture(scope='session')

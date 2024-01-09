@@ -3,13 +3,14 @@ import logging
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
-from ..adapters import AudioRecordingAdapter
-from ..communications import YoutubeAudioDownloader
-from ..domain import AudioRecording, User
-from ..dtos import AudioDownloadOptionsInput
-from ..exceptions import AudioRecordingAlreadyDownloadedException
-from ..persistence import AudioRecordingsPersistence
-from ..persistence.domain import DatabaseAudioRecording
+from ..adapters.audio_recording_adapter import AudioRecordingAdapter
+from ..communications.youtube_audio_downloader import YoutubeAudioDownloader
+from ..domain.audio_recording import AudioRecording
+from ..domain.user import User
+from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
+from ..exceptions.audio_recording_already_downloaded_exception import AudioRecordingAlreadyDownloadedException
+from ..persistence.audio_recordings_persistence import AudioRecordingsPersistence
+from ..persistence.domain.database_audio_recording import DatabaseAudioRecording
 
 
 class AudioRecordingAdder:

@@ -7,10 +7,13 @@ from string import Template
 from uuid import uuid4
 from yt_dlp import YoutubeDL
 
-from ..configuration import AppSettings, AudioConversionSettings
-from ..domain import AudioRecording, AudioSample, User
-from ..dtos import AudioDownloadOptionsInput
-from ..exceptions import AudioDownloadException
+from ..configuration.app_settings import AppSettings
+from ..configuration.audio_conversion_settings import AudioConversionSettings
+from ..domain.audio_recording import AudioRecording
+from ..domain.audio_sample import AudioSample
+from ..domain.user import User
+from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
+from ..exceptions.audio_download_exception import AudioDownloadException
 
 
 class YoutubeAudioDownloader:
@@ -173,8 +176,10 @@ class YoutubeAudioDownloader:
 
                 except Exception as exception:
 
-                    self._log.warning(f'Exception found while downloading audio on attempt {download_attempt}',
-                                      extra={'exception': exception})
+                    self._log.warning(
+                        msg=f'Exception found while downloading audio on attempt {download_attempt}',
+                        extra={'exception': exception}
+                    )
 
                     download_attempt += 1
 

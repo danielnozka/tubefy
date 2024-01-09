@@ -5,7 +5,10 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.sql.expression import select
 from uuid import UUID
 
-from .domain import DatabaseAudioRecording, DatabaseAudioSample, DatabaseModel, DatabaseUser
+from .domain.database_audio_recording import DatabaseAudioRecording
+from .domain.database_audio_sample import DatabaseAudioSample
+from .domain.database_model import DatabaseModel
+from .domain.database_user import DatabaseUser
 
 
 class DatabaseContext:
