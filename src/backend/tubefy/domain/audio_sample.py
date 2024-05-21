@@ -8,7 +8,7 @@ class AudioSample:
     video_id: str
     file_path: Path
 
-    def __init__(self, id_: UUID, video_id: str, file_path: Path):
+    def __init__(self, id_: UUID, video_id: str, file_path: Path) -> None:
 
         self.id = id_
         self.video_id = video_id

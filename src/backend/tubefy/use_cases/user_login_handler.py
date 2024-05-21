@@ -8,7 +8,7 @@ from ..dtos.token_output import TokenOutput
 from ..dtos.user_input import UserInput
 from ..exceptions.user_unauthorized_exception import UserUnauthorizedException
 from ..persistence.users_persistence import UsersPersistence
-from ..persistence.domain.database_user import DatabaseUser
+from ..persistence.domain.user_persistence_domain import UserPersistenceDomain
 from ..services.json_web_token_handler import JsonWebTokenHandler
 from ..services.password_hash_handler import PasswordHashHandler
 
@@ -28,23 +28,28 @@ class UserLoginHandler:
         users_persistence: UsersPersistence = Provide['users_persistence'],
         json_web_token_handler: JsonWebTokenHandler = Provide['json_web_token_handler'],
         password_hash_handler: PasswordHashHandler = Provide['password_hash_handler']
-    ):
+    ) -> None:
 
         self._token_adapter = token_adapter
         self._users_persistence = users_persistence
         self._json_web_token_handler = json_web_token_handler
         self._password_hash_handler = password_hash_handler
 
-    def log_in_user(self, user_input: UserInput) -> TokenOutput:
+    async def log_in_user(self, user_input: UserInput) -> TokenOutput:
 
         self._log.debug(f'Start [funcName](user_input={user_input})')
-        database_user: DatabaseUser | None = self._users_persistence.get_user(user_input.username)
+        user_persistence_domain: UserPersistenceDomain | None = (
+            await self._users_persistence.get_user(user_input.username)
+        )
 
-        if database_user is not None:
+        if user_persistence_domain is not None:
 
-            if self._password_hash_handler.verify_password(user_input.password, database_user.password) is True:
+            if self._password_hash_handler.verify_password(
+                password=user_input.password,
+                hashed_password=user_persistence_domain.password
+            ) is True:
 
-                token: str = self._json_web_token_handler.get_token(database_user.username)
+                token: str = self._json_web_token_handler.get_token(user_persistence_domain.username)
                 result: TokenOutput = self._token_adapter.adapt(token)
                 self._log.debug(f'End [funcName](user_input={user_input})')
 

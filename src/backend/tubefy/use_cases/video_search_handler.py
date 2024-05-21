@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from dependency_injector.wiring import inject, Provide
@@ -19,15 +20,15 @@ class VideoSearchHandler:
         self,
         youtube_videos_adapter: YoutubeVideosAdapter = Provide['youtube_videos_adapter'],
         youtube_videos_getter: YoutubeVideosGetter = Provide['youtube_videos_getter']
-    ):
+    ) -> None:
 
         self._youtube_videos_adapter = youtube_videos_adapter
         self._youtube_videos_getter = youtube_videos_getter
 
-    def search(self, query: str) -> list[VideoOutput]:
+    async def search(self, query: str) -> list[VideoOutput]:
 
         self._log.debug(f'Start [funcName](query=\'{query}\')')
-        videos_message: list[dict] = self._youtube_videos_getter.get(query)
+        videos_message: list[dict] = await asyncio.to_thread(self._youtube_videos_getter.get, query)
         result: list[VideoOutput] = self._youtube_videos_adapter.adapt(videos_message)
         self._log.debug(f'End [funcName](query=\'{query}\')')
 

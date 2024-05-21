@@ -13,8 +13,7 @@ class AudioRecording:
     bit_rate: int
     user_id: UUID
 
-    def __init__(
-        self,
+    def __init__(self,
         id_: UUID,
         video_id: str,
         file_path: Path,
@@ -23,7 +22,7 @@ class AudioRecording:
         codec: str,
         bit_rate: int,
         user_id: UUID
-    ):
+    ) -> None:
 
         self.id = id_
         self.video_id = video_id

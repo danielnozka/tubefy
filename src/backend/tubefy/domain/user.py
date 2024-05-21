@@ -9,7 +9,7 @@ class User:
     username: str
     audio_recordings: list[AudioRecording]
 
-    def __init__(self, id_: UUID, username: str, audio_recordings: list[AudioRecording]):
+    def __init__(self, id_: UUID, username: str, audio_recordings: list[AudioRecording]) -> None:
 
         self.id = id_
         self.username = username

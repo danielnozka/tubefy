@@ -3,10 +3,10 @@ from sqlalchemy import DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
-from .database_model import DatabaseModel
+from .base_persistence_domain import BasePersistenceDomain
 
 
-class DatabaseAudioSample(DatabaseModel):
+class AudioSamplePersistenceDomain(BasePersistenceDomain):
 
     __tablename__: str = 'audio_samples'
 

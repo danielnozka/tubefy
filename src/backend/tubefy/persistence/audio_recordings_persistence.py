@@ -5,72 +5,49 @@ from logging import Logger
 from pathlib import Path
 from uuid import UUID
 
-from ..configuration.app_settings import AppSettings
 from ..domain.user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
-from .database_context import DatabaseContext
-from .domain.database_audio_recording import DatabaseAudioRecording
-from ..services.directory_handler import DirectoryHandler
+from .app_persistence_context import AppPersistenceContext
+from .domain.audio_recording_persistence_domain import AudioRecordingPersistenceDomain
 
 
 class AudioRecordingsPersistence:
 
     _log: Logger = logging.getLogger(__name__)
-    _audio_recordings_directory: str = 'recordings'
-    _database_context: DatabaseContext
-    _directory_handler: DirectoryHandler
-    _audio_recordings_directory_path: Path
+    _context: AppPersistenceContext
 
     @inject
-    def __init__(
-        self,
-        app_settings: AppSettings = Provide['app_settings'],
-        directory_handler: DirectoryHandler = Provide['directory_handler']
-    ):
+    def __init__(self, context: AppPersistenceContext = Provide['app_persistence_context']) -> None:
 
-        self._database_context = DatabaseContext(
-            directory_handler.create_directory(app_settings.persistence_settings.data_path)
-        )
-        self._audio_recordings_directory_path = directory_handler.create_directory(
-            app_settings.persistence_settings.data_path.joinpath(self._audio_recordings_directory)
-        )
-        self._directory_handler = directory_handler
+        self._context = context
 
-    def close(self) -> None:
-
-        self._database_context.close()
-
-    def get_audio_recording(self, audio_recording_id: UUID) -> DatabaseAudioRecording | None:
+    async def get_audio_recording(self, audio_recording_id: UUID) -> AudioRecordingPersistenceDomain | None:
 
         self._log.debug(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
-        result: DatabaseAudioRecording | None = self._database_context.get_audio_recording(audio_recording_id)
+        result: AudioRecordingPersistenceDomain | None = await self._context.get_audio_recording(audio_recording_id)
         self._log.debug(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
         return result
 
-    def add_audio_recording(self, database_audio_recording: DatabaseAudioRecording) -> None:
+    async def add_audio_recording(self, audio_recording: AudioRecordingPersistenceDomain) -> None:
 
-        self._log.debug(f'Start [funcName](database_audio_recording={database_audio_recording})')
-        self._database_context.add_audio_recording(database_audio_recording)
-        self._log.debug(f'End [funcName](database_audio_recording={database_audio_recording})')
+        self._log.debug(f'Start [funcName](audio_recording={audio_recording})')
+        await self._context.add_audio_recording(audio_recording)
+        self._log.debug(f'End [funcName](audio_recording={audio_recording})')
 
-    def delete_audio_recording(self, database_audio_recording: DatabaseAudioRecording) -> None:
+    async def delete_audio_recording(self, audio_recording: AudioRecordingPersistenceDomain) -> None:
 
-        self._log.debug(f'Start [funcName](database_audio_recording={database_audio_recording})')
-        database_audio_recording_file_path: Path = Path(database_audio_recording.file_path)
+        self._log.debug(f'Start [funcName](audio_recording={audio_recording})')
+        await self._context.delete_audio_recording(audio_recording)
+        self._log.debug(f'End [funcName](audio_recording={audio_recording})')
 
-        if database_audio_recording_file_path.is_file():
+    async def get_user_audio_recordings_directory(self, user: User) -> Path:
 
-            database_audio_recording_file_path.unlink()
+        return await self._context.get_user_audio_recordings_directory(user.id)
 
-        self._database_context.delete_audio_recording(database_audio_recording)
-        self._log.debug(f'End [funcName](database_audio_recording={database_audio_recording})')
+    def get_audio_recording_filename(self, audio_download_options_input: AudioDownloadOptionsInput) -> str:
 
-    def get_user_audio_recordings_directory(self, user: User) -> Path:
-
-        return self._directory_handler.create_directory(self._audio_recordings_directory_path.joinpath(str(user.id)))
-
-    @staticmethod
-    def get_audio_recording_filename(audio_download_options_input: AudioDownloadOptionsInput) -> str:
-
-        return f'{audio_download_options_input.artist} - {audio_download_options_input.title}'
+        return self._context.get_audio_recording_filename(
+            artist=audio_download_options_input.artist,
+            title=audio_download_options_input.title
+        )

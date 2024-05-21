@@ -14,13 +14,16 @@ class YoutubeVideosGetter:
     _log: Logger = logging.getLogger(__name__)
     _max_results: int = 20
 
-    def get(self, query: str) -> list[dict]:
+    def get(self, query: str) -> list[dict[str, str | list[str]]]:
 
         self._log.debug(f'Start [funcName](query=\'{query}\')')
 
         try:
 
-            result: list[dict] = YoutubeSearch(query, self._max_results).to_dict()
+            result: list[dict[str, str | list[str]]] = YoutubeSearch(
+                search_terms=query,
+                max_results=self._max_results
+            ).to_dict()
             self._log.debug(f'End [funcName](query=\'{query}\')')
 
             return result

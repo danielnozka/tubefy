@@ -3,42 +3,30 @@ import logging
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 
-from ..configuration.app_settings import AppSettings
-from .domain.database_user import DatabaseUser
-from .database_context import DatabaseContext
-from ..services.directory_handler import DirectoryHandler
+from .app_persistence_context import AppPersistenceContext
+from .domain.user_persistence_domain import UserPersistenceDomain
 
 
 class UsersPersistence:
 
     _log: Logger = logging.getLogger(__name__)
-    _database_context: DatabaseContext
+    _context: AppPersistenceContext
 
     @inject
-    def __init__(
-        self,
-        app_settings: AppSettings = Provide['app_settings'],
-        directory_handler: DirectoryHandler = Provide['directory_handler']
-    ):
+    def __init__(self, context: AppPersistenceContext = Provide['app_persistence_context']) -> None:
 
-        self._database_context = DatabaseContext(
-            directory_handler.create_directory(app_settings.persistence_settings.data_path)
-        )
+        self._context = context
 
-    def close(self) -> None:
-
-        self._database_context.close()
-
-    def get_user(self, username: str) -> DatabaseUser | None:
+    async def get_user(self, username: str) -> UserPersistenceDomain | None:
 
         self._log.debug(f'Start [funcName](username=\'{username}\')')
-        result: DatabaseUser | None = self._database_context.get_user(username)
+        result: UserPersistenceDomain | None = await self._context.get_user(username)
         self._log.debug(f'End [funcName](username=\'{username}\')')
 
         return result
 
-    def add_user(self, database_user: DatabaseUser) -> None:
+    async def add_user(self, user: UserPersistenceDomain) -> None:
 
-        self._log.debug(f'Start [funcName](database_user={database_user})')
-        self._database_context.add_user(database_user)
-        self._log.debug(f'End [funcName](database_user={database_user})')
+        self._log.debug(f'Start [funcName](user={user})')
+        await self._context.add_user(user)
+        self._log.debug(f'End [funcName](user={user})')

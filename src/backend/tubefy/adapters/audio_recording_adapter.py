@@ -8,27 +8,30 @@ from ..domain.audio_recording import AudioRecording
 from ..domain.user import User
 from ..dtos.audio_recording_output import AudioRecordingOutput
 from ..dtos.audio_output import AudioOutput
-from ..persistence.domain.database_audio_recording import DatabaseAudioRecording
+from ..persistence.domain.audio_recording_persistence_domain import AudioRecordingPersistenceDomain
 
 
 class AudioRecordingAdapter:
 
     _log: Logger = logging.getLogger(__name__)
 
-    def adapt_to_domain(self, database_audio_recording: DatabaseAudioRecording) -> AudioRecording:
+    def adapt_from_persistence(
+        self,
+        audio_recording_persistence_domain: AudioRecordingPersistenceDomain
+    ) -> AudioRecording:
 
-        self._log.debug(f'Start [funcName](database_audio_recording={database_audio_recording})')
+        self._log.debug(f'Start [funcName](audio_recording_persistence_domain={audio_recording_persistence_domain})')
         result: AudioRecording = AudioRecording(
-            id_=UUID(database_audio_recording.id),
-            video_id=database_audio_recording.video_id,
-            file_path=Path(database_audio_recording.file_path),
-            title=database_audio_recording.title,
-            artist=database_audio_recording.artist,
-            codec=database_audio_recording.codec,
-            bit_rate=database_audio_recording.bit_rate,
-            user_id=UUID(database_audio_recording.user_id)
+            id_=UUID(audio_recording_persistence_domain.id),
+            video_id=audio_recording_persistence_domain.video_id,
+            file_path=Path(audio_recording_persistence_domain.file_path),
+            title=audio_recording_persistence_domain.title,
+            artist=audio_recording_persistence_domain.artist,
+            codec=audio_recording_persistence_domain.codec,
+            bit_rate=audio_recording_persistence_domain.bit_rate,
+            user_id=UUID(audio_recording_persistence_domain.user_id)
         )
-        self._log.debug(f'End [funcName](database_audio_recording={database_audio_recording})')
+        self._log.debug(f'End [funcName](audio_recording_persistence_domain={audio_recording_persistence_domain})')
 
         return result
 
@@ -55,10 +58,10 @@ class AudioRecordingAdapter:
 
         return result
 
-    def adapt_to_persistence(self, audio_recording: AudioRecording, user: User) -> DatabaseAudioRecording:
+    def adapt_to_persistence(self, audio_recording: AudioRecording, user: User) -> AudioRecordingPersistenceDomain:
 
         self._log.debug(f'Start [funcName](audio_recording={audio_recording}, user={user})')
-        result: DatabaseAudioRecording = DatabaseAudioRecording(
+        result: AudioRecordingPersistenceDomain = AudioRecordingPersistenceDomain(
             id=str(audio_recording.id),
             video_id=audio_recording.video_id,
             file_path=str(audio_recording.file_path),

@@ -1,16 +1,16 @@
 import logging
 
 from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends
 from logging import Logger
 from uuid import UUID
 
 from .app_base_controller import AppBaseController
-from .user_authentication_controller import UserAuthenticationController
 from ..domain.user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
 from ..dtos.audio_output import AudioOutput
 from ..dtos.audio_recording_output import AudioRecordingOutput
+from ..middleware.request_authentication_middleware import RequestAuthenticationMiddleware
 from ..use_cases.audio_recording_adder import AudioRecordingAdder
 from ..use_cases.audio_recording_deleter import AudioRecordingDeleter
 from ..use_cases.audio_recording_getter import AudioRecordingGetter
@@ -33,7 +33,7 @@ class UserAudioController(AppBaseController):
         audio_recording_deleter: AudioRecordingDeleter = Provide['audio_recording_deleter'],
         audio_recording_getter: AudioRecordingGetter = Provide['audio_recording_getter'],
         user_getter: UserGetter = Provide['user_getter']
-    ):
+    ) -> None:
 
         self.api_router.add_api_route(
             path='/videos/{video_id}/audio',
@@ -64,7 +64,7 @@ class UserAudioController(AppBaseController):
         self,
         video_id: str,
         audio_download_options_input: AudioDownloadOptionsInput,
-        request: Request
+        token: str = Depends(RequestAuthenticationMiddleware.authenticate_request)
     ) -> None:
 
         self._log.info(
@@ -73,9 +73,8 @@ class UserAudioController(AppBaseController):
 
         try:
 
-            token: str = await self._authenticate_request(request)
-            user: User = self._user_getter.get(token)
-            self._audio_recording_adder.add(
+            user: User = await self._user_getter.get(token)
+            await self._audio_recording_adder.add(
                 video_id=video_id,
                 audio_download_options_input=audio_download_options_input,
                 user=user
@@ -94,14 +93,16 @@ class UserAudioController(AppBaseController):
 
             raise exception
 
-    async def get_all_user_audio_recordings(self, request: Request) -> list[AudioRecordingOutput]:
+    async def get_all_user_audio_recordings(
+        self,
+        token: str = Depends(RequestAuthenticationMiddleware.authenticate_request)
+    ) -> list[AudioRecordingOutput]:
 
         self._log.info('Start [funcName]()')
 
         try:
 
-            token: str = await self._authenticate_request(request)
-            user: User = self._user_getter.get(token)
+            user: User = await self._user_getter.get(token)
             result: list[AudioRecordingOutput] = self._audio_recording_getter.get_all(user)
             self._log.info('End [funcName]()')
 
@@ -113,14 +114,17 @@ class UserAudioController(AppBaseController):
 
             raise exception
 
-    async def get_user_audio_recording(self, audio_recording_id: UUID, request: Request) -> AudioOutput:
+    async def get_user_audio_recording(
+        self,
+        audio_recording_id: UUID,
+        token: str = Depends(RequestAuthenticationMiddleware.authenticate_request)
+    ) -> AudioOutput:
 
         self._log.info(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
         try:
 
-            token: str = await self._authenticate_request(request)
-            user: User = self._user_getter.get(token)
+            user: User = await self._user_getter.get(token)
             result: AudioOutput = self._audio_recording_getter.get(audio_recording_id=audio_recording_id, user=user)
             self._log.info(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
@@ -135,15 +139,18 @@ class UserAudioController(AppBaseController):
 
             raise exception
 
-    async def delete_user_audio_recording(self, audio_recording_id: UUID, request: Request) -> None:
+    async def delete_user_audio_recording(
+        self,
+        audio_recording_id: UUID,
+        token: str = Depends(RequestAuthenticationMiddleware.authenticate_request)
+    ) -> None:
 
         self._log.info(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
         try:
 
-            token: str = await self._authenticate_request(request)
-            user: User = self._user_getter.get(token)
-            self._audio_recording_deleter.delete(audio_recording_id=audio_recording_id, user=user)
+            user: User = await self._user_getter.get(token)
+            await self._audio_recording_deleter.delete(audio_recording_id=audio_recording_id, user=user)
             self._log.info(f'End [funcName](audio_recording_id=\'{audio_recording_id}\')')
 
         except Exception as exception:
@@ -154,8 +161,3 @@ class UserAudioController(AppBaseController):
             )
 
             raise exception
-
-    @staticmethod
-    async def _authenticate_request(request: Request) -> str:
-
-        return await UserAuthenticationController.authenticate_request(request)

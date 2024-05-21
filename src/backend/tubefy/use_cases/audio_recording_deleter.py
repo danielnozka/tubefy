@@ -8,7 +8,7 @@ from ..domain.audio_recording import AudioRecording
 from ..domain.user import User
 from ..exceptions.audio_recording_not_found_exception import AudioRecordingNotFoundException
 from ..persistence.audio_recordings_persistence import AudioRecordingsPersistence
-from ..persistence.domain.database_audio_recording import DatabaseAudioRecording
+from ..persistence.domain.audio_recording_persistence_domain import AudioRecordingPersistenceDomain
 
 
 class AudioRecordingDeleter:
@@ -20,11 +20,11 @@ class AudioRecordingDeleter:
     def __init__(
         self,
         audio_recordings_persistence: AudioRecordingsPersistence = Provide['audio_recordings_persistence']
-    ):
+    ) -> None:
 
         self._audio_recordings_persistence = audio_recordings_persistence
 
-    def delete(self, audio_recording_id: UUID, user: User) -> None:
+    async def delete(self, audio_recording_id: UUID, user: User) -> None:
 
         self._log.debug(f'Start [funcName](audio_recording_id=\'{audio_recording_id}\', user={user})')
         audio_recording: AudioRecording | None = next(
@@ -38,8 +38,8 @@ class AudioRecordingDeleter:
 
         else:
 
-            database_audio_recording: DatabaseAudioRecording = self._audio_recordings_persistence.get_audio_recording(
-                audio_recording_id
+            audio_recording_persistence_domain: AudioRecordingPersistenceDomain = (
+                await self._audio_recordings_persistence.get_audio_recording(audio_recording_id)
             )
-            self._audio_recordings_persistence.delete_audio_recording(database_audio_recording)
+            await self._audio_recordings_persistence.delete_audio_recording(audio_recording_persistence_domain)
             self._log.debug(f'End [funcName](audio_recording_id=\'{audio_recording_id}\', user={user})')

@@ -4,15 +4,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from typing import TYPE_CHECKING
 
-from .database_model import DatabaseModel
+from .base_persistence_domain import BasePersistenceDomain
 
 
 if TYPE_CHECKING:
 
-    from .database_user import DatabaseUser
+    from .user_persistence_domain import UserPersistenceDomain
 
 
-class DatabaseAudioRecording(DatabaseModel):
+class AudioRecordingPersistenceDomain(BasePersistenceDomain):
 
     __tablename__: str = 'audio_recordings'
 
@@ -25,8 +25,7 @@ class DatabaseAudioRecording(DatabaseModel):
     bit_rate: Mapped[int] = mapped_column(Integer)
     user_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
     creation_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    user: Mapped['DatabaseUser'] = relationship(back_populates='audio_recordings', lazy='subquery')
+    user: Mapped['UserPersistenceDomain'] = relationship(back_populates='audio_recordings', lazy='subquery')
 
     def __str__(self) -> str:
 

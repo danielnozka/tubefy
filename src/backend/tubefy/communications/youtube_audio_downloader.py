@@ -7,13 +7,13 @@ from string import Template
 from uuid import uuid4
 from yt_dlp import YoutubeDL
 
-from ..configuration.app_settings import AppSettings
-from ..configuration.audio_conversion_settings import AudioConversionSettings
 from ..domain.audio_recording import AudioRecording
 from ..domain.audio_sample import AudioSample
 from ..domain.user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
 from ..exceptions.audio_download_exception import AudioDownloadException
+from ..settings.app_settings import AppSettings
+from ..settings.audio_conversion_settings import AudioConversionSettings
 
 
 class YoutubeAudioDownloader:
@@ -25,7 +25,7 @@ class YoutubeAudioDownloader:
     _audio_conversion_settings: AudioConversionSettings
 
     @inject
-    def __init__(self, app_settings: AppSettings = Provide['app_settings']):
+    def __init__(self, app_settings: AppSettings = Provide['app_settings']) -> None:
 
         self._audio_conversion_settings = app_settings.audio_conversion_settings
 
@@ -107,6 +107,7 @@ class YoutubeAudioDownloader:
             'ffmpeg_location': self._audio_conversion_settings.ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
+            'logger': self._log,
             'nocheckcertificate': True,
             'outtmpl': self._get_output_file_template(
                 output_directory=output_directory,
@@ -119,8 +120,7 @@ class YoutubeAudioDownloader:
                     'preferredquality': str(self._audio_conversion_settings.audio_sample_bit_rate),
                 }
             ],
-            'prefer_ffmpeg': True,
-            'quiet': True
+            'prefer_ffmpeg': True
         }
 
     def _get_audio_recording_download_options(
@@ -134,6 +134,7 @@ class YoutubeAudioDownloader:
             'ffmpeg_location': self._audio_conversion_settings.ffmpeg_location,
             'format': 'bestaudio/best',
             'keepvideo': False,
+            'logger': self._log,
             'nocheckcertificate': True,
             'outtmpl': self._get_output_file_template(
                 output_directory=output_directory,
@@ -156,7 +157,6 @@ class YoutubeAudioDownloader:
                 f'artist={audio_download_options_input.artist}'
             ],
             'prefer_ffmpeg': True,
-            'quiet': True,
             'writethumbnail': True
         }
 

@@ -8,7 +8,6 @@ from .app_base_controller import AppBaseController
 from ..dtos.audio_output import AudioOutput
 from ..dtos.video_output import VideoOutput
 from ..use_cases.audio_sample_getter import AudioSampleGetter
-from ..use_cases.audio_samples_deleter import AudioSamplesDeleter
 from ..use_cases.video_search_handler import VideoSearchHandler
 
 
@@ -23,9 +22,8 @@ class VideoHandlerController(AppBaseController):
     def __init__(
         self,
         audio_sample_getter: AudioSampleGetter = Provide['audio_sample_getter'],
-        audio_samples_deleter: AudioSamplesDeleter = Provide['audio_samples_deleter'],
         video_search_handler: VideoSearchHandler = Provide['video_search_handler']
-    ):
+    ) -> None:
 
         self.api_router.add_api_route(
             path='/search',
@@ -39,7 +37,6 @@ class VideoHandlerController(AppBaseController):
         )
         self._audio_sample_getter = audio_sample_getter
         self._video_search_handler = video_search_handler
-        audio_samples_deleter.delete()
 
     async def search_videos(self, query: str) -> list[VideoOutput]:
 
@@ -47,7 +44,7 @@ class VideoHandlerController(AppBaseController):
 
         try:
 
-            result: list[VideoOutput] = self._video_search_handler.search(query)
+            result: list[VideoOutput] = await self._video_search_handler.search(query)
             self._log.info(f'End [funcName](query=\'{query}\')')
 
             return result
@@ -67,7 +64,7 @@ class VideoHandlerController(AppBaseController):
 
         try:
 
-            result: AudioOutput = self._audio_sample_getter.get(video_id)
+            result: AudioOutput = await self._audio_sample_getter.get(video_id)
             self._log.info(f'End [funcName](video_id=\'{video_id}\')')
 
             return result

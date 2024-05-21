@@ -9,7 +9,7 @@ from ..domain.audio_sample import AudioSample
 from ..dtos.audio_output import AudioOutput
 from ..exceptions.audio_file_not_found_exception import AudioFileNotFoundException
 from ..persistence.audio_samples_persistence import AudioSamplesPersistence
-from ..persistence.domain.database_audio_sample import DatabaseAudioSample
+from ..persistence.domain.audio_sample_persistence_domain import AudioSamplePersistenceDomain
 
 
 class AudioSampleGetter:
@@ -25,30 +25,36 @@ class AudioSampleGetter:
         audio_sample_adapter: AudioSampleAdapter = Provide['audio_sample_adapter'],
         youtube_audio_downloader: YoutubeAudioDownloader = Provide['youtube_audio_downloader'],
         audio_samples_persistence: AudioSamplesPersistence = Provide['audio_samples_persistence']
-    ):
+    ) -> None:
 
         self._audio_sample_adapter = audio_sample_adapter
         self._youtube_audio_downloader = youtube_audio_downloader
         self._audio_samples_persistence = audio_samples_persistence
 
-    def get(self, video_id: str) -> AudioOutput:
+    async def get(self, video_id: str) -> AudioOutput:
 
         self._log.debug(f'Start [funcName](video_id=\'{video_id}\')')
-        database_audio_sample: DatabaseAudioSample | None = self._audio_samples_persistence.get_audio_sample(video_id)
+        audio_sample_persistence_domain: AudioSamplePersistenceDomain | None = (
+            await self._audio_samples_persistence.get_audio_sample(video_id)
+        )
 
-        if database_audio_sample is None:
+        if audio_sample_persistence_domain is None:
 
             audio_sample: AudioSample = self._youtube_audio_downloader.download_audio_sample(
                 video_id=video_id,
                 output_directory=self._audio_samples_persistence.get_audio_samples_directory(),
                 output_filename=self._audio_samples_persistence.get_audio_sample_filename(video_id)
             )
-            database_audio_sample: DatabaseAudioSample = self._audio_sample_adapter.adapt_to_persistence(audio_sample)
-            self._audio_samples_persistence.add_audio_sample(database_audio_sample)
+            audio_sample_persistence_domain: AudioSamplePersistenceDomain = (
+                self._audio_sample_adapter.adapt_to_persistence(audio_sample)
+            )
+            await self._audio_samples_persistence.add_audio_sample(audio_sample_persistence_domain)
 
         else:
 
-            audio_sample: AudioSample = self._audio_sample_adapter.adapt_to_domain(database_audio_sample)
+            audio_sample: AudioSample = self._audio_sample_adapter.adapt_from_persistence(
+                audio_sample_persistence_domain
+            )
 
             if not audio_sample.file_path.is_file():
 

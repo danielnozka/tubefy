@@ -7,7 +7,7 @@ from ..adapters.user_adapter import UserAdapter
 from ..dtos.user_input import UserInput
 from ..exceptions.username_already_registered_exception import UsernameAlreadyRegisteredException
 from ..persistence.users_persistence import UsersPersistence
-from ..persistence.domain.database_user import DatabaseUser
+from ..persistence.domain.user_persistence_domain import UserPersistenceDomain
 
 
 class UserRegistrationHandler:
@@ -21,21 +21,23 @@ class UserRegistrationHandler:
         self,
         user_adapter: UserAdapter = Provide['user_adapter'],
         users_persistence: UsersPersistence = Provide['users_persistence']
-    ):
+    ) -> None:
 
         self._user_adapter = user_adapter
         self._users_persistence = users_persistence
 
-    def register_user(self, user_input: UserInput) -> None:
+    async def register_user(self, user_input: UserInput) -> None:
 
         self._log.debug(f'Start [funcName](user_input={user_input})')
 
-        database_user: DatabaseUser | None = self._users_persistence.get_user(user_input.username)
+        user_persistence_domain: UserPersistenceDomain | None = (
+            await self._users_persistence.get_user(user_input.username)
+        )
 
-        if database_user is None:
+        if user_persistence_domain is None:
 
-            database_user: DatabaseUser = self._user_adapter.adapt_to_persistence(user_input)
-            self._users_persistence.add_user(database_user)
+            user_persistence_domain: UserPersistenceDomain = self._user_adapter.adapt_to_persistence(user_input)
+            await self._users_persistence.add_user(user_persistence_domain)
 
         else:
 

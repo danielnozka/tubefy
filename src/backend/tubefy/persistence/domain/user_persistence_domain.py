@@ -4,15 +4,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from typing import TYPE_CHECKING
 
-from .database_model import DatabaseModel
+from .base_persistence_domain import BasePersistenceDomain
 
 
 if TYPE_CHECKING:
 
-    from .database_audio_recording import DatabaseAudioRecording
+    from .audio_recording_persistence_domain import AudioRecordingPersistenceDomain
 
 
-class DatabaseUser(DatabaseModel):
+class UserPersistenceDomain(BasePersistenceDomain):
 
     __tablename__: str = 'users'
 
@@ -20,8 +20,10 @@ class DatabaseUser(DatabaseModel):
     username: Mapped[str] = mapped_column(String, unique=True, index=True)
     password: Mapped[str] = mapped_column(String)
     creation_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    audio_recordings: Mapped[list['DatabaseAudioRecording']] = relationship(back_populates='user', lazy='subquery')
+    audio_recordings: Mapped[list['AudioRecordingPersistenceDomain']] = relationship(
+        back_populates='user',
+        lazy='subquery'
+    )
 
     def __str__(self) -> str:
 

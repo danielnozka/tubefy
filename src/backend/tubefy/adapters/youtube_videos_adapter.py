@@ -9,13 +9,13 @@ class YoutubeVideosAdapter:
 
     _log: Logger = logging.getLogger(__name__)
 
-    def adapt(self, videos_message: list[dict]) -> list[VideoOutput]:
+    def adapt(self, videos_message: list[dict[str, str | list[str]]]) -> list[VideoOutput]:
 
         self._log.debug('Start [funcName]()')
 
         result: list[VideoOutput] = []
 
-        video: dict
+        video: dict[str, str | list[str]]
         for video in videos_message:
 
             video_output: VideoOutput = VideoOutput(

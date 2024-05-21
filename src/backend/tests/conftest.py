@@ -1,73 +1,46 @@
 import logging
 import pkgutil
 import pytest
-import threading
 
 from dependency_injector.wiring import inject, Provide
-from threading import Timer
 
 from . import fixtures
-from tubefy.app import APP_COMPONENTS
+from tubefy import app, APP_COMPONENTS, APP_ROOT_PATH
+from tubefy.logging.logging_builder import LoggingBuilder
 from tubefy.module_initializer import ModuleInitializer
-from tubefy.configuration.app_settings import AppSettings
-from tubefy.persistence.audio_recordings_persistence import AudioRecordingsPersistence
-from tubefy.persistence.audio_samples_persistence import AudioSamplesPersistence
-from tubefy.persistence.users_persistence import UsersPersistence
 from tubefy.services.directory_handler import DirectoryHandler
-from tubefy.services.logging_handler import LoggingHandler
+from tubefy.settings.app_settings import AppSettings
 
 
-logging.getLogger('httpx').propagate = False
+logging.getLogger('pytest_dependency').propagate = False
 
-pytest_plugins: list[str] = [f'{fixtures.__name__}.{module}' for _, module, _ in pkgutil.iter_modules(['./fixtures'])]
+pytest_plugins: list[str] = [
+    f'{fixtures.__name__}.{module}' for _, module, _ in pkgutil.iter_modules([fixtures.__path__[0]])
+]
+
+
+@pytest.fixture(scope='session')
+def module_initializer() -> ModuleInitializer:
+
+    module_initializer: ModuleInitializer = ModuleInitializer()
+    module_initializer.configuration.app_root_path.from_value(APP_ROOT_PATH)
+    module_initializer.wire(modules=[__name__, app], packages=[*APP_COMPONENTS, fixtures])
+
+    return module_initializer
 
 
 @pytest.fixture(scope='session', autouse=True)
-def setup() -> None:
+def setup(module_initializer: ModuleInitializer) -> None:
 
-    module_initializer: ModuleInitializer = ModuleInitializer()
-    module_initializer.wire(modules=[__name__], packages=[*APP_COMPONENTS, fixtures])
-    setup_logging()
+    LoggingBuilder.build()
     yield
-    close_timer_threads()
-    close_persistence()
-    delete_test_data()
+    teardown()
 
 
 @inject
-def setup_logging(logging_handler: LoggingHandler = Provide['logging_handler']) -> None:
-
-    logging_handler.build()
-    yield
-    logging_handler.close()
-
-
-def close_timer_threads():
-
-    running_timer_threads: list[Timer] = [thread for thread in threading.enumerate() if isinstance(thread, Timer)]
-
-    thread: Timer
-    for thread in running_timer_threads:
-
-        thread.cancel()
-
-
-@inject
-def close_persistence(
-    audio_recordings_persistence: AudioRecordingsPersistence = Provide['audio_recordings_persistence'],
-    audio_samples_persistence: AudioSamplesPersistence = Provide['audio_samples_persistence'],
-    users_persistence: UsersPersistence = Provide['users_persistence']
-) -> None:
-
-    audio_recordings_persistence.close()
-    audio_samples_persistence.close()
-    users_persistence.close()
-
-
-@inject
-def delete_test_data(
-    app_settings: AppSettings = Provide['app_settings'],
-    directory_handler: DirectoryHandler = Provide['directory_handler']
+def teardown(
+    directory_handler: DirectoryHandler = Provide['directory_handler'],
+    app_settings: AppSettings = Provide['app_settings']
 ) -> None:
 
     directory_handler.delete_directory(app_settings.persistence_settings.data_path)

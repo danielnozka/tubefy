@@ -5,8 +5,8 @@ from dependency_injector.wiring import inject, Provide
 from jose import jwt, JWTError
 from logging import Logger
 
-from ..configuration.app_settings import AppSettings
 from ..exceptions.user_unauthorized_exception import UserUnauthorizedException
+from ..settings.app_settings import AppSettings
 
 
 class JsonWebTokenHandler:
@@ -17,7 +17,7 @@ class JsonWebTokenHandler:
     _key: str
 
     @inject
-    def __init__(self, app_settings: AppSettings = Provide['app_settings']):
+    def __init__(self, app_settings: AppSettings = Provide['app_settings']) -> None:
 
         self._algorithm = app_settings.security_settings.json_web_token_algorithm
         self._expiration_minutes = app_settings.security_settings.json_web_token_expiration_minutes

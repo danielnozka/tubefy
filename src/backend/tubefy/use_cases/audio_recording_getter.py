@@ -19,7 +19,7 @@ class AudioRecordingGetter:
     _audio_recording_adapter: AudioRecordingAdapter
 
     @inject
-    def __init__(self, audio_recording_adapter: AudioRecordingAdapter = Provide['audio_recording_adapter']):
+    def __init__(self, audio_recording_adapter: AudioRecordingAdapter = Provide['audio_recording_adapter']) -> None:
 
         self._audio_recording_adapter = audio_recording_adapter
 

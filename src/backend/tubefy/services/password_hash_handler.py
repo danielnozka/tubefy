@@ -23,7 +23,7 @@ class PasswordHashHandler:
     def verify_password(self, password: str, hashed_password: str) -> bool:
 
         self._log.debug('Start [funcName]()')
-        result: bool = self._context.verify(password, hashed_password)
+        result: bool = self._context.verify(secret=password, hash=hashed_password)
         self._log.debug('End [funcName]()')
 
         return result
