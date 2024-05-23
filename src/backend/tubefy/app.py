@@ -48,9 +48,9 @@ class App(FastAPI):
             title=app_settings.app_name,
             lifespan=self._handle_lifespan_events
         )
+        self.add_exception_handler(exc_class_or_status_code=Exception, handler=self._handle_exception)
+        self.add_middleware(RequestIdentificationMiddleware)
         self._add_controllers()
-        self._add_exception_handlers()
-        self._add_middleware()
         self._app_persistence_context = app_persistence_context
         self._frontend_build_path = directory_handler.create_directory(app_settings.server_settings.frontend_build_path)
         self._host = app_settings.server_settings.host
@@ -78,24 +78,16 @@ class App(FastAPI):
             app_controller: AppBaseController = AppController()
             self.include_router(app_controller.api_router)
 
-    def _add_exception_handlers(self) -> None:
-
-        self.add_exception_handler(exc_class_or_status_code=AppBaseException, handler=self._handle_app_exception)
-        self.add_exception_handler(exc_class_or_status_code=Exception, handler=self._handle_unexpected_exception)
-
-    def _add_middleware(self) -> None:
-
-        self.add_middleware(RequestIdentificationMiddleware)
-
     @staticmethod
-    async def _handle_app_exception(request: Request, exc: AppBaseException) -> JSONResponse:
+    async def _handle_exception(request: Request, exc: Exception) -> JSONResponse:
 
-        return JSONResponse(status_code=exc.status_code, content=str(exc), headers=exc.headers)
+        if isinstance(exc, AppBaseException):
 
-    @staticmethod
-    async def _handle_unexpected_exception(request: Request, exc: Exception) -> JSONResponse:
+            return JSONResponse(status_code=exc.status_code, content=str(exc), headers=exc.headers)
 
-        return JSONResponse(status_code=500, content=f'{exc.__class__.__name__}: {exc}')
+        else:
+
+            return JSONResponse(status_code=500, content=f'{exc.__class__.__name__}: {exc}')
 
     @asynccontextmanager
     async def _handle_lifespan_events(self, app: FastAPI) -> AsyncGenerator[None, None]:
