@@ -40,7 +40,7 @@ class YoutubeAudioGetter:
 
                     self._log.warning(
                         msg=(
-                            f'Exception found while downloading audio from video {video_id} '
+                            f'Exception found while downloading audio from video \'{video_id}\' '
                             f'on attempt {download_attempt}'
                         ),
                         extra={'exception': exception}
