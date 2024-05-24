@@ -25,29 +25,29 @@ class UserAdapter:
         self._audio_recording_adapter = audio_recording_adapter
         self._password_hash_handler = password_hash_handler
 
-    def adapt_from_persistence(self, user_persistence_domain: UserPersistenceDomain) -> User:
+    def adapt_from_persistence(self, user: UserPersistenceDomain) -> User:
 
-        self._log.debug(f'Start [funcName](user_persistence_domain={user_persistence_domain})')
+        self._log.debug(f'Start [funcName](user={user})')
         result: User = User(
-            id=UUID(user_persistence_domain.id),
-            username=user_persistence_domain.username,
+            id=UUID(user.id),
+            username=user.username,
             audio_recordings=[
                 self._audio_recording_adapter.adapt_from_persistence(x)
-                for x in user_persistence_domain.audio_recordings
+                for x in user.audio_recordings
             ]
         )
-        self._log.debug(f'End [funcName](user_persistence_domain={user_persistence_domain})')
+        self._log.debug(f'End [funcName](user={user})')
 
         return result
 
-    def adapt_to_persistence(self, user_input: UserInput) -> UserPersistenceDomain:
+    def adapt_to_persistence(self, user: UserInput) -> UserPersistenceDomain:
 
-        self._log.debug(f'Start [funcName](user_input={user_input})')
+        self._log.debug(f'Start [funcName](user={user})')
         result: UserPersistenceDomain = UserPersistenceDomain(
             id=str(uuid4()),
-            username=user_input.username,
-            password=self._password_hash_handler.hash_password(user_input.password)
+            username=user.username,
+            password=self._password_hash_handler.hash_password(user.password)
         )
-        self._log.debug(f'End [funcName](user_input={user_input})')
+        self._log.debug(f'End [funcName](user={user})')
 
         return result

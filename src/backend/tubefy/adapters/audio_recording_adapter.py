@@ -13,23 +13,20 @@ class AudioRecordingAdapter:
 
     _log: Logger = logging.getLogger(__name__)
 
-    def adapt_from_persistence(
-        self,
-        audio_recording_persistence_domain: AudioRecordingPersistenceDomain
-    ) -> AudioRecording:
+    def adapt_from_persistence(self, audio_recording: AudioRecordingPersistenceDomain) -> AudioRecording:
 
-        self._log.debug(f'Start [funcName](audio_recording_persistence_domain={audio_recording_persistence_domain})')
+        self._log.debug(f'Start [funcName](audio_recording={audio_recording})')
         result: AudioRecording = AudioRecording(
-            id=UUID(audio_recording_persistence_domain.id),
-            video_id=audio_recording_persistence_domain.video_id,
-            file_path=Path(audio_recording_persistence_domain.file_path),
-            title=audio_recording_persistence_domain.title,
-            artist=audio_recording_persistence_domain.artist,
-            codec=audio_recording_persistence_domain.codec,
-            bit_rate=audio_recording_persistence_domain.bit_rate,
-            user_id=UUID(audio_recording_persistence_domain.user_id)
+            id=UUID(audio_recording.id),
+            video_id=audio_recording.video_id,
+            file_path=Path(audio_recording.file_path),
+            title=audio_recording.title,
+            artist=audio_recording.artist,
+            codec=audio_recording.codec,
+            bit_rate=audio_recording.bit_rate,
+            user_id=UUID(audio_recording.user_id)
         )
-        self._log.debug(f'End [funcName](audio_recording_persistence_domain={audio_recording_persistence_domain})')
+        self._log.debug(f'End [funcName](audio_recording={audio_recording})')
 
         return result
 

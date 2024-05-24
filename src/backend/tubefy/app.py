@@ -68,6 +68,10 @@ class App(FastAPI):
 
             self._log.error(msg='Stopped application because of exception', extra={'exception': exception})
 
+        finally:
+
+            self._log.info('Application stopped')
+
     def _add_controllers(self) -> None:
 
         AppController: type[AppBaseController]

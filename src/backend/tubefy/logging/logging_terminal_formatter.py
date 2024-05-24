@@ -9,13 +9,13 @@ class LoggingTerminalFormatter(Formatter):
         '%(asctime)s.%(msecs)03d - [%(levelname)s] - [%(name)s] - %(message)s'
     )
     _main_format_with_request_identification: str = (
-        '%(asctime)s.%(msecs)03d - [%(levelname)s] - [%(request)s] - [%(name)s] - %(message)s'
+        '%(asctime)s.%(msecs)03d - [%(request)s] - [%(levelname)s] - [%(name)s] - %(message)s'
     )
     _exception_format_without_request_identification: str = (
         '%(asctime)s.%(msecs)03d - [%(levelname)s] - [%(name)s] - %(message)s - %(error)s'
     )
     _exception_format_with_request_identification: str = (
-        '%(asctime)s.%(msecs)03d - [%(levelname)s] - [%(request)s] - [%(name)s] - %(message)s - %(error)s'
+        '%(asctime)s.%(msecs)03d - [%(request)s] - [%(levelname)s] - [%(name)s] - %(message)s - %(error)s'
     )
 
     def __init__(self) -> None:
