@@ -1,8 +1,6 @@
 import logging
-
 from logging import Logger
 from youtube_search import YoutubeSearch
-
 from ..exceptions.youtube_video_search_exception import YoutubeVideoSearchException
 
 

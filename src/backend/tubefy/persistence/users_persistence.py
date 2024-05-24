@@ -1,8 +1,6 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
-
 from .app_persistence_context import AppPersistenceContext
 from .domain.user_persistence_domain import UserPersistenceDomain
 

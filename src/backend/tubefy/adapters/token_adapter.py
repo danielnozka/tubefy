@@ -1,7 +1,5 @@
 import logging
-
 from logging import Logger
-
 from ..dtos.token_output import TokenOutput
 
 

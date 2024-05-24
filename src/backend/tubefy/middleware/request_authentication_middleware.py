@@ -1,7 +1,6 @@
 from fastapi import Request
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
-
 from ..exceptions.authentication_required_exception import AuthenticationRequiredException
 
 

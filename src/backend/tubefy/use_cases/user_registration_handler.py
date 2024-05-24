@@ -1,8 +1,6 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
-
 from ..adapters.user_adapter import UserAdapter
 from ..dtos.user_input import UserInput
 from ..exceptions.username_already_registered_exception import UsernameAlreadyRegisteredException

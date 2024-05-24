@@ -1,6 +1,5 @@
 from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Configuration, Singleton
-
 from .adapters.audio_recording_adapter import AudioRecordingAdapter
 from .adapters.audio_sample_adapter import AudioSampleAdapter
 from .adapters.token_adapter import TokenAdapter

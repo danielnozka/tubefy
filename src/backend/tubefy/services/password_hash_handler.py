@@ -1,5 +1,4 @@
 import logging
-
 from logging import Logger
 from passlib.context import CryptContext
 

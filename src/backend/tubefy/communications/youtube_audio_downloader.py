@@ -1,12 +1,10 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from pathlib import Path
 from string import Template
 from uuid import uuid4
 from yt_dlp import YoutubeDL
-
 from ..domain.audio_recording import AudioRecording
 from ..domain.audio_sample import AudioSample
 from ..domain.user import User

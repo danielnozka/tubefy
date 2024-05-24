@@ -1,9 +1,7 @@
 import logging
-
 from logging import Logger
 from pathlib import Path
 from uuid import UUID
-
 from ..domain.audio_sample import AudioSample
 from ..dtos.audio_output import AudioOutput
 from ..persistence.domain.audio_sample_persistence_domain import AudioSamplePersistenceDomain

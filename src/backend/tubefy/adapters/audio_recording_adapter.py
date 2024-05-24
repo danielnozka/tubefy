@@ -1,9 +1,7 @@
 import logging
-
 from logging import Logger
 from pathlib import Path
 from uuid import UUID
-
 from ..domain.audio_recording import AudioRecording
 from ..domain.user import User
 from ..dtos.audio_recording_output import AudioRecordingOutput

@@ -1,7 +1,5 @@
 import logging
-
 from logging import Logger
-
 from ..dtos.video_output import VideoOutput
 
 

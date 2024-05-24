@@ -1,8 +1,6 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
-
 from ..adapters.user_adapter import UserAdapter
 from ..domain.user import User
 from ..exceptions.user_unauthorized_exception import UserUnauthorizedException

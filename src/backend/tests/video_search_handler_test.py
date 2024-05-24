@@ -1,5 +1,4 @@
 import requests
-
 from fastapi.testclient import TestClient
 from httpx import Response
 from unittest import mock

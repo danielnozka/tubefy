@@ -1,5 +1,4 @@
 from uuid import UUID
-
 from .audio_recording import AudioRecording
 
 

@@ -1,10 +1,8 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
 from logging import Logger
 from uuid import UUID
-
 from .app_base_controller import AppBaseController
 from ..domain.user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput

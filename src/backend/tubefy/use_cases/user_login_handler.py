@@ -1,8 +1,6 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
-
 from ..adapters.token_adapter import TokenAdapter
 from ..dtos.token_output import TokenOutput
 from ..dtos.user_input import UserInput

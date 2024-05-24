@@ -1,8 +1,6 @@
 import pytest_asyncio
-
 from dependency_injector.wiring import inject, Provide
 from uuid import UUID
-
 from tubefy.domain.audio_recording import AudioRecording
 from tubefy.domain.user import User
 from tubefy.use_cases.user_getter import UserGetter

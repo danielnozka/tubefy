@@ -1,8 +1,6 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
-
 from ..adapters.audio_recording_adapter import AudioRecordingAdapter
 from ..communications.youtube_audio_downloader import YoutubeAudioDownloader
 from ..domain.audio_recording import AudioRecording

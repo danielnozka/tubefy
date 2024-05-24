@@ -1,9 +1,7 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter
 from logging import Logger
-
 from .app_base_controller import AppBaseController
 from ..dtos.audio_output import AudioOutput
 from ..dtos.video_output import VideoOutput

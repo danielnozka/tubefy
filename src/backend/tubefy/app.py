@@ -1,6 +1,5 @@
 import logging
 import uvicorn
-
 from contextlib import asynccontextmanager
 from dependency_injector.wiring import inject, Provide
 from fastapi import FastAPI, Request
@@ -9,7 +8,6 @@ from fastapi.staticfiles import StaticFiles
 from logging import Logger
 from pathlib import Path
 from typing import AsyncGenerator
-
 from .controllers import APP_CONTROLLERS, AppBaseController
 from .exceptions.app_base_exception import AppBaseException
 from .logging.logging_builder import LoggingBuilder

@@ -1,9 +1,7 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from uuid import UUID
-
 from ..adapters.audio_recording_adapter import AudioRecordingAdapter
 from ..domain.audio_recording import AudioRecording
 from ..domain.user import User

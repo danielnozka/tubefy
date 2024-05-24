@@ -1,5 +1,4 @@
 import logging
-
 from aiopath import AsyncPath
 from logging import Logger
 from pathlib import Path

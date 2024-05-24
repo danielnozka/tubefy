@@ -1,10 +1,8 @@
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from pathlib import Path
 from uuid import UUID
-
 from ..domain.user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
 from .app_persistence_context import AppPersistenceContext

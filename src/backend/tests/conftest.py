@@ -1,9 +1,7 @@
 import logging
 import pkgutil
 import pytest
-
 from dependency_injector.wiring import inject, Provide
-
 from . import fixtures
 from tubefy import app, APP_COMPONENTS, APP_ROOT_PATH
 from tubefy.logging.logging_builder import LoggingBuilder

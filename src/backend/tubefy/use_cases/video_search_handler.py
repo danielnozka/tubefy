@@ -1,9 +1,7 @@
 import asyncio
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
-
 from ..adapters.youtube_videos_adapter import YoutubeVideosAdapter
 from ..communications.youtube_videos_getter import YoutubeVideosGetter
 from ..dtos.video_output import VideoOutput

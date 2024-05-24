@@ -1,5 +1,4 @@
 from logging import Filter, LogRecord
-
 from ..middleware.request_identification_middleware import RequestIdentificationMiddleware
 
 

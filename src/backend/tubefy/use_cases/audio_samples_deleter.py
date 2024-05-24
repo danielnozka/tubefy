@@ -1,9 +1,7 @@
 import asyncio
 import logging
-
 from dependency_injector.wiring import inject, Provide
 from logging import Logger
-
 from ..persistence.audio_samples_persistence import AudioSamplesPersistence
 from ..settings.app_settings import AppSettings
 

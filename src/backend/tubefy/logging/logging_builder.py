@@ -1,9 +1,7 @@
 import logging
 import logging.config
-
 from logging import StreamHandler
 from typing import Any
-
 from .logging_request_identification_filter import LoggingRequestIdentificationFilter
 from .logging_terminal_formatter import LoggingTerminalFormatter
 
