@@ -29,7 +29,7 @@ class UserAdapter:
 
         self._log.debug(f'Start [funcName](user_persistence_domain={user_persistence_domain})')
         result: User = User(
-            id_=UUID(user_persistence_domain.id),
+            id=UUID(user_persistence_domain.id),
             username=user_persistence_domain.username,
             audio_recordings=[
                 self._audio_recording_adapter.adapt_from_persistence(x)

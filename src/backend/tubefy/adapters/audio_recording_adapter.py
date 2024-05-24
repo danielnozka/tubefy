@@ -20,7 +20,7 @@ class AudioRecordingAdapter:
 
         self._log.debug(f'Start [funcName](audio_recording_persistence_domain={audio_recording_persistence_domain})')
         result: AudioRecording = AudioRecording(
-            id_=UUID(audio_recording_persistence_domain.id),
+            id=UUID(audio_recording_persistence_domain.id),
             video_id=audio_recording_persistence_domain.video_id,
             file_path=Path(audio_recording_persistence_domain.file_path),
             title=audio_recording_persistence_domain.title,

@@ -41,7 +41,7 @@ class YoutubeAudioDownloader:
             )
         )
         result: AudioSample = AudioSample(
-            id_=uuid4(),
+            id=uuid4(),
             video_id=video_id,
             file_path=self._get_audio_sample_file_path(
                 output_directory=output_directory,
@@ -78,7 +78,7 @@ class YoutubeAudioDownloader:
             )
         )
         result: AudioRecording = AudioRecording(
-            id_=uuid4(),
+            id=uuid4(),
             video_id=video_id,
             file_path=self._get_audio_recording_file_path(
                 output_directory=output_directory,

@@ -1,38 +1,16 @@
+from dataclasses import dataclass, field
 from pathlib import Path
 from uuid import UUID
 
 
+@dataclass
 class AudioRecording:
 
     id: UUID
-    video_id: str
-    file_path: Path
-    title: str
-    artist: str
-    codec: str
-    bit_rate: int
-    user_id: UUID
-
-    def __init__(self,
-        id_: UUID,
-        video_id: str,
-        file_path: Path,
-        title: str,
-        artist: str,
-        codec: str,
-        bit_rate: int,
-        user_id: UUID
-    ) -> None:
-
-        self.id = id_
-        self.video_id = video_id
-        self.file_path = file_path
-        self.title = title
-        self.artist = artist
-        self.codec = codec
-        self.bit_rate = bit_rate
-        self.user_id = user_id
-
-    def __str__(self) -> str:
-
-        return f'{self.__class__.__name__}(id=\'{self.id}\')'
+    video_id: str = field(repr=False)
+    file_path: Path = field(repr=False)
+    title: str = field(repr=False)
+    artist: str = field(repr=False)
+    codec: str = field(repr=False)
+    bit_rate: int = field(repr=False)
+    user_id: UUID = field(repr=False)

@@ -15,7 +15,7 @@ class AudioSampleAdapter:
 
         self._log.debug(f'Start [funcName](audio_sample_persistence_domain={audio_sample_persistence_domain})')
         result: AudioSample = AudioSample(
-            id_=UUID(audio_sample_persistence_domain.id),
+            id=UUID(audio_sample_persistence_domain.id),
             video_id=audio_sample_persistence_domain.video_id,
             file_path=Path(audio_sample_persistence_domain.file_path)
         )
