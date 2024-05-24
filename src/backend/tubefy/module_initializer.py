@@ -5,7 +5,8 @@ from .adapters.audio_sample_adapter import AudioSampleAdapter
 from .adapters.token_adapter import TokenAdapter
 from .adapters.user_adapter import UserAdapter
 from .adapters.youtube_videos_adapter import YoutubeVideosAdapter
-from .communications.youtube_audio_downloader import YoutubeAudioDownloader
+from .communications.youtube_audio_recording_getter import YoutubeAudioRecordingGetter
+from .communications.youtube_audio_sample_getter import YoutubeAudioSampleGetter
 from .communications.youtube_videos_getter import YoutubeVideosGetter
 from .persistence.app_persistence_context import AppPersistenceContext
 from .persistence.audio_recordings_persistence import AudioRecordingsPersistence
@@ -39,7 +40,8 @@ class ModuleInitializer(DeclarativeContainer):
     youtube_videos_adapter: Singleton[YoutubeVideosAdapter] = Singleton(YoutubeVideosAdapter)
 
     # Communications
-    youtube_audio_downloader: Singleton[YoutubeAudioDownloader] = Singleton(YoutubeAudioDownloader)
+    youtube_audio_recording_getter: Singleton[YoutubeAudioRecordingGetter] = Singleton(YoutubeAudioRecordingGetter)
+    youtube_audio_sample_getter: Singleton[YoutubeAudioSampleGetter] = Singleton(YoutubeAudioSampleGetter)
     youtube_videos_getter: Singleton[YoutubeVideosGetter] = Singleton(YoutubeVideosGetter)
 
     # Persistence
