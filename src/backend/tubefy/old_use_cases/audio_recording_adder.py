@@ -4,9 +4,9 @@ from logging import Logger
 from ..adapters.audio_recording_adapter import AudioRecordingAdapter
 from ..communications.youtube_audio_recording_getter import YoutubeAudioRecordingGetter
 from ..domain.audio_recording import AudioRecording
-from ..domain.user import User
+from ..domain.old_user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
-from ..exceptions.audio_recording_already_downloaded_exception import AudioRecordingAlreadyDownloadedException
+from ..exceptions.user_audio_already_downloaded_exception import AudioRecordingAlreadyDownloadedException
 from ..persistence.audio_recordings_persistence import AudioRecordingsPersistence
 from ..persistence.domain.audio_recording_persistence_domain import AudioRecordingPersistenceDomain
 

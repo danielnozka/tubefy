@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from logging import Logger
 from uuid import UUID
 from .app_base_controller import AppBaseController
-from ..domain.user import User
+from ..domain.old_user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
 from ..dtos.audio_output import AudioOutput
 from ..dtos.audio_recording_output import AudioRecordingOutput
@@ -17,7 +17,7 @@ from ..use_cases.user_getter import UserGetter
 
 class UserAudioController(AppBaseController):
 
-    api_router: APIRouter = APIRouter(prefix='/api', tags=['user_audio'])
+    api_router: APIRouter = APIRouter(prefix='/api', tags=['audio'])
     _log: Logger = logging.getLogger(__name__)
     _audio_recording_adder: AudioRecordingAdder
     _audio_recording_deleter: AudioRecordingDeleter

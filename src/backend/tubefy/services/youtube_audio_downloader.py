@@ -1,28 +1,24 @@
 import logging
-from dependency_injector.wiring import inject, Provide
 from logging import Logger
-from pathlib import Path
 from string import Template
 from yt_dlp import YoutubeDL
-from ..exceptions.audio_download_exception import AudioDownloadException
-from ..settings.app_settings import AppSettings
-from ..settings.audio_downloader_settings import AudioConversionSettings
+from ..domain.audio import Audio
+from ..domain.audio_download_options import AudioDownloadOptions
+from .i_audio_downloader import IAudioDownloader
 
 
-class YoutubeAudioGetter:
+class YoutubeAudioDownloader(IAudioDownloader):
 
     _log: Logger = logging.getLogger(__name__)
     _url_template: Template = Template('https://www.youtube.com/watch?v=${video_id}')
     _max_download_attempts: int = 3
     _output_file_template: Template = Template('${output_file_path}.%(ext)s')
-    _audio_conversion_settings: AudioConversionSettings
 
-    @inject
-    def __init__(self, app_settings: AppSettings = Provide['app_settings']) -> None:
+    def __init__(self) -> None:
 
-        self._audio_conversion_settings = app_settings.audio_conversion_settings
+        pass
 
-    def _download_audio(self, video_id: str, download_options: dict) -> None:
+    def download_audio(self, audio_download_options: AudioDownloadOptions) -> Audio:
 
         with YoutubeDL(download_options) as downloader:
 

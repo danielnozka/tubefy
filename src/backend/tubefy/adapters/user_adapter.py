@@ -3,8 +3,8 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from uuid import UUID, uuid4
 from ..adapters.audio_recording_adapter import AudioRecordingAdapter
-from ..domain.user import User
-from ..dtos.user_input import UserInput
+from ..domain.old_user import User
+from ..dtos.user_credentials_dto import UserInput
 from ..persistence.domain.user_persistence_domain import UserPersistenceDomain
 from ..services.password_hash_handler import PasswordHashHandler
 

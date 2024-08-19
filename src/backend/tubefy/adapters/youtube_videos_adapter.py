@@ -1,6 +1,6 @@
 import logging
 from logging import Logger
-from ..dtos.video_output import VideoOutput
+from ..dtos.video_dto import VideoOutput
 
 
 class YoutubeVideosAdapter:

@@ -1,7 +1,7 @@
 from fastapi.security import OAuth2PasswordRequestForm
 
 
-class UserInput(OAuth2PasswordRequestForm):
+class UserCredentialsDto(OAuth2PasswordRequestForm):
 
     def __repr__(self) -> str:
 

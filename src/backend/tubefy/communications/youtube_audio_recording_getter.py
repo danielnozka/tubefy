@@ -4,7 +4,7 @@ from pathlib import Path
 from uuid import uuid4
 from .youtube_audio_getter import YoutubeAudioGetter
 from ..domain.audio_recording import AudioRecording
-from ..domain.user import User
+from ..domain.old_user import User
 from ..dtos.audio_download_options_input import AudioDownloadOptionsInput
 
 

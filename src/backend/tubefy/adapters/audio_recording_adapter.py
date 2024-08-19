@@ -3,7 +3,7 @@ from logging import Logger
 from pathlib import Path
 from uuid import UUID
 from ..domain.audio_recording import AudioRecording
-from ..domain.user import User
+from ..domain.old_user import User
 from ..dtos.audio_recording_output import AudioRecordingOutput
 from ..dtos.audio_output import AudioOutput
 from ..persistence.domain.audio_recording_persistence_domain import AudioRecordingPersistenceDomain

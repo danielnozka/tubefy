@@ -1,7 +1,7 @@
 from .base_json_dto import BaseJsonDto
 
 
-class VideoOutput(BaseJsonDto):
+class VideoDto(BaseJsonDto):
 
     id: str
     title: str

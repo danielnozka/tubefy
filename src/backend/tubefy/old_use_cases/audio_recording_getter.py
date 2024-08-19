@@ -4,11 +4,11 @@ from logging import Logger
 from uuid import UUID
 from ..adapters.audio_recording_adapter import AudioRecordingAdapter
 from ..domain.audio_recording import AudioRecording
-from ..domain.user import User
+from ..domain.old_user import User
 from ..dtos.audio_output import AudioOutput
 from ..dtos.audio_recording_output import AudioRecordingOutput
 from ..exceptions.audio_file_not_found_exception import AudioFileNotFoundException
-from ..exceptions.audio_recording_not_found_exception import AudioRecordingNotFoundException
+from ..exceptions.user_audio_not_found_exception import AudioRecordingNotFoundException
 
 
 class AudioRecordingGetter:

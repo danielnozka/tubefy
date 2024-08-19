@@ -3,8 +3,8 @@ from dependency_injector.wiring import inject, Provide
 from logging import Logger
 from uuid import UUID
 from ..domain.audio_recording import AudioRecording
-from ..domain.user import User
-from ..exceptions.audio_recording_not_found_exception import AudioRecordingNotFoundException
+from ..domain.old_user import User
+from ..exceptions.user_audio_not_found_exception import AudioRecordingNotFoundException
 from ..persistence.audio_recordings_persistence import AudioRecordingsPersistence
 from ..persistence.domain.audio_recording_persistence_domain import AudioRecordingPersistenceDomain
 

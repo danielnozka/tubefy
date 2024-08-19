@@ -1,8 +1,5 @@
-from .app_base_exception import AppBaseException
-
-
-class AudioDownloadException(AppBaseException):
+class AudioDownloadException(Exception):
 
     def __init__(self) -> None:
 
-        super().__init__(status_code=500, message='Audio recording download exceeded the maximum numbers of attempts')
+        super().__init__('Audio download exceeded the maximum numbers of attempts')

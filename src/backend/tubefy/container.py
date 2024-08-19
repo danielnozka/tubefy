@@ -19,15 +19,15 @@ from .settings.app_settings import AppSettings
 from .use_cases.audio_recording_adder import AudioRecordingAdder
 from .use_cases.audio_recording_deleter import AudioRecordingDeleter
 from .use_cases.audio_recording_getter import AudioRecordingGetter
-from .use_cases.audio_sample_getter import AudioSampleGetter
+from .use_cases.old_audio_sample_getter import AudioSampleGetter
 from .use_cases.audio_samples_deleter import AudioSamplesDeleter
 from .use_cases.user_getter import UserGetter
-from .use_cases.user_login_handler import UserLoginHandler
-from .use_cases.user_registration_handler import UserRegistrationHandler
+from .use_cases.old_user_login_handler import UserLoginHandler
+from .use_cases.old_user_registration_handler import UserRegistrationHandler
 from .use_cases.video_search_handler import VideoSearchHandler
 
 
-class ModuleInitializer(DeclarativeContainer):
+class Container(DeclarativeContainer):
 
     # Configuration
     configuration: Configuration = Configuration()

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from dependency_injector.wiring import inject, Provide
 from jose import jwt, JWTError
 from logging import Logger
-from ..exceptions.user_unauthorized_exception import UserUnauthorizedException
+from ..exceptions.unauthorized_user_exception import UserUnauthorizedException
 from ..settings.app_settings import AppSettings
 
 

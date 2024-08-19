@@ -1,7 +1,7 @@
 from . import app, APP_COMPONENTS, APP_ROOT_PATH
 from .app import App
 from .logging.logging_builder import LoggingBuilder
-from .module_initializer import ModuleInitializer
+from .container import ModuleInitializer
 
 
 LoggingBuilder.build()
